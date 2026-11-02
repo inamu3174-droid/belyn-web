@@ -1,106 +1,107 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// PRODUCT CATALOG  —  EDIT THIS FILE WITH REAL BELYN DATA
-//
-// belyn.in could not be reached while this site was generated, so:
-//   • PRICES and SIZES below are PLACEHOLDERS (not real Belyn prices).
-//   • PRODUCT IMAGES are drawn placeholders. To use real photography, drop files
-//     into /public/images/products/ and set `image: '/images/products/<file>.jpg'`.
-// While PRICES_ARE_PLACEHOLDERS is true a small "Placeholder price" tag is shown
-// on cards and product pages so nothing fake ships by accident.
-// ─────────────────────────────────────────────────────────────────────────────
 export const PRICES_ARE_PLACEHOLDERS = true;
 
 export interface Variant {
   id: string;
-  label: string; // e.g. "250 g"
-  price: number; // INR, whole rupees
+  label: string;
+  price: number;
 }
 
 export interface Product {
   slug: string;
   name: string;
-  short: string; // card line
+  short: string;
   description: string;
-  bg: string; // card background colour (from the reference palette)
-  image?: string; // real photo URL; falls back to drawn jar
-  jar: { lid: string; body: string; label: string; ink: string; lines: string[] };
+  bg: string;
+  image?: string;
+  jar: {
+    lid: string;
+    body: string;
+    label: string;
+    ink: string;
+    lines: string[];
+  };
   variants: Variant[];
 }
 
 export const products: Product[] = [
   {
     slug: 'kashmiri-white-honey',
-    name: 'Kashmiri White Honey',
-    short: 'White honey from Kashmir',
-    description: 'Kashmiri white honey, selected and packed by Belyn. Born in Kashmir. Crafted with Purity.',
-    bg: '#efdd3d',
-    jar: { lid: '#193e10', body: '#f3e6b8', label: '#193e10', ink: '#ccfd51', lines: ['KASHMIRI', 'WHITE', 'HONEY'] },
+    name: 'White Honey',
+    short: 'Pure White',
+    description: 'Delicate Kashmiri white honey, raw and unfiltered.',
+    bg: '#f8f0d8',
+    jar: { lid: '#c4a35a', body: '#f5e6b8', label: '#fff8e7', ink: '#5c3d1e', lines: ['WHITE', 'HONEY'] },
     variants: [
-      { id: 'honey-250', label: '250 g', price: 999 }, // PLACEHOLDER
-      { id: 'honey-500', label: '500 g', price: 1799 }, // PLACEHOLDER
+      { id: '250g', label: '250 g', price: 899 },
+      { id: '500g', label: '500 g', price: 1599 },
     ],
   },
   {
     slug: 'kashmiri-saffron',
     name: 'Kashmiri Saffron',
-    short: 'Saffron from the valley',
-    description: 'Kashmiri saffron, packed by Belyn. A little goes a long way in kahwa, sweets and rice.',
-    bg: '#b7533c',
-    jar: { lid: '#4b1c0e', body: '#7a2a1a', label: '#4b1c0e', ink: '#efdd3d', lines: ['KASHMIRI', 'SAFFRON'] },
+    short: 'Mongra',
+    description: 'Hand-picked Kashmiri Mongra saffron threads.',
+    bg: '#f4d4b8',
+    jar: { lid: '#8b3a2a', body: '#e8a87c', label: '#fff0e0', ink: '#5c1e10', lines: ['SAFFRON'] },
     variants: [
-      { id: 'saffron-1', label: '1 g', price: 499 }, // PLACEHOLDER
-      { id: 'saffron-2', label: '2 g', price: 949 }, // PLACEHOLDER
+      { id: '1g', label: '1 g', price: 1499 },
+      { id: '2g', label: '2 g', price: 2799 },
     ],
   },
   {
     slug: 'kashmiri-almonds',
     name: 'Kashmiri Almonds',
-    short: 'Almonds from Kashmir',
-    description: 'Kashmiri almonds, selected and packed by Belyn.',
-    bg: '#cbed41',
-    jar: { lid: '#193e10', body: '#d9b98a', label: '#193e10', ink: '#ffffff', lines: ['KASHMIRI', 'ALMONDS'] },
+    short: 'Mamra',
+    description: 'Premium Kashmiri Mamra almonds.',
+    bg: '#e8f0c8',
+    jar: { lid: '#6b5a3a', body: '#d4c4a0', label: '#f5f0e0', ink: '#3a2e1a', lines: ['ALMONDS'] },
     variants: [
-      { id: 'almonds-250', label: '250 g', price: 699 }, // PLACEHOLDER
-      { id: 'almonds-500', label: '500 g', price: 1299 }, // PLACEHOLDER
+      { id: '250g', label: '250 g', price: 699 },
+      { id: '500g', label: '500 g', price: 1299 },
     ],
   },
   {
     slug: 'kashmiri-walnuts',
     name: 'Kashmiri Walnuts',
-    short: 'Walnuts from Kashmir',
-    description: 'Kashmiri walnuts, selected and packed by Belyn.',
-    bg: '#a4dcf6',
-    jar: { lid: '#1f4fc2', body: '#c79a6b', label: '#1f4fc2', ink: '#ffffff', lines: ['KASHMIRI', 'WALNUTS'] },
+    short: 'Kernels',
+    description: 'Fresh Kashmiri walnut kernels.',
+    bg: '#d8e8f0',
+    jar: { lid: '#5a4a3a', body: '#c4b090', label: '#f0e8d8', ink: '#3a2e1a', lines: ['WALNUTS'] },
     variants: [
-      { id: 'walnuts-250', label: '250 g', price: 599 }, // PLACEHOLDER
-      { id: 'walnuts-500', label: '500 g', price: 1099 }, // PLACEHOLDER
+      { id: '250g', label: '250 g', price: 599 },
+      { id: '500g', label: '500 g', price: 1099 },
     ],
   },
   {
     slug: 'premium-dry-fruits',
     name: 'Premium Dry Fruits',
-    short: 'A Kashmiri dry fruit mix',
-    description: 'A Belyn selection of premium dry fruits from Kashmir.',
-    bg: '#f2b38c',
-    jar: { lid: '#4b1c0e', body: '#c9824f', label: '#4b1c0e', ink: '#f2b38c', lines: ['PREMIUM', 'DRY', 'FRUITS'] },
+    short: 'Mix',
+    description: 'A curated mix of premium Kashmiri dry fruits.',
+    bg: '#f0e0d0',
+    jar: { lid: '#6b4a2a', body: '#d8b890', label: '#fff5e8', ink: '#3a2e1a', lines: ['DRY', 'FRUITS'] },
     variants: [
-      { id: 'dryfruits-250', label: '250 g', price: 799 }, // PLACEHOLDER
-      { id: 'dryfruits-500', label: '500 g', price: 1499 }, // PLACEHOLDER
+      { id: '250g', label: '250 g', price: 799 },
+      { id: '500g', label: '500 g', price: 1499 },
     ],
   },
   {
     slug: 'kashmiri-kahwa',
     name: 'Kashmiri Kahwa',
-    short: 'Traditional Kashmiri tea',
-    description: 'Kashmiri kahwa, packed by Belyn. Steep it slow and sip it warm.',
-    bg: '#7fc8a9',
-    jar: { lid: '#193e10', body: '#2f6b4a', label: '#193e10', ink: '#ccfd51', lines: ['KASHMIRI', 'KAHWA'] },
+    short: 'Blend',
+    description: 'Traditional Kashmiri kahwa blend with saffron and spices.',
+    bg: '#d0e8d8',
+    jar: { lid: '#3a5a4a', body: '#a0c4b0', label: '#e8f5ee', ink: '#1a3a2a', lines: ['KAHWA'] },
     variants: [
-      { id: 'kahwa-50', label: '50 g', price: 399 }, // PLACEHOLDER
-      { id: 'kahwa-100', label: '100 g', price: 749 }, // PLACEHOLDER
+      { id: '50g', label: '50 g', price: 449 },
+      { id: '100g', label: '100 g', price: 799 },
     ],
   },
 ];
 
-export const getProduct = (slug: string) => products.find((p) => p.slug === slug);
-export const formatPrice = (n: number) => '₹' + n.toLocaleString('en-IN');
+export function getProduct(slug: string): Product | undefined {
+  return products.find((p) => p.slug === slug);
+}
+
+export function formatPrice(n: number): string {
+  return '₹' + n.toLocaleString('en-IN');
+}

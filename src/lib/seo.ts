@@ -1,43 +1,41 @@
 import { useEffect } from 'react';
-import { site } from '../data/site';
 
-function setMeta(selector: string, attr: 'name' | 'property', key: string, content: string) {
-  let el = document.head.querySelector<HTMLMetaElement>(selector);
-  if (!el) {
-    el = document.createElement('meta');
-    el.setAttribute(attr, key);
-    document.head.appendChild(el);
-  }
-  el.setAttribute('content', content);
+interface SeoOpts {
+  title: string;
+  description?: string;
+  path?: string;
+  noindex?: boolean;
+  jsonLd?: object;
 }
 
-export function useSeo(opts: { title: string; description: string; path: string; noindex?: boolean; jsonLd?: object }) {
-  const { title, description, path, noindex, jsonLd } = opts;
+export function useSeo({ title, description, path, noindex, jsonLd }: SeoOpts) {
   useEffect(() => {
-    const full = title.includes('BELYN') ? title : `${title} | BELYN`;
-    document.title = full;
-    const url = site.url + path;
-    setMeta('meta[name="description"]', 'name', 'description', description);
-    setMeta('meta[property="og:title"]', 'property', 'og:title', full);
-    setMeta('meta[property="og:description"]', 'property', 'og:description', description);
-    setMeta('meta[property="og:url"]', 'property', 'og:url', url);
-    setMeta('meta[name="robots"]', 'name', 'robots', noindex ? 'noindex,follow' : 'index,follow');
-    let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'canonical';
-      document.head.appendChild(link);
-    }
-    link.href = url;
-    let ld = document.getElementById('ld-json');
-    if (jsonLd) {
-      if (!ld) {
-        ld = document.createElement('script');
-        ld.id = 'ld-json';
-        ld.setAttribute('type', 'application/ld+json');
-        document.head.appendChild(ld);
+    document.title = title;
+    const setMeta = (name: string, content: string, prop = false) => {
+      const attr = prop ? 'property' : 'name';
+      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, name);
+        document.head.appendChild(el);
       }
-      ld.textContent = JSON.stringify(jsonLd);
-    } else ld?.remove();
+      el.content = content;
+    };
+    if (description) setMeta('description', description);
+    if (noindex) setMeta('robots', 'noindex');
+    else {
+      const r = document.querySelector('meta[name="robots"]');
+      if (r) r.remove();
+    }
+    // simple json-ld
+    const existing = document.getElementById('json-ld');
+    if (existing) existing.remove();
+    if (jsonLd) {
+      const s = document.createElement('script');
+      s.id = 'json-ld';
+      s.type = 'application/ld+json';
+      s.textContent = JSON.stringify(jsonLd);
+      document.head.appendChild(s);
+    }
   }, [title, description, path, noindex, jsonLd]);
 }

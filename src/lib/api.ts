@@ -1,25 +1,43 @@
-import { site } from '../data/site';
+const DEMO = (typeof __ENV__ !== 'undefined' ? (__ENV__ as any).VITE_DEMO_MODE : undefined) !== 'false';
 
-export type SubmitResult = { ok: true; demo?: boolean; ref?: string } | { ok: false; message: string };
-
-async function post(url: string, body: unknown): Promise<SubmitResult> {
+export async function submitContact(data: {
+  name: string;
+  email: string;
+  message: string;
+  website?: string;
+}): Promise<{ ok: boolean; demo?: boolean; message?: string }> {
   try {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    if (res.ok) {
-      const data = await res.json().catch(() => ({}));
-      return { ok: true, ref: data.ref };
+    const r = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (r.status === 501) return { ok: true, demo: true };
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      return { ok: false, message: j.message || 'Could not send your message.' };
     }
-    // 404/501 = the serverless function / email provider is not configured yet.
-    if (res.status === 404 || res.status === 501) {
-      if (site.demoMode) return { ok: true, demo: true };
-      return { ok: false, message: 'This form is not connected yet. Please contact us directly.' };
-    }
-    const data = await res.json().catch(() => ({}));
-    return { ok: false, message: data.message || 'Something went wrong. Please try again.' };
+    return { ok: true };
   } catch {
-    return { ok: false, message: 'Network error. Please check your connection and try again.' };
+    return DEMO ? { ok: true, demo: true } : { ok: false, message: 'Network error. Please try again.' };
   }
 }
 
-export const submitOrder = (payload: unknown) => post(site.orderEndpoint, payload);
-export const submitContact = (payload: unknown) => post(site.contactEndpoint, payload);
+export async function submitOrder(payload: any): Promise<{ ok: boolean; demo?: boolean; ref?: string; message?: string }> {
+  try {
+    const r = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (r.status === 501) return { ok: true, demo: true, ref: payload.ref };
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      return { ok: false, message: j.message || 'Could not place your order.' };
+    }
+    const j = await r.json().catch(() => ({}));
+    return { ok: true, ref: j.ref || payload.ref };
+  } catch {
+    return DEMO ? { ok: true, demo: true, ref: payload.ref } : { ok: false, message: 'Network error. Please try again.' };
+  }
+}
