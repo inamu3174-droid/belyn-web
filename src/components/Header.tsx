@@ -86,8 +86,8 @@ export default function Header() {
           </div>
         </nav>
 
-        <Link to="/" className="logo" aria-label="BELYN home">
-          B E L Y N
+        <Link to="/" className="logo" aria-label="Belyn home">
+          <img src="/images/logo.svg" alt="Belyn" width="120" height="38" />
         </Link>
 
         <div className="header__right">
