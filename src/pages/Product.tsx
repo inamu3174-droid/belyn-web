@@ -22,7 +22,6 @@ export default function Product({ slug }: { slug: string }) {
 
   const variant = product?.variants.find((v) => v.id === variantId);
 
-  // Product structured data only when prices are real (never publish placeholder prices to search engines).
   const jsonLd = useMemo(
     () =>
       product && variant && !PRICES_ARE_PLACEHOLDERS
@@ -58,6 +57,8 @@ export default function Product({ slug }: { slug: string }) {
           <Link to="/shop">Shop</Link> / <span>{product.name}</span>
         </nav>
         <h1 className="h-pdp">{product.name.toUpperCase()}</h1>
+        {product.subtitle && <p className="pdp__subtitle">{product.subtitle}</p>}
+        {product.badge && <p className="pdp__badge">{product.badge}</p>}
         <p className="pdp__price">
           {formatPrice(variant.price)}
           {PRICES_ARE_PLACEHOLDERS && <em className="ph-tag">Placeholder price</em>}
@@ -95,6 +96,82 @@ export default function Product({ slug }: { slug: string }) {
             {added ? 'Added ✓' : `Add to cart · ${formatPrice(variant.price * qty)}`}
           </button>
         </div>
+
+        {product.quality && (
+          <details className="acc">
+            <summary>Quality & Sourcing</summary>
+            <p>{product.quality}</p>
+          </details>
+        )}
+
+        {product.purity && (
+          <details className="acc">
+            <summary>Purity</summary>
+            <p>{product.purity}</p>
+          </details>
+        )}
+
+        {product.ingredients && (
+          <details className="acc">
+            <summary>Ingredients</summary>
+            <p>{product.ingredients}</p>
+            {product.allergen && <p>{product.allergen}</p>}
+          </details>
+        )}
+
+        {product.naturalCharacter && (
+          <details className="acc">
+            <summary>Natural Character</summary>
+            <p>{product.naturalCharacter}</p>
+          </details>
+        )}
+
+        {product.promise && product.promise.length > 0 && (
+          <details className="acc">
+            <summary>The Belyn Promise</summary>
+            <ul>
+              {product.promise.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+
+        {product.brewing && product.brewing.length > 0 && (
+          <details className="acc">
+            <summary>Brewing Instructions</summary>
+            <ol>
+              {product.brewing.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          </details>
+        )}
+
+        {product.nutrition && product.nutrition.length > 0 && (
+          <details className="acc">
+            <summary>Nutritional Information</summary>
+            <p className="pdp__nutrition-note">Per 100g</p>
+            <table className="pdp__nutrition">
+              <tbody>
+                {product.nutrition.map((row) => (
+                  <tr key={row.nutrient}>
+                    <td>{row.nutrient}</td>
+                    <td>{row.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
+        )}
+
+        {product.care && (
+          <details className="acc">
+            <summary>Care & Storage</summary>
+            <p>{product.care}</p>
+            {product.shelfLife && <p><strong>Shelf life:</strong> {product.shelfLife}</p>}
+          </details>
+        )}
 
         <details className="acc">
           <summary>Shipping</summary>
