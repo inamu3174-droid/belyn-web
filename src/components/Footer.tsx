@@ -169,6 +169,7 @@ export default function Footer() {
             {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
             {site.email && site.phone && ' · '}
             {site.phone && <a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a>}
+            {site.whatsapp && <span> · <a href={`https://wa.me/${site.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></span>}
           </p>
         )}
         <p className="foot__policies">
