@@ -1,4 +1,4 @@
-const DEMO = (typeof __ENV__ !== 'undefined' ? (__ENV__ as any).VITE_DEMO_MODE : undefined) !== 'false';
+const DEMO = (typeof __ENV__ !== 'undefined' ? (__ENV__ as any).VITE_DEMO_MODE : undefined) === 'true';
 
 export async function submitContact(data: {
   name: string;
@@ -12,7 +12,7 @@ export async function submitContact(data: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    if (r.status === 501) return { ok: true, demo: true };
+    if (r.status === 501) return { ok: false, message: 'Email is not configured yet. Please contact us on WhatsApp.' };
     if (!r.ok) {
       const j = await r.json().catch(() => ({}));
       return { ok: false, message: j.message || 'Could not send your message.' };
@@ -30,7 +30,7 @@ export async function submitOrder(payload: any): Promise<{ ok: boolean; demo?: b
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (r.status === 501) return { ok: true, demo: true, ref: payload.ref };
+    if (r.status === 501) return { ok: false, message: 'Order email is not configured yet. Please contact Belyn on WhatsApp.' };
     if (!r.ok) {
       const j = await r.json().catch(() => ({}));
       return { ok: false, message: j.message || 'Could not place your order.' };
