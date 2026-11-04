@@ -12,7 +12,7 @@ npm run build    # outputs dist/
 ## Replace placeholders (important)
 - `src/data/products.ts`: **prices and sizes are placeholders** (belyn.in was unreachable when this was built). Enter real values, then set `PRICES_ARE_PLACEHOLDERS = false` (hides the tags, enables product structured data).
 - Product photos: put files in `public/images/products/`, set `image: '/images/products/x.jpg'` per product. Editorial/journal visuals are drawn placeholders in `src/components/Art.tsx` (`Scene`).
-- Contact details: env vars `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_INSTAGRAM_URL` (shown only when set).
+- Contact details default to `hello@belyn.in` and `9596481999` (WhatsApp link included). Override with `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_WHATSAPP_NUMBER`, `VITE_INSTAGRAM_URL`.
 - Policy pages (`src/pages/Policy.tsx`) and story copy (`src/pages/Story.tsx`) need Belyn's official text.
 
 ## Orders, contact, payments
