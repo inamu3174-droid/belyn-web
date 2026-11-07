@@ -1,8 +1,18 @@
 // Sends an email through Resend (https://resend.com). Needs env vars on Vercel:
 //   RESEND_API_KEY, MAIL_FROM (verified sender), MAIL_TO (where Belyn receives orders/messages)
 export default async function send(subject, text, replyTo) {
-  const { RESEND_API_KEY, MAIL_FROM } = process.env;
-  const MAIL_TO = process.env.MAIL_TO || 'hello@belyn.in';
+  const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
+  let MAIL_FROM = (process.env.MAIL_FROM || '').trim();
+  const MAIL_TO = (process.env.MAIL_TO || 'hello@belyn.in').trim();
+
+  // Strip accidental wrapping quotes from env UI / mobile paste
+  if (
+    (MAIL_FROM.startsWith('"') && MAIL_FROM.endsWith('"')) ||
+    (MAIL_FROM.startsWith("'") && MAIL_FROM.endsWith("'"))
+  ) {
+    MAIL_FROM = MAIL_FROM.slice(1, -1).trim();
+  }
+
   if (!RESEND_API_KEY || !MAIL_FROM) return { configured: false };
 
   try {
@@ -28,7 +38,7 @@ export default async function send(subject, text, replyTo) {
       body?.error?.message ||
       (Array.isArray(body?.errors) ? body.errors.map((e) => e.message).join('; ') : null) ||
       `Resend HTTP ${r.status}`;
-    return { configured: true, ok: false, error: detail };
+    return { configured: true, ok: false, error: detail, fromUsed: MAIL_FROM };
   } catch (err) {
     return { configured: true, ok: false, error: err?.message || 'Network error calling Resend' };
   }
