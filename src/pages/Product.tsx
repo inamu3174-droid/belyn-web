@@ -6,6 +6,22 @@ import { useCart } from '../lib/cart';
 import { Link, useRouter } from '../lib/router';
 import { useSeo } from '../lib/seo';
 import NotFound from './NotFound';
+import '../product-page.css';
+
+function Accordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className={`pdpx-acc${open ? ' is-open' : ''}`}>
+      <button type="button" className="pdpx-acc__btn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        <span>{title}</span>
+        <span className="pdpx-acc__icon" aria-hidden="true">
+          {open ? '−' : '+'}
+        </span>
+      </button>
+      {open && <div className="pdpx-acc__body">{children}</div>}
+    </div>
+  );
+}
 
 export default function Product({ slug }: { slug: string }) {
   const product = getProduct(slug);
@@ -17,7 +33,6 @@ export default function Product({ slug }: { slug: string }) {
   const [imgIndex, setImgIndex] = useState(0);
   const [zoom, setZoom] = useState(false);
 
-  // Only real image URLs — never invent or duplicate placeholders
   const gallery = useMemo(() => {
     if (!product) return [] as string[];
     const list: string[] = [];
@@ -82,208 +97,214 @@ export default function Product({ slug }: { slug: string }) {
 
   const hasGallery = gallery.length > 0;
   const mainSrc = hasGallery ? gallery[Math.min(imgIndex, gallery.length - 1)] : null;
+  const lineTotal = variant.price * qty;
 
   return (
-    <main className="page pdp">
-      <div className="pdp__media" style={{ background: product.bg }}>
-        {mainSrc ? (
-          <div className="pdp-gallery">
-            <div className="pdp-gallery__main">
-              <button
-                type="button"
-                className="pdp-gallery__zoom"
-                aria-label="Zoom image"
-                onClick={() => setZoom(true)}
-              >
-                <img src={mainSrc} alt={product.name} />
-              </button>
-              {gallery.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className="pdp-gallery__nav pdp-gallery__nav--prev"
-                    aria-label="Previous image"
-                    onClick={() => setImgIndex((i) => (i - 1 + gallery.length) % gallery.length)}
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    className="pdp-gallery__nav pdp-gallery__nav--next"
-                    aria-label="Next image"
-                    onClick={() => setImgIndex((i) => (i + 1) % gallery.length)}
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-            </div>
-            {gallery.length > 1 && (
-              <div className="pdp-gallery__thumbs" role="list">
-                {gallery.map((src, i) => (
-                  <button
-                    key={src + i}
-                    type="button"
-                    role="listitem"
-                    className={`pdp-gallery__thumb${i === imgIndex ? ' is-on' : ''}`}
-                    aria-label={`View image ${i + 1}`}
-                    aria-current={i === imgIndex}
-                    onClick={() => setImgIndex(i)}
-                  >
-                    <img src={src} alt="" />
-                  </button>
-                ))}
+    <main className="page pdpx">
+      <div className="pdpx-hero">
+        <div className="pdpx-gallery" style={{ background: product.bg }}>
+          {mainSrc ? (
+            <>
+              <div className="pdpx-gallery__stage">
+                <button type="button" className="pdpx-gallery__zoom" aria-label="Zoom image" onClick={() => setZoom(true)}>
+                  <img src={mainSrc} alt={product.name} />
+                </button>
+                {gallery.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="pdpx-gallery__nav pdpx-gallery__nav--prev"
+                      aria-label="Previous image"
+                      onClick={() => setImgIndex((i) => (i - 1 + gallery.length) % gallery.length)}
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      className="pdpx-gallery__nav pdpx-gallery__nav--next"
+                      aria-label="Next image"
+                      onClick={() => setImgIndex((i) => (i + 1) % gallery.length)}
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
               </div>
-            )}
+              {gallery.length > 1 && (
+                <div className="pdpx-gallery__thumbs" role="list">
+                  {gallery.map((src, i) => (
+                    <button
+                      key={src + i}
+                      type="button"
+                      role="listitem"
+                      className={`pdpx-gallery__thumb${i === imgIndex ? ' is-on' : ''}`}
+                      aria-label={`View image ${i + 1}`}
+                      aria-current={i === imgIndex}
+                      onClick={() => setImgIndex(i)}
+                    >
+                      <img src={src} alt="" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="pdpx-gallery__art">
+              <ProductVisual product={product} />
+            </div>
+          )}
+        </div>
+
+        <div className="pdpx-info">
+          <nav className="pdpx-crumbs" aria-label="Breadcrumb">
+            <Link to="/shop">Shop</Link>
+            <span aria-hidden="true">/</span>
+            <span>{product.name}</span>
+          </nav>
+
+          <p className="pdpx-kicker">B E L Y N</p>
+          <h1 className="pdpx-title">{product.name}</h1>
+          {product.subtitle && <p className="pdpx-subtitle">{product.subtitle}</p>}
+          {product.badge && <p className="pdpx-badge">{product.badge}</p>}
+
+          <p className="pdpx-price">
+            <span>{formatPrice(variant.price)}</span>
+            {PRICES_ARE_PLACEHOLDERS && <em className="ph-tag">Placeholder price</em>}
+          </p>
+
+          <p className="pdpx-desc">{product.description}</p>
+
+          <div className="pdpx-variants">
+            <p className="pdpx-label">Size</p>
+            <div className="pdpx-size-grid" role="radiogroup" aria-label="Size">
+              {product.variants.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={v.id === variantId}
+                  className={`pdpx-size${v.id === variantId ? ' is-on' : ''}`}
+                  onClick={() => setVariantId(v.id)}
+                >
+                  <span className="pdpx-size__label">{v.label}</span>
+                  <span className="pdpx-size__price">{formatPrice(v.price)}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        ) : (
-          <ProductVisual product={product} />
-        )}
+
+          <div className="pdpx-actions">
+            <div className="pdpx-qty" aria-label="Quantity">
+              <button type="button" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>
+                −
+              </button>
+              <span aria-live="polite">{qty}</span>
+              <button type="button" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(20, q + 1))}>
+                +
+              </button>
+            </div>
+            <button type="button" className="pdpx-btn pdpx-btn--primary" onClick={addToCart}>
+              {added ? 'Added to cart' : `Add to cart · ${formatPrice(lineTotal)}`}
+            </button>
+          </div>
+
+          <button type="button" className="pdpx-btn pdpx-btn--gold" onClick={buyNow}>
+            Buy now · {formatPrice(lineTotal)}
+          </button>
+
+          <p className="pdpx-ship-note">Shipping calculated at checkout · Free in J&K on orders of ₹600+</p>
+
+          <div className="pdpx-acc-list">
+            {product.quality && (
+              <Accordion title="Quality & Sourcing">
+                <p>{product.quality}</p>
+              </Accordion>
+            )}
+            {product.purity && (
+              <Accordion title="Purity">
+                <p>{product.purity}</p>
+              </Accordion>
+            )}
+            {product.ingredients && (
+              <Accordion title="Ingredients">
+                <p>{product.ingredients}</p>
+                {product.allergen && <p>{product.allergen}</p>}
+              </Accordion>
+            )}
+            {product.naturalCharacter && (
+              <Accordion title="Natural Character">
+                <p>{product.naturalCharacter}</p>
+              </Accordion>
+            )}
+            {product.promise && product.promise.length > 0 && (
+              <Accordion title="The Belyn Promise">
+                <ul>
+                  {product.promise.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </Accordion>
+            )}
+            {product.brewing && product.brewing.length > 0 && (
+              <Accordion title="Brewing Instructions">
+                <ol>
+                  {product.brewing.map((step, i) => (
+                    <li key={i}>{step}</li>
+                  ))}
+                </ol>
+              </Accordion>
+            )}
+            {product.nutrition && product.nutrition.length > 0 && (
+              <Accordion title="Nutritional Information">
+                <p className="pdpx-nutrition-note">Per 100g</p>
+                <table className="pdpx-nutrition">
+                  <tbody>
+                    {product.nutrition.map((row) => (
+                      <tr key={row.nutrient}>
+                        <td>{row.nutrient}</td>
+                        <td>{row.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Accordion>
+            )}
+            {product.care && (
+              <Accordion title="Care & Storage">
+                <p>{product.care}</p>
+                {product.shelfLife && (
+                  <p>
+                    <strong>Shelf life:</strong> {product.shelfLife}
+                  </p>
+                )}
+              </Accordion>
+            )}
+            <Accordion title="Shipping">
+              <p>
+                Delivery details are on the <Link to="/policies/shipping">Shipping Policy</Link> page. J&K orders of
+                ₹600 or more ship free; other destinations have a flat ₹100 fee.
+              </p>
+            </Accordion>\n          </div>
+        </div>
       </div>
 
       {zoom && mainSrc && (
-        <div className="pdp-zoom" role="dialog" aria-label="Zoomed product image" onClick={() => setZoom(false)}>
-          <button type="button" className="pdp-zoom__close" aria-label="Close zoom" onClick={() => setZoom(false)}>
+        <div className="pdpx-zoom" role="dialog" aria-label="Zoomed product image" onClick={() => setZoom(false)}>
+          <button type="button" className="pdpx-zoom__close" aria-label="Close zoom" onClick={() => setZoom(false)}>
             ×
           </button>
           <img src={mainSrc} alt={product.name} onClick={(e) => e.stopPropagation()} />
         </div>
       )}
 
-      <div className="pdp__info">
-        <nav className="crumbs" aria-label="Breadcrumb">
-          <Link to="/shop">Shop</Link> / <span>{product.name}</span>
-        </nav>
-        <h1 className="h-pdp">{product.name.toUpperCase()}</h1>
-        {product.subtitle && <p className="pdp__subtitle">{product.subtitle}</p>}
-        {product.badge && <p className="pdp__badge">{product.badge}</p>}
-        <p className="pdp__price">
-          {formatPrice(variant.price)}
-          {PRICES_ARE_PLACEHOLDERS && <em className="ph-tag">Placeholder price</em>}
-        </p>
-        <p className="pdp__desc">{product.description}</p>
-
-        <fieldset className="variants">
-          <legend>Size</legend>
-          {product.variants.map((v) => (
-            <label key={v.id} className={`pill ${v.id === variantId ? 'is-on' : ''}`}>
-              <input type="radio" name="variant" value={v.id} checked={v.id === variantId} onChange={() => setVariantId(v.id)} />
-              {v.label}
-            </label>
-          ))}
-        </fieldset>
-
-        <div className="pdp__buy">
-          <div className="qty">
-            <button type="button" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>
-              &minus;
-            </button>
-            <span aria-live="polite">{qty}</span>
-            <button type="button" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(20, q + 1))}>
-              +
-            </button>
-          </div>
-          <button type="button" className="btn btn--dark btn--grow" onClick={addToCart}>
-            {added ? 'Added ✓' : `Add to cart · ${formatPrice(variant.price * qty)}`}
-          </button>
+      <section className="pdpx-related" aria-labelledby="pdpx-rel">
+        <div className="pdpx-related__head">
+          <h2 id="pdpx-rel">More from Kashmir</h2>
+          <Link to="/shop" className="pdpx-related__all">
+            View all
+          </Link>
         </div>
-        <button type="button" className="btn btn--lime btn--block pdp__buynow" onClick={buyNow}>
-          Buy now · {formatPrice(variant.price * qty)}
-        </button>
-
-        {product.quality && (
-          <details className="acc">
-            <summary>Quality & Sourcing</summary>
-            <p>{product.quality}</p>
-          </details>
-        )}
-
-        {product.purity && (
-          <details className="acc">
-            <summary>Purity</summary>
-            <p>{product.purity}</p>
-          </details>
-        )}
-
-        {product.ingredients && (
-          <details className="acc">
-            <summary>Ingredients</summary>
-            <p>{product.ingredients}</p>
-            {product.allergen && <p>{product.allergen}</p>}
-          </details>
-        )}
-
-        {product.naturalCharacter && (
-          <details className="acc">
-            <summary>Natural Character</summary>
-            <p>{product.naturalCharacter}</p>
-          </details>
-        )}
-
-        {product.promise && product.promise.length > 0 && (
-          <details className="acc">
-            <summary>The Belyn Promise</summary>
-            <ul>
-              {product.promise.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </details>
-        )}
-
-        {product.brewing && product.brewing.length > 0 && (
-          <details className="acc">
-            <summary>Brewing Instructions</summary>
-            <ol>
-              {product.brewing.map((step, i) => (
-                <li key={i}>{step}</li>
-              ))}
-            </ol>
-          </details>
-        )}
-
-        {product.nutrition && product.nutrition.length > 0 && (
-          <details className="acc">
-            <summary>Nutritional Information</summary>
-            <p className="pdp__nutrition-note">Per 100g</p>
-            <table className="pdp__nutrition">
-              <tbody>
-                {product.nutrition.map((row) => (
-                  <tr key={row.nutrient}>
-                    <td>{row.nutrient}</td>
-                    <td>{row.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </details>
-        )}
-
-        {product.care && (
-          <details className="acc">
-            <summary>Care & Storage</summary>
-            <p>{product.care}</p>
-            {product.shelfLife && (
-              <p>
-                <strong>Shelf life:</strong> {product.shelfLife}
-              </p>
-            )}
-          </details>
-        )}
-
-        <details className="acc">
-          <summary>Shipping</summary>
-          <p>
-            Delivery details are on the <Link to="/policies/shipping">Shipping Policy</Link> page.
-          </p>
-        </details>
-      </div>
-
-      <section className="related" aria-labelledby="rel">
-        <h2 id="rel" className="h-section">
-          MORE FROM KASHMIR
-        </h2>
-        <div className="grid">
+        <div className="pdpx-related__grid">
           {products
             .filter((p) => p.slug !== product.slug)
             .slice(0, 3)
