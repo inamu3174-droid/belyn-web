@@ -2,6 +2,7 @@
 import crypto from 'crypto';
 import send from './_send.js';
 import { calculateShipping, orderTotal } from './_shipping.js';
+import { createDelhiveryShipment, delhiveryConfigured } from './_delhivery.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
@@ -32,6 +33,28 @@ export default async function handler(req, res) {
     const ship = calculateShipping(subtotal, order.shipping.pin, order.shipping.state);
     const total = orderTotal(subtotal, ship.amount);
 
+    let delhiveryLine = 'Delhivery: not configured';
+    let waybill = '';
+    let trackingUrl = '';
+    if (delhiveryConfigured()) {
+      const d = await createDelhiveryShipment({
+        ref: order.ref,
+        paymentMethod: 'razorpay',
+        customer: order.customer,
+        shipping: order.shipping,
+        items: order.items,
+        subtotal,
+        total,
+      });
+      if (d.ok && d.waybill) {
+        waybill = d.waybill;
+        trackingUrl = d.trackingUrl || '';
+        delhiveryLine = `Delhivery AWB: ${waybill}${trackingUrl ? '\nTrack: ' + trackingUrl : ''}`;
+      } else {
+        delhiveryLine = `Delhivery: failed — ${d.error || 'unknown error'}`;
+      }
+    }
+
     const lines = order.items
       .map(
         (i) =>
@@ -49,15 +72,24 @@ Subtotal: INR ${subtotal}
 Shipping: ${ship.free ? 'FREE' : 'INR ' + ship.amount} (${ship.zone === 'jk' ? 'Jammu & Kashmir' : 'Pan-India'})
 Total: INR ${total}
 
+${delhiveryLine}
+
 Customer: ${order.customer.name} | ${order.customer.email} | ${order.customer.phone}
 Ship to: ${order.shipping.address}, ${order.shipping.city}, ${order.shipping.state} ${order.shipping.pin}
 Notes: ${String(order.notes || '').slice(0, 1000)}`;
 
     const r = await send(`New Belyn order ${order.ref} (PAID)`, text, order.customer.email);
     if (!r.configured) {
-      return res.status(200).json({ ok: true, ref: order.ref, emailSent: false, total });
+      return res.status(200).json({ ok: true, ref: order.ref, emailSent: false, total, waybill: waybill || undefined });
     }
-    return res.status(200).json({ ok: true, ref: order.ref, emailSent: !!r.ok, total });
+    return res.status(200).json({
+      ok: true,
+      ref: order.ref,
+      emailSent: !!r.ok,
+      total,
+      waybill: waybill || undefined,
+      trackingUrl: trackingUrl || undefined,
+    });
   }
 
   return res.status(200).json({ ok: true, ref: order.ref || orderId });
