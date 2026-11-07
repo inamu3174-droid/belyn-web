@@ -1,0 +1,16 @@
+/* Shipping labels on checkout only */
+.co-ship-free {
+  color: var(--co-green, #075E4D);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.co-ship-badge {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--co-green, #075E4D);
+}
