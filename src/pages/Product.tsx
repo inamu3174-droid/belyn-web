@@ -284,7 +284,8 @@ export default function Product({ slug }: { slug: string }) {
                 Delivery details are on the <Link to="/policies/shipping">Shipping Policy</Link> page. J&K orders of
                 ₹600 or more ship free; other destinations have a flat ₹100 fee.
               </p>
-            </Accordion>\n          </div>
+            </Accordion>
+          </div>
         </div>
       </div>
 
