@@ -49,7 +49,7 @@ export default function Header() {
         setSearchOpen(false);
       }
     };
-    window    window.addEventListener('keydown', onKey);
+    window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [menu, searchOpen]);
 
@@ -78,11 +78,7 @@ export default function Header() {
         </Link>
 
         <div className="header__right">
-          <button
-            className="icon-btn hdr-icon"
-            aria-label="Search products"
-            onClick={() => setSearchOpen(true)}
-          >
+          <button className="icon-btn hdr-icon" aria-label="Search products" onClick={() => setSearchOpen(true)}>
             <SearchIcon />
           </button>
           <button
@@ -98,7 +94,7 @@ export default function Header() {
 
       <div className="announce" role="region" aria-label="Brand promise">
         <p>
-          <span>100% PURE & RAW</span>
+          <span>100% PURE &amp; RAW</span>
           <span className="announce__sep" aria-hidden="true">|</span>
           <span>DIRECT FROM KASHMIR</span>
           <span className="announce__sep" aria-hidden="true">|</span>

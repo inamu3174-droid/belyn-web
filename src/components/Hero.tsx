@@ -14,21 +14,29 @@ export default function Hero() {
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
       mm.add('(prefers-reduced-motion: no-preference)', () => {
-        // entrance: headline lines rise out of a mask, jars drop in with a spin, copy fades up
         const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-        tl.from('.hero__line > span', { yPercent: 110, duration: 1.1, stagger: 0.12 })
-          .from('.hero__jar--a', { y: -160, x: -40, rotate: -50, opacity: 0, duration: 1.2, ease: 'back.out(1.3)' }, 0.25)
-          .from('.hero__jar--b', { y: 160, x: 40, rotate: 50, opacity: 0, duration: 1.2, ease: 'back.out(1.3)' }, 0.4)
-          .from('.hero__sub, .hero__cta', { y: 18, opacity: 0, duration: 0.8, stagger: 0.1 }, 0.7);
+        tl.from('.hero__line > span', { yPercent: 110, duration: 1.05, stagger: 0.1 })
+          .from('.hero__jar--a', { y: -120, x: -30, rotate: -40, opacity: 0, duration: 1.1, ease: 'back.out(1.2)' }, 0.2)
+          .from('.hero__jar--b', { y: 120, x: 30, rotate: 40, opacity: 0, duration: 1.1, ease: 'back.out(1.2)' }, 0.35)
+          .from('.hero__sub, .hero__cta', { y: 16, opacity: 0, duration: 0.75, stagger: 0.08 }, 0.65);
 
-        // scroll: hero content drifts up slower than the sheet that slides over it
         gsap.to('.hero__content', {
-          yPercent: -14,
+          yPercent: -10,
           ease: 'none',
           scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
         });
-        gsap.to('.hero__jar--a', { yPercent: -30, rotate: 12, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
-        gsap.to('.hero__jar--b', { yPercent: -50, rotate: -10, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
+        gsap.to('.hero__jar--a', {
+          yPercent: -22,
+          rotate: 8,
+          ease: 'none',
+          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
+        });
+        gsap.to('.hero__jar--b', {
+          yPercent: -36,
+          rotate: -6,
+          ease: 'none',
+          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
+        });
       });
     }, root);
     return () => {
@@ -38,7 +46,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="hero" ref={root} aria-label="Welcome to BELYN">
+    <section className="hero hero--ref" ref={root} aria-label="Welcome to BELYN">
       <div className="hero__jar hero__jar--a" aria-hidden="true">
         <Jar jar={products[0].jar} />
       </div>
@@ -46,17 +54,17 @@ export default function Hero() {
         <Jar jar={products[1].jar} />
       </div>
       <div className="hero__content">
-        <h1 className="hero__title">
+        <h1 className="hero__title hero__title--ref">
           <span className="hero__line">
-            <span>PURELY</span>
+            <span>Born in the Quiet</span>
           </span>
           <span className="hero__line">
-            <span>KASHMIR.</span>
+            <span>Winters of Kashmir.</span>
           </span>
         </h1>
-        <p className="hero__sub">Nature&rsquo;s finest, from the heart of Kashmir.</p>
+        <p className="hero__sub">From our home to yours, bringing you nature just as it should be.</p>
         <Link to="/shop" className="hero__cta">
-          Shop Now <span aria-hidden="true">&rarr;</span>
+          Shop Now <span aria-hidden="true">→</span>
         </Link>
       </div>
     </section>
