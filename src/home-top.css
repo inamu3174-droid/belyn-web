@@ -1,0 +1,210 @@
+/* Header + announcement + welcome refinements (site-wide header, home welcome) */
+
+.header--ref {
+  background: var(--warm-ivory, #F8F6EF) !important;
+  box-shadow: none !important;
+  height: auto;
+}
+
+.header--ref .header__inner {
+  height: var(--hdr);
+}
+
+.header--ref .logo img {
+  height: clamp(30px, 3.4vw, 40px);
+}
+
+.header--ref .header__right {
+  gap: 6px;
+}
+
+.header--ref .cart-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  color: var(--deep-green);
+  display: grid;
+  place-items: center;
+}
+
+.header--ref .cart-btn__count {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: var(--deep-green);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* Announcement strip */
+.announce {
+  background: var(--deep-green);
+  color: var(--warm-ivory);
+  text-align: center;
+  padding: 8px var(--pad);
+}
+
+.announce p {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: clamp(9px, 1.7vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.announce__sep {
+  opacity: 0.55;
+  font-weight: 500;
+}
+
+/* Offset page content for header + announce */
+body {
+  --hdr-stack: calc(var(--hdr) + 34px);
+}
+
+.hero--ref {
+  padding-top: calc(var(--hdr-stack) + 12px);
+  min-height: clamp(420px, 62svh, 680px);
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 40%, rgba(233, 229, 216, 0.9), transparent 70%),
+    var(--sheet);
+}
+
+.hero__title--ref {
+  font-size: clamp(34px, 6.5vw, 64px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.01em;
+  max-width: 16ch;
+}
+
+.hero--ref .hero__sub {
+  max-width: 36ch;
+  color: var(--coffee-brown, #392C22);
+  font-weight: 500;
+}
+
+/* Welcome section */
+.welcome {
+  padding: clamp(36px, 5vw, 56px) var(--pad) clamp(20px, 3vw, 28px);
+  text-align: center;
+}
+
+.welcome__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 22px);
+  margin-bottom: 10px;
+}
+
+.welcome__rule {
+  display: block;
+  width: clamp(28px, 6vw, 56px);
+  height: 1px;
+  background: var(--muted-gold, #B99A62);
+}
+
+.welcome__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 42px);
+  color: var(--deep-green);
+  line-height: 1.15;
+}
+
+.welcome__tagline {
+  margin: 0 auto 22px;
+  max-width: 40ch;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--coffee-brown, #392C22);
+  line-height: 1.5;
+}
+
+.welcome__cats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.welcome__cat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0.65em 1.15em;
+  border-radius: 12px;
+  border: 1.5px solid var(--deep-green);
+  background: transparent;
+  color: var(--deep-green);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.welcome__cat:hover {
+  transform: translateY(-1px);
+  background: rgba(7, 91, 77, 0.05);
+}
+
+.welcome__cat.is-primary {
+  background: var(--deep-green);
+  color: var(--warm-ivory);
+  border-color: var(--deep-green);
+}
+
+.welcome__cat.is-primary:hover {
+  background: #054a3d;
+}
+
+.welcome__cat.is-wide {
+  flex: 1 1 100%;
+  max-width: 420px;
+}
+
+@media (max-width: 640px) {
+  .announce p {
+    letter-spacing: 0.06em;
+    gap: 4px 6px;
+  }
+  .announce__sep {
+    display: none;
+  }
+  .welcome__cat {
+    flex: 1 1 calc(50% - 10px);
+  }
+  .welcome__cat.is-wide {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+
+/* Pages other than home still clear the stacked header */
+.page {
+  padding-top: calc(var(--hdr-stack) + 12px);
+}
+
+.hero + .sheet {
+  margin-top: -24px;
+}
