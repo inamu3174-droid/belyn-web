@@ -1,16 +1,72 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useCart } from '../lib/cart';
 import { Link } from '../lib/router';
 import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct } from '../data/products';
 import { ProductVisual } from '../components/Art';
 import { submitOrder, createRazorpayOrder, verifyRazorpayPayment, loadRazorpay } from '../lib/api';
 import { useSeo } from '../lib/seo';
-import { Field } from './Contact';
 
 const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const phoneOk = (v: string) => /^(\+?91[\s-]?)?[6-9]\d{9}$/.test(v.replace(/[\s-]/g, '')) || /^\+?\d{8,15}$/.test(v.replace(/[\s-]/g, ''));
+const phoneOk = (v: string) =>
+  /^(\+?91[\s-]?)?[6-9]\d{9}$/.test(v.replace(/[\s-]/g, '')) ||
+  /^\+?\d{8,15}$/.test(v.replace(/[\s-]/g, ''));
 
-interface Done { ref: string; demo: boolean; total: number; email: string; payment: string }
+interface Done {
+  ref: string;
+  demo: boolean;
+  total: number;
+  email: string;
+  payment: string;
+}
+
+function CheckoutField({
+  label,
+  name,
+  type = 'text',
+  textarea,
+  error,
+  autoComplete,
+  inputMode,
+  maxLength,
+  placeholder,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  textarea?: boolean;
+  error?: string;
+  autoComplete?: string;
+  inputMode?: 'numeric' | 'tel' | 'text';
+  maxLength?: number;
+  placeholder?: string;
+}) {
+  const id = 'co-' + name;
+  const common = {
+    id,
+    name,
+    placeholder,
+    'aria-invalid': !!error || undefined,
+    'aria-describedby': error ? id + '-err' : undefined,
+    autoComplete,
+  } as const;
+  return (
+    <div className={`co-field${error ? ' co-field--err' : ''}`}>
+      <label className="co-label" htmlFor={id}>
+        {label}
+      </label>
+      {textarea ? (
+        <textarea className="co-input co-textarea" rows={4} {...common} />
+      ) : (
+        <input className="co-input" type={type} inputMode={inputMode} maxLength={maxLength} {...common} />
+      )}
+      {error && (
+        <p id={id + '-err'} className="co-err" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default function Checkout() {
   useSeo({ title: 'Checkout', description: 'Complete your Belyn order.', path: '/checkout', noindex: true });
@@ -19,14 +75,61 @@ export default function Checkout() {
   const [busy, setBusy] = useState(false);
   const [fail, setFail] = useState('');
   const [done, setDone] = useState<Done | null>(null);
+  const [pay, setPay] = useState<'razorpay' | 'cod' | 'upi'>('razorpay');
 
-  if (done) return <main className="page page--narrow"><div className="notice notice--ok" role="status"><p className="eyebrow">ORDER {done.demo ? 'PREVIEW' : 'RECEIVED'}</p><h1 className="h-page">THANK YOU.</h1><p>Reference <strong>{done.ref}</strong>. Payment: {done.payment}. We have noted an order of {formatPrice(done.total)} and will contact you at {done.email}.</p>{done.demo && <p className="note">Demo mode: no order was sent and no payment was taken. Configure email on Vercel to go live.</p>}<Link to="/shop" className="btn btn--lime">Continue shopping <span aria-hidden="true">&rarr;</span></Link></div></main>;
+  // Checkout-only fonts (does not change global site fonts)
+  useEffect(() => {
+    const id = 'belyn-checkout-fonts';
+    if (document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap';
+    document.head.appendChild(link);
+  }, []);
 
-  if (lines.length === 0) return <main className="page page--narrow"><header className="page__head"><h1 className="h-page">YOUR CART IS EMPTY</h1></header><Link to="/shop" className="btn btn--lime">Shop Now <span aria-hidden="true">&rarr;</span></Link></main>;
+  if (done) {
+    return (
+      <main className="page page--narrow co-page">
+        <div className="co-done" role="status">
+          <p className="co-eyebrow">ORDER {done.demo ? 'PREVIEW' : 'RECEIVED'}</p>
+          <h1 className="co-title">Thank you.</h1>
+          <p className="co-lede">
+            Reference <strong>{done.ref}</strong>. Payment: {done.payment}. We have noted an order of{' '}
+            {formatPrice(done.total)} and will contact you at {done.email}.
+          </p>
+          {done.demo && (
+            <p className="co-note">Demo mode: no order was sent and no payment was taken.</p>
+          )}
+          <Link to="/shop" className="co-btn">
+            Continue shopping <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (lines.length === 0) {
+    return (
+      <main className="page page--narrow co-page">
+        <header className="co-head">
+          <p className="co-eyebrow">CHECKOUT</p>
+          <h1 className="co-title">Your cart is empty</h1>
+          <p className="co-lede">Add something pure from Kashmir, then return to complete your order.</p>
+        </header>
+        <Link to="/shop" className="co-btn">
+          Shop now <span aria-hidden="true">→</span>
+        </Link>
+      </main>
+    );
+  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget; const f = new FormData(form); const v = (k: string) => String(f.get(k) || '').trim();
+    const form = e.currentTarget;
+    const f = new FormData(form);
+    const v = (k: string) => String(f.get(k) || '').trim();
     const next: Record<string, string> = {};
     if (v('name').length < 2) next.name = 'Please enter your full name.';
     if (!emailOk(v('email'))) next.email = 'Please enter a valid email address.';
@@ -35,10 +138,15 @@ export default function Checkout() {
     if (v('city').length < 2) next.city = 'Please enter your city.';
     if (v('state').length < 2) next.state = 'Please enter your state.';
     if (!/^\d{6}$/.test(v('pin'))) next.pin = 'PIN code must be 6 digits.';
-    setErrors(next); if (Object.keys(next).length) { requestAnimationFrame(() => (form.querySelector('[aria-invalid="true"]') as HTMLElement | null)?.focus()); return; }
-    setBusy(true); setFail('');
+    setErrors(next);
+    if (Object.keys(next).length) {
+      requestAnimationFrame(() => (form.querySelector('[aria-invalid="true"]') as HTMLElement | null)?.focus());
+      return;
+    }
+    setBusy(true);
+    setFail('');
     const ref = 'BLY-' + Date.now().toString(36).toUpperCase();
-    const paymentMethod = v('payment') || 'cod';
+    const paymentMethod = pay;
     const payload = {
       ref,
       paymentMethod,
@@ -54,7 +162,6 @@ export default function Checkout() {
       website: v('website'),
     };
 
-    // ── Pay online via Razorpay ──
     if (paymentMethod === 'razorpay') {
       const loaded = await loadRazorpay();
       if (!loaded) {
@@ -76,8 +183,12 @@ export default function Checkout() {
         description: `Order ${ref}`,
         order_id: order.id,
         prefill: { name: v('name'), email: v('email'), contact: v('phone') },
-        theme: { color: '#075B4D' },
-        handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+        theme: { color: '#075E4D' },
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
           const verified = await verifyRazorpayPayment({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -95,7 +206,10 @@ export default function Checkout() {
             });
             clear();
           } else {
-            setFail(verified.message || 'Payment received but confirmation failed. Please contact us with your payment ID.');
+            setFail(
+              verified.message ||
+                'Payment received but confirmation failed. Please contact us with your payment ID.',
+            );
           }
         },
         modal: {
@@ -113,7 +227,6 @@ export default function Checkout() {
       return;
     }
 
-    // ── COD / UPI (email order request only) ──
     const r = await submitOrder(payload);
     setBusy(false);
     if (r.ok) {
@@ -128,17 +241,165 @@ export default function Checkout() {
     } else setFail(r.message || 'Could not place your order.');
   }
 
-  return <main className="page checkout"><header className="page__head"><p className="eyebrow">CHECKOUT</p><h1 className="h-page">YOUR DETAILS</h1></header><div className="checkout__grid"><form className="form" onSubmit={onSubmit} noValidate id="checkout-form">
-    <Field label="Full name" name="name" autoComplete="name" error={errors.name}/><div className="row2"><Field label="Email" name="email" type="email" autoComplete="email" error={errors.email}/><Field label="Phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" error={errors.phone}/></div>
-    <Field label="Address" name="address" autoComplete="street-address" error={errors.address}/><div className="row3"><Field label="City" name="city" autoComplete="address-level2" error={errors.city}/><Field label="State" name="state" autoComplete="address-level1" error={errors.state}/><Field label="PIN code" name="pin" inputMode="numeric" maxLength={6} autoComplete="postal-code" error={errors.pin}/></div>
-    <fieldset className="form__field"><legend>Payment method</legend>
-      <label><input type="radio" name="payment" value="razorpay" defaultChecked/> Pay online (UPI / Card / Netbanking)</label>
-      <label><input type="radio" name="payment" value="cod"/> Cash on Delivery (COD)</label>
-      <label><input type="radio" name="payment" value="upi"/> UPI (manual — instructions after order)</label>
-    </fieldset>
-    <Field label="Order notes (optional)" name="notes" textarea/><input type="text" name="website" tabIndex={-1} autoComplete="off" className="hp" aria-hidden="true"/>
-    {fail && <p className="notice notice--err" role="alert">{fail}</p>}
-    <p className="note">Online payments are processed securely by Razorpay. COD remains available if you prefer.</p>
-    <button className="btn btn--dark btn--block" disabled={busy}>{busy ? 'Processing…' : `Place order · ${formatPrice(subtotal)}`}</button>
-  </form><aside className="summary" aria-label="Order summary"><h2>Order summary</h2><ul>{lines.map((l) => { const p = getProduct(l.slug)!; const variant = p.variants.find((x) => x.id === l.variantId)!; return <li key={l.slug + l.variantId}><div className="cline__img" style={{ background: p.bg }}><ProductVisual product={p}/></div><div><strong>{p.name}</strong><p className="cline__var">{variant.label} × {l.qty}</p></div><span>{formatPrice(variant.price * l.qty)}</span></li>; })}</ul><div className="drawer__sub"><span>Subtotal</span><strong>{formatPrice(subtotal)}</strong></div>{PRICES_ARE_PLACEHOLDERS && <p className="note">Prices are placeholders until real Belyn pricing is added.</p>}</aside></div></main>;
+  return (
+    <main className="page co-page">
+      <header className="co-head">
+        <p className="co-eyebrow">CHECKOUT</p>
+        <h1 className="co-title">Your details</h1>
+        <p className="co-lede">Almost there. Complete your details to place your order.</p>
+      </header>
+
+      <div className="co-layout">
+        <form className="co-form" onSubmit={onSubmit} noValidate id="checkout-form">
+          <section className="co-section" aria-labelledby="co-contact-heading">
+            <h2 id="co-contact-heading" className="co-section-title">
+              Contact & delivery
+            </h2>
+            <CheckoutField label="Full name" name="name" autoComplete="name" placeholder="Your full name" error={errors.name} />
+            <div className="co-row2">
+              <CheckoutField label="Email address" name="email" type="email" autoComplete="email" placeholder="you@example.com" error={errors.email} />
+              <CheckoutField label="Phone number" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="10-digit mobile" error={errors.phone} />
+            </div>
+            <CheckoutField label="Address" name="address" autoComplete="street-address" placeholder="House no., street, landmark" error={errors.address} />
+            <div className="co-row3">
+              <CheckoutField label="City" name="city" autoComplete="address-level2" placeholder="City" error={errors.city} />
+              <CheckoutField label="State" name="state" autoComplete="address-level1" placeholder="State" error={errors.state} />
+              <CheckoutField label="PIN code" name="pin" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="6 digits" error={errors.pin} />
+            </div>
+          </section>
+
+          <section className="co-section" aria-labelledby="co-pay-heading">
+            <h2 id="co-pay-heading" className="co-section-title">
+              Payment method
+            </h2>
+            <div className="co-pay" role="radiogroup" aria-label="Payment method">
+              <label className={`co-pay-card${pay === 'razorpay' ? ' is-selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="razorpay"
+                  checked={pay === 'razorpay'}
+                  onChange={() => setPay('razorpay')}
+                />
+                <span className="co-pay-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                    <path d="M2 10h20" />
+                  </svg>
+                </span>
+                <span className="co-pay-body">
+                  <span className="co-pay-title">Pay online</span>
+                  <span className="co-pay-desc">UPI, cards & net banking via Razorpay</span>
+                </span>
+                <span className="co-pay-check" aria-hidden="true" />
+              </label>
+
+              <label className={`co-pay-card${pay === 'cod' ? ' is-selected' : ''}`}>
+                <input type="radio" name="payment" value="cod" checked={pay === 'cod'} onChange={() => setPay('cod')} />
+                <span className="co-pay-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 3v18M8 7h5.5a3.5 3.5 0 0 1 0 7H8m0 0h6a3.5 3.5 0 0 1 0 7H8" />
+                  </svg>
+                </span>
+                <span className="co-pay-body">
+                  <span className="co-pay-title">Cash on delivery</span>
+                  <span className="co-pay-desc">Pay when your order arrives</span>
+                </span>
+                <span className="co-pay-check" aria-hidden="true" />
+              </label>
+
+              <label className={`co-pay-card${pay === 'upi' ? ' is-selected' : ''}`}>
+                <input type="radio" name="payment" value="upi" checked={pay === 'upi'} onChange={() => setPay('upi')} />
+                <span className="co-pay-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M7 7h10v10H7z" />
+                    <path d="M12 3v4M12 17v4M3 12h4M17 12h4" />
+                  </svg>
+                </span>
+                <span className="co-pay-body">
+                  <span className="co-pay-title">UPI (manual)</span>
+                  <span className="co-pay-desc">Payment instructions shared after order</span>
+                </span>
+                <span className="co-pay-check" aria-hidden="true" />
+              </label>
+            </div>
+          </section>
+
+          <section className="co-section">
+            <CheckoutField label="Order notes (optional)" name="notes" textarea placeholder="Delivery instructions, gift note…" />
+          </section>
+
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hp" aria-hidden="true" />
+
+          {fail && (
+            <p className="co-alert" role="alert">
+              {fail}
+            </p>
+          )}
+
+          <ul className="co-trust">
+            <li>
+              <strong>Secure checkout</strong>
+              <span>Your payment is processed securely.</span>
+            </li>
+            <li>
+              <strong>Carefully packed</strong>
+              <span>Products packed with care from Kashmir.</span>
+            </li>
+            <li>
+              <strong>Customer support</strong>
+              <span>We&rsquo;re here to help with your order.</span>
+            </li>
+          </ul>
+
+          <button className="co-btn co-btn--block" disabled={busy} type="submit">
+            {busy ? 'Processing…' : `Place order · ${formatPrice(subtotal)}`}
+          </button>
+        </form>
+
+        <aside className="co-summary" aria-label="Order summary">
+          <div className="co-summary-card">
+            <h2 className="co-summary-title">Order summary</h2>
+            <ul className="co-lines">
+              {lines.map((l) => {
+                const p = getProduct(l.slug)!;
+                const variant = p.variants.find((x) => x.id === l.variantId)!;
+                return (
+                  <li key={l.slug + l.variantId} className="co-line">
+                    <div className="co-thumb" style={{ background: p.bg }}>
+                      <ProductVisual product={p} />
+                    </div>
+                    <div className="co-line-meta">
+                      <p className="co-line-name">{p.name}</p>
+                      <p className="co-line-var">
+                        {variant.label} × {l.qty}
+                      </p>
+                    </div>
+                    <p className="co-line-price">{formatPrice(variant.price * l.qty)}</p>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="co-totals">
+              <div className="co-total-row">
+                <span>Subtotal</span>
+                <span>{formatPrice(subtotal)}</span>
+              </div>
+              <div className="co-total-row">
+                <span>Shipping</span>
+                <span>Calculated after order</span>
+              </div>
+              <div className="co-total-row co-total-row--grand">
+                <span>Total</span>
+                <strong>{formatPrice(subtotal)}</strong>
+              </div>
+            </div>
+            {PRICES_ARE_PLACEHOLDERS && (
+              <p className="co-note">Prices are placeholders until real Belyn pricing is added.</p>
+            )}
+          </div>
+        </aside>
+      </div>
+    </main>
+  );
 }
