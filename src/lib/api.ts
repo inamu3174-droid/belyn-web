@@ -23,7 +23,7 @@ export async function submitContact(data: {
   }
 }
 
-export async function submitOrder(payload: any): Promise<{ ok: boolean; demo?: boolean; ref?: string; message?: string }> {
+export async function submitOrder(payload: any): Promise<{ ok: boolean; demo?: boolean; ref?: string; message?: string; total?: number }> {
   try {
     const r = await fetch('/api/order', {
       method: 'POST',
@@ -36,25 +36,39 @@ export async function submitOrder(payload: any): Promise<{ ok: boolean; demo?: b
       return { ok: false, message: j.message || 'Could not place your order.' };
     }
     const j = await r.json().catch(() => ({}));
-    return { ok: true, ref: j.ref || payload.ref };
+    return { ok: true, ref: j.ref || payload.ref, total: j.total };
   } catch {
     return DEMO ? { ok: true, demo: true, ref: payload.ref } : { ok: false, message: 'Network error. Please try again.' };
   }
 }
 
-export async function createRazorpayOrder(amount: number, receipt: string): Promise<
-  { ok: true; id: string; amount: number; currency: string; keyId: string } | { ok: false; message: string }
+export async function createRazorpayOrder(
+  subtotal: number,
+  receipt: string,
+  pin: string,
+  state: string,
+): Promise<
+  | { ok: true; id: string; amount: number; currency: string; keyId: string; shipping: number; total: number }
+  | { ok: false; message: string }
 > {
   try {
     const r = await fetch('/api/razorpay-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, receipt }),
+      body: JSON.stringify({ subtotal, amount: subtotal, receipt, pin, state }),
     });
     const j = await r.json().catch(() => ({}));
     if (r.status === 501) return { ok: false, message: j.message || 'Razorpay is not configured yet.' };
     if (!r.ok) return { ok: false, message: j.message || 'Could not start payment.' };
-    return { ok: true, id: j.id, amount: j.amount, currency: j.currency || 'INR', keyId: j.keyId };
+    return {
+      ok: true,
+      id: j.id,
+      amount: j.amount,
+      currency: j.currency || 'INR',
+      keyId: j.keyId,
+      shipping: Number(j.shipping) || 0,
+      total: Number(j.total) || subtotal,
+    };
   } catch {
     return { ok: false, message: 'Network error. Please try again.' };
   }
@@ -65,7 +79,7 @@ export async function verifyRazorpayPayment(data: {
   razorpay_payment_id: string;
   razorpay_signature: string;
   order: any;
-}): Promise<{ ok: boolean; ref?: string; message?: string }> {
+}): Promise<{ ok: boolean; ref?: string; message?: string; total?: number }> {
   try {
     const r = await fetch('/api/razorpay-verify', {
       method: 'POST',
@@ -74,7 +88,7 @@ export async function verifyRazorpayPayment(data: {
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) return { ok: false, message: j.message || 'Payment verification failed.' };
-    return { ok: true, ref: j.ref };
+    return { ok: true, ref: j.ref, total: j.total };
   } catch {
     return { ok: false, message: 'Network error while verifying payment.' };
   }
