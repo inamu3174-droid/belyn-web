@@ -1,6 +1,7 @@
 import { Link } from '../lib/router';
 import { useCart } from '../lib/cart';
 import { formatPrice, getProduct } from '../data/products';
+import { JK_FREE_THRESHOLD, FLAT_SHIPPING } from '../lib/shipping';
 import { ProductVisual } from './Art';
 
 export default function CartDrawer() {
@@ -8,11 +9,7 @@ export default function CartDrawer() {
 
   return (
     <>
-      <div
-        className={`scrim ${open ? 'is-open' : ''}`}
-        onClick={() => setOpen(false)}
-        aria-hidden={!open}
-      />
+      <div className={`scrim ${open ? 'is-open' : ''}`} onClick={() => setOpen(false)} aria-hidden={!open} />
       <aside className={`drawer ${open ? 'is-open' : ''}`} aria-label="Shopping cart" aria-hidden={!open}>
         <div className="drawer__head">
           <h2>Cart ({count})</h2>
@@ -47,17 +44,11 @@ export default function CartDrawer() {
                       </Link>
                       <p className="cline__var">{variant.label}</p>
                       <div className="qty qty--sm">
-                        <button
-                          aria-label="Decrease quantity"
-                          onClick={() => setQty(l.slug, l.variantId, l.qty - 1)}
-                        >
+                        <button aria-label="Decrease quantity" onClick={() => setQty(l.slug, l.variantId, l.qty - 1)}>
                           −
                         </button>
                         <span>{l.qty}</span>
-                        <button
-                          aria-label="Increase quantity"
-                          onClick={() => setQty(l.slug, l.variantId, l.qty + 1)}
-                        >
+                        <button aria-label="Increase quantity" onClick={() => setQty(l.slug, l.variantId, l.qty + 1)}>
                           +
                         </button>
                       </div>
@@ -77,6 +68,13 @@ export default function CartDrawer() {
                 <span>Subtotal</span>
                 <strong>{formatPrice(subtotal)}</strong>
               </div>
+              <div className="drawer__sub" style={{ fontSize: 13, paddingTop: 0 }}>
+                <span>Shipping</span>
+                <span>At checkout</span>
+              </div>
+              <p className="note" style={{ margin: '0 0 8px' }}>
+                J&K: free on orders of {formatPrice(JK_FREE_THRESHOLD)}+. Elsewhere: flat {formatPrice(FLAT_SHIPPING)}.
+              </p>
               <Link to="/checkout" className="btn btn--dark btn--block" onClick={() => setOpen(false)}>
                 Checkout · {formatPrice(subtotal)}
               </Link>
