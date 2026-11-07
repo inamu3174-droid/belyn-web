@@ -3,21 +3,38 @@ import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct, products } from '../d
 import { ProductVisual } from '../components/Art';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../lib/cart';
-import { Link } from '../lib/router';
+import { Link, useRouter } from '../lib/router';
 import { useSeo } from '../lib/seo';
 import NotFound from './NotFound';
 
 export default function Product({ slug }: { slug: string }) {
   const product = getProduct(slug);
   const { add } = useCart();
+  const { navigate } = useRouter();
   const [variantId, setVariantId] = useState(product?.variants[0].id ?? '');
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [imgIndex, setImgIndex] = useState(0);
+  const [zoom, setZoom] = useState(false);
+
+  // Only real image URLs — never invent or duplicate placeholders
+  const gallery = useMemo(() => {
+    if (!product) return [] as string[];
+    const list: string[] = [];
+    if (product.images?.length) {
+      for (const src of product.images) if (src && !list.includes(src)) list.push(src);
+    } else if (product.image) {
+      list.push(product.image);
+    }
+    return list;
+  }, [product]);
 
   useEffect(() => {
     setVariantId(product?.variants[0].id ?? '');
     setQty(1);
     setAdded(false);
+    setImgIndex(0);
+    setZoom(false);
   }, [slug, product]);
 
   const variant = product?.variants.find((v) => v.id === variantId);
@@ -31,7 +48,12 @@ export default function Product({ slug }: { slug: string }) {
             name: product.name,
             description: product.description,
             brand: { '@type': 'Brand', name: 'BELYN' },
-            offers: { '@type': 'Offer', priceCurrency: 'INR', price: variant.price, url: `${location.origin}/product/${product.slug}` },
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'INR',
+              price: variant.price,
+              url: `${location.origin}/product/${product.slug}`,
+            },
           }
         : undefined,
     [product, variant],
@@ -47,11 +69,87 @@ export default function Product({ slug }: { slug: string }) {
 
   if (!product || !variant) return <NotFound />;
 
+  function addToCart() {
+    add(product!.slug, variant!.id, qty);
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1800);
+  }
+
+  function buyNow() {
+    add(product!.slug, variant!.id, qty);
+    navigate('/checkout');
+  }
+
+  const hasGallery = gallery.length > 0;
+  const mainSrc = hasGallery ? gallery[Math.min(imgIndex, gallery.length - 1)] : null;
+
   return (
     <main className="page pdp">
       <div className="pdp__media" style={{ background: product.bg }}>
-        <ProductVisual product={product} />
+        {mainSrc ? (
+          <div className="pdp-gallery">
+            <div className="pdp-gallery__main">
+              <button
+                type="button"
+                className="pdp-gallery__zoom"
+                aria-label="Zoom image"
+                onClick={() => setZoom(true)}
+              >
+                <img src={mainSrc} alt={product.name} />
+              </button>
+              {gallery.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="pdp-gallery__nav pdp-gallery__nav--prev"
+                    aria-label="Previous image"
+                    onClick={() => setImgIndex((i) => (i - 1 + gallery.length) % gallery.length)}
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    className="pdp-gallery__nav pdp-gallery__nav--next"
+                    aria-label="Next image"
+                    onClick={() => setImgIndex((i) => (i + 1) % gallery.length)}
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+            {gallery.length > 1 && (
+              <div className="pdp-gallery__thumbs" role="list">
+                {gallery.map((src, i) => (
+                  <button
+                    key={src + i}
+                    type="button"
+                    role="listitem"
+                    className={`pdp-gallery__thumb${i === imgIndex ? ' is-on' : ''}`}
+                    aria-label={`View image ${i + 1}`}
+                    aria-current={i === imgIndex}
+                    onClick={() => setImgIndex(i)}
+                  >
+                    <img src={src} alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <ProductVisual product={product} />
+        )}
       </div>
+
+      {zoom && mainSrc && (
+        <div className="pdp-zoom" role="dialog" aria-label="Zoomed product image" onClick={() => setZoom(false)}>
+          <button type="button" className="pdp-zoom__close" aria-label="Close zoom" onClick={() => setZoom(false)}>
+            ×
+          </button>
+          <img src={mainSrc} alt={product.name} onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
+
       <div className="pdp__info">
         <nav className="crumbs" aria-label="Breadcrumb">
           <Link to="/shop">Shop</Link> / <span>{product.name}</span>
@@ -77,25 +175,21 @@ export default function Product({ slug }: { slug: string }) {
 
         <div className="pdp__buy">
           <div className="qty">
-            <button aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>
+            <button type="button" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>
               &minus;
             </button>
             <span aria-live="polite">{qty}</span>
-            <button aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(20, q + 1))}>
+            <button type="button" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(20, q + 1))}>
               +
             </button>
           </div>
-          <button
-            className="btn btn--dark btn--grow"
-            onClick={() => {
-              add(product.slug, variant.id, qty);
-              setAdded(true);
-              window.setTimeout(() => setAdded(false), 1800);
-            }}
-          >
+          <button type="button" className="btn btn--dark btn--grow" onClick={addToCart}>
             {added ? 'Added ✓' : `Add to cart · ${formatPrice(variant.price * qty)}`}
           </button>
         </div>
+        <button type="button" className="btn btn--lime btn--block pdp__buynow" onClick={buyNow}>
+          Buy now · {formatPrice(variant.price * qty)}
+        </button>
 
         {product.quality && (
           <details className="acc">
@@ -169,7 +263,11 @@ export default function Product({ slug }: { slug: string }) {
           <details className="acc">
             <summary>Care & Storage</summary>
             <p>{product.care}</p>
-            {product.shelfLife && <p><strong>Shelf life:</strong> {product.shelfLife}</p>}
+            {product.shelfLife && (
+              <p>
+                <strong>Shelf life:</strong> {product.shelfLife}
+              </p>
+            )}
           </details>
         )}
 
