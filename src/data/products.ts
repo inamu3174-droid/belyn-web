@@ -29,7 +29,10 @@ export interface Product {
   promise?: string[];
   nutrition?: NutritionRow[];
   bg: string;
+  /** Single product photo path under /public */
   image?: string;
+  /** Multiple real product photos for gallery (preferred over image) */
+  images?: string[];
   jar: {
     lid: string;
     body: string;
