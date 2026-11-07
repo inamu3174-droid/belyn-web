@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from '../lib/router';
 import { useCart } from '../lib/cart';
 import { PRICES_ARE_PLACEHOLDERS, formatPrice, type Product } from '../data/products';
@@ -6,6 +7,16 @@ import { ProductVisual } from './Art';
 export default function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const v = product.variants[0];
+  const [justAdded, setJustAdded] = useState(false);
+
+  function onAdd(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    add(product.slug, v.id, 1);
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1400);
+  }
+
   return (
     <article className="pcard">
       <div className="pcard__media" style={{ ['--card' as string]: product.bg }}>
@@ -19,8 +30,8 @@ export default function ProductCard({ product }: { product: Product }) {
             From {formatPrice(v.price)}
             {PRICES_ARE_PLACEHOLDERS && <em> placeholder price</em>}
           </span>
-          <button className="pcard__quick" onClick={() => add(product.slug, v.id)}>
-            Add to cart +
+          <button type="button" className="pcard__quick" onClick={onAdd}>
+            {justAdded ? 'Added ✓' : 'Add to cart +'}
           </button>
         </div>
       </div>
@@ -32,8 +43,8 @@ export default function ProductCard({ product }: { product: Product }) {
             {PRICES_ARE_PLACEHOLDERS && <em className="ph-tag">Placeholder price</em>}
           </p>
         </div>
-        <button className="pcard__add" aria-label={`Add ${product.name} ${v.label} to cart`} onClick={() => add(product.slug, v.id)}>
-          +
+        <button type="button" className="pcard__add" aria-label={`Add ${product.name} ${v.label} to cart`} onClick={onAdd}>
+          {justAdded ? '✓' : '+'}
         </button>
       </div>
     </article>
