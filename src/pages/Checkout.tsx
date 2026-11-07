@@ -1,9 +1,10 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useCart } from '../lib/cart';
 import { Link } from '../lib/router';
 import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct } from '../data/products';
 import { ProductVisual } from '../components/Art';
 import { submitOrder, createRazorpayOrder, verifyRazorpayPayment, loadRazorpay } from '../lib/api';
+import { calculateShipping, orderTotal } from '../lib/shipping';
 import { useSeo } from '../lib/seo';
 
 const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -17,6 +18,7 @@ interface Done {
   total: number;
   email: string;
   payment: string;
+  shippingLabel: string;
 }
 
 function CheckoutField({
@@ -29,6 +31,8 @@ function CheckoutField({
   inputMode,
   maxLength,
   placeholder,
+  value,
+  onChange,
 }: {
   label: string;
   name: string;
@@ -39,8 +43,11 @@ function CheckoutField({
   inputMode?: 'numeric' | 'tel' | 'text';
   maxLength?: number;
   placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
 }) {
   const id = 'co-' + name;
+  const controlled = value !== undefined;
   const common = {
     id,
     name,
@@ -48,6 +55,9 @@ function CheckoutField({
     'aria-invalid': !!error || undefined,
     'aria-describedby': error ? id + '-err' : undefined,
     autoComplete,
+    ...(controlled
+      ? { value, onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange?.(e.target.value) }
+      : {}),
   } as const;
   return (
     <div className={`co-field${error ? ' co-field--err' : ''}`}>
@@ -76,8 +86,15 @@ export default function Checkout() {
   const [fail, setFail] = useState('');
   const [done, setDone] = useState<Done | null>(null);
   const [pay, setPay] = useState<'razorpay' | 'cod' | 'upi'>('razorpay');
+  const [stateVal, setStateVal] = useState('');
+  const [pinVal, setPinVal] = useState('');
 
-  // Checkout-only fonts (does not change global site fonts)
+  const ship = useMemo(() => calculateShipping(subtotal, pinVal, stateVal), [subtotal, pinVal, stateVal]);
+  const total = orderTotal(subtotal, ship.zone === 'pending' ? 0 : ship.amount);
+  const payable = ship.zone === 'pending' ? subtotal : total;
+  const shippingDisplay =
+    ship.zone === 'pending' ? ship.label : ship.free ? 'FREE' : formatPrice(ship.amount);
+
   useEffect(() => {
     const id = 'belyn-checkout-fonts';
     if (document.getElementById(id)) return;
@@ -96,12 +113,10 @@ export default function Checkout() {
           <p className="co-eyebrow">ORDER {done.demo ? 'PREVIEW' : 'RECEIVED'}</p>
           <h1 className="co-title">Thank you.</h1>
           <p className="co-lede">
-            Reference <strong>{done.ref}</strong>. Payment: {done.payment}. We have noted an order of{' '}
-            {formatPrice(done.total)} and will contact you at {done.email}.
+            Reference <strong>{done.ref}</strong>. Payment: {done.payment}. Total {formatPrice(done.total)}
+            {done.shippingLabel ? ` (shipping ${done.shippingLabel})` : ''}. We will contact you at {done.email}.
           </p>
-          {done.demo && (
-            <p className="co-note">Demo mode: no order was sent and no payment was taken.</p>
-          )}
+          {done.demo && <p className="co-note">Demo mode: no order was sent and no payment was taken.</p>}
           <Link to="/shop" className="co-btn">
             Continue shopping <span aria-hidden="true">→</span>
           </Link>
@@ -130,19 +145,25 @@ export default function Checkout() {
     const form = e.currentTarget;
     const f = new FormData(form);
     const v = (k: string) => String(f.get(k) || '').trim();
+    const pin = v('pin') || pinVal;
+    const state = v('state') || stateVal;
     const next: Record<string, string> = {};
     if (v('name').length < 2) next.name = 'Please enter your full name.';
     if (!emailOk(v('email'))) next.email = 'Please enter a valid email address.';
     if (!phoneOk(v('phone'))) next.phone = 'Please enter a valid phone number.';
     if (v('address').length < 6) next.address = 'Please enter your street address.';
     if (v('city').length < 2) next.city = 'Please enter your city.';
-    if (v('state').length < 2) next.state = 'Please enter your state.';
-    if (!/^\d{6}$/.test(v('pin'))) next.pin = 'PIN code must be 6 digits.';
+    if (state.length < 2) next.state = 'Please enter your state.';
+    if (!/^\d{6}$/.test(pin)) next.pin = 'PIN code must be 6 digits.';
     setErrors(next);
     if (Object.keys(next).length) {
       requestAnimationFrame(() => (form.querySelector('[aria-invalid="true"]') as HTMLElement | null)?.focus());
       return;
     }
+
+    const liveShip = calculateShipping(subtotal, pin, state);
+    const liveTotal = orderTotal(subtotal, liveShip.amount);
+
     setBusy(true);
     setFail('');
     const ref = 'BLY-' + Date.now().toString(36).toUpperCase();
@@ -151,7 +172,7 @@ export default function Checkout() {
       ref,
       paymentMethod,
       customer: { name: v('name'), email: v('email'), phone: v('phone') },
-      shipping: { address: v('address'), city: v('city'), state: v('state'), pin: v('pin') },
+      shipping: { address: v('address'), city: v('city'), state, pin },
       notes: v('notes'),
       items: lines.map((l) => {
         const p = getProduct(l.slug)!;
@@ -159,6 +180,9 @@ export default function Checkout() {
         return { slug: l.slug, name: p.name, variant: variant.label, qty: l.qty, unitPrice: variant.price };
       }),
       subtotal,
+      // Informational only — server recalculates shipping
+      shippingAmount: liveShip.amount,
+      total: liveTotal,
       website: v('website'),
     };
 
@@ -169,7 +193,7 @@ export default function Checkout() {
         setFail('Could not load payment window. Please try again or choose Cash on Delivery.');
         return;
       }
-      const order = await createRazorpayOrder(subtotal, ref);
+      const order = await createRazorpayOrder(subtotal, ref, pin, state);
       if (!order.ok) {
         setBusy(false);
         setFail(order.message);
@@ -200,9 +224,10 @@ export default function Checkout() {
             setDone({
               ref: verified.ref || ref,
               demo: false,
-              total: subtotal,
+              total: verified.total ?? order.total,
               email: v('email'),
               payment: 'Paid online (Razorpay)',
+              shippingLabel: liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
             });
             clear();
           } else {
@@ -233,9 +258,10 @@ export default function Checkout() {
       setDone({
         ref: r.ref || ref,
         demo: !!r.demo,
-        total: subtotal,
+        total: r.total ?? liveTotal,
         email: v('email'),
         payment: paymentMethod === 'upi' ? 'UPI (manual confirmation)' : 'Cash on Delivery',
+        shippingLabel: liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
       });
       clear();
     } else setFail(r.message || 'Could not place your order.');
@@ -263,8 +289,26 @@ export default function Checkout() {
             <CheckoutField label="Address" name="address" autoComplete="street-address" placeholder="House no., street, landmark" error={errors.address} />
             <div className="co-row3">
               <CheckoutField label="City" name="city" autoComplete="address-level2" placeholder="City" error={errors.city} />
-              <CheckoutField label="State" name="state" autoComplete="address-level1" placeholder="State" error={errors.state} />
-              <CheckoutField label="PIN code" name="pin" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="6 digits" error={errors.pin} />
+              <CheckoutField
+                label="State"
+                name="state"
+                autoComplete="address-level1"
+                placeholder="State"
+                error={errors.state}
+                value={stateVal}
+                onChange={setStateVal}
+              />
+              <CheckoutField
+                label="PIN code"
+                name="pin"
+                inputMode="numeric"
+                maxLength={6}
+                autoComplete="postal-code"
+                placeholder="6 digits"
+                error={errors.pin}
+                value={pinVal}
+                onChange={(val) => setPinVal(val.replace(/\D/g, '').slice(0, 6))}
+              />
             </div>
           </section>
 
@@ -274,13 +318,7 @@ export default function Checkout() {
             </h2>
             <div className="co-pay" role="radiogroup" aria-label="Payment method">
               <label className={`co-pay-card${pay === 'razorpay' ? ' is-selected' : ''}`}>
-                <input
-                  type="radio"
-                  name="payment"
-                  value="razorpay"
-                  checked={pay === 'razorpay'}
-                  onChange={() => setPay('razorpay')}
-                />
+                <input type="radio" name="payment" value="razorpay" checked={pay === 'razorpay'} onChange={() => setPay('razorpay')} />
                 <span className="co-pay-icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <rect x="2" y="5" width="20" height="14" rx="2" />
@@ -353,7 +391,7 @@ export default function Checkout() {
           </ul>
 
           <button className="co-btn co-btn--block" disabled={busy} type="submit">
-            {busy ? 'Processing…' : `Place order · ${formatPrice(subtotal)}`}
+            {busy ? 'Processing…' : `Place order · ${formatPrice(payable)}`}
           </button>
         </form>
 
@@ -387,11 +425,20 @@ export default function Checkout() {
               </div>
               <div className="co-total-row">
                 <span>Shipping</span>
-                <span>Calculated after order</span>
+                <span className={ship.free ? 'co-ship-free' : undefined}>{shippingDisplay}</span>
               </div>
+              {ship.free && (
+                <p className="co-ship-badge" role="status">
+                  Free shipping · Jammu & Kashmir
+                </p>
+              )}
+              {ship.zone !== 'pending' && !ship.free && (
+                <p className="co-note">{ship.note}</p>
+              )}
+              {ship.zone === 'pending' && <p className="co-note">{ship.note}</p>}
               <div className="co-total-row co-total-row--grand">
                 <span>Total</span>
-                <strong>{formatPrice(subtotal)}</strong>
+                <strong>{formatPrice(payable)}</strong>
               </div>
             </div>
             {PRICES_ARE_PLACEHOLDERS && (
