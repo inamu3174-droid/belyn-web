@@ -1,6 +1,7 @@
 // Receives an order request and emails it to Belyn.
 import send from './_send.js';
 import { calculateShipping, orderTotal } from './_shipping.js';
+import { createDelhiveryShipment, delhiveryConfigured } from './_delhivery.js';
 
 export default async function order(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
@@ -20,29 +21,84 @@ export default async function order(req, res) {
   const total = orderTotal(subtotal, ship.amount);
 
   const method = ['cod', 'upi', 'razorpay'].includes(b.paymentMethod) ? b.paymentMethod.toUpperCase() : 'COD';
+
+  let delhiveryLine = 'Delhivery: not configured';
+  let waybill = '';
+  let trackingUrl = '';
+  if (delhiveryConfigured()) {
+    const d = await createDelhiveryShipment({
+      ref: b.ref,
+      paymentMethod: b.paymentMethod,
+      customer: b.customer,
+      shipping: b.shipping,
+      items: b.items,
+      subtotal,
+      total,
+    });
+    if (d.ok && d.waybill) {
+      waybill = d.waybill;
+      trackingUrl = d.trackingUrl || '';
+      delhiveryLine = 'Delhivery AWB: ' + waybill + (trackingUrl ? '\nTrack: ' + trackingUrl : '');
+    } else {
+      delhiveryLine = 'Delhivery: failed — ' + (d.error || 'unknown error');
+    }
+  }
+
   const lines = b.items
-    .map((i) => `- ${String(i.name).slice(0, 80)} (${String(i.variant).slice(0, 20)}) x ${Number(i.qty) | 0} @ INR ${Number(i.unitPrice) | 0}`)
+    .map(
+      (i) =>
+        '- ' +
+        String(i.name).slice(0, 80) +
+        ' (' +
+        String(i.variant).slice(0, 20) +
+        ') x ' +
+        (Number(i.qty) | 0) +
+        ' @ INR ' +
+        (Number(i.unitPrice) | 0),
+    )
     .join('\n');
-  const text = `Order ${String(b.ref).slice(0, 30)}
-Payment: ${method}
 
-${lines}
+  const text =
+    'Order ' +
+    String(b.ref).slice(0, 30) +
+    '\nPayment: ' +
+    method +
+    '\n\n' +
+    lines +
+    '\n\nSubtotal: INR ' +
+    subtotal +
+    '\nShipping: ' +
+    (ship.free ? 'FREE' : 'INR ' + ship.amount) +
+    ' (' +
+    (ship.zone === 'jk' ? 'Jammu & Kashmir' : 'Pan-India') +
+    ')\nTotal: INR ' +
+    total +
+    '\n\n' +
+    delhiveryLine +
+    '\n\nCustomer: ' +
+    b.customer.name +
+    ' | ' +
+    b.customer.email +
+    ' | ' +
+    b.customer.phone +
+    '\nShip to: ' +
+    b.shipping.address +
+    ', ' +
+    b.shipping.city +
+    ', ' +
+    b.shipping.state +
+    ' ' +
+    pin +
+    '\nNotes: ' +
+    String(b.notes || '').slice(0, 1000);
 
-Subtotal: INR ${subtotal}
-Shipping: ${ship.free ? 'FREE' : 'INR ' + ship.amount} (${ship.zone === 'jk' ? 'Jammu & Kashmir' : 'Pan-India'})
-Total: INR ${total}
-
-Customer: ${b.customer.name} | ${b.customer.email} | ${b.customer.phone}
-Ship to: ${b.shipping.address}, ${b.shipping.city}, ${b.shipping.state} ${pin}
-Notes: ${String(b.notes || '').slice(0, 1000)}`;
-
-  const r = await send(`New Belyn order ${b.ref} (${method})`, text, b.customer.email);
+  const r = await send('New Belyn order ' + b.ref + ' (' + method + ')', text, b.customer.email);
   if (!r.configured) {
     return res.status(501).json({ message: 'Orders are not configured. Set RESEND_API_KEY and MAIL_FROM in Vercel.' });
   }
   if (!r.ok) {
     return res.status(502).json({
-      message: r.error ? `Email failed: ${r.error}` : 'Could not place your order. Please try again.',
+      message: r.error ? 'Email failed: ' + r.error : 'Could not place your order. Please try again.',
     });
   }
   return res.status(200).json({
@@ -50,5 +106,7 @@ Notes: ${String(b.notes || '').slice(0, 1000)}`;
     ref: b.ref,
     shipping: ship.amount,
     total,
+    waybill: waybill || undefined,
+    trackingUrl: trackingUrl || undefined,
   });
 }
