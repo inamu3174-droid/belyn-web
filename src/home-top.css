@@ -1,6 +1,11 @@
 /* Header + announcement + welcome refinements (site-wide header, home welcome) */
 
 .header--ref {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   background: var(--warm-ivory, #F8F6EF) !important;
   box-shadow: none !important;
   height: auto;
@@ -111,7 +116,7 @@
   font-weight: 500;
 }
 
-/* Offset page content for header + announce */
+/* Offset page content for fixed header + announce (prevents jump/overlap) */
 body {
   --hdr-stack: calc(var(--hdr) + 34px);
 }
@@ -239,11 +244,16 @@ body {
   }
 }
 
-/* Pages other than home still clear the stacked header */
+/* Pages other than home still clear the fixed header stack */
 .page {
   padding-top: calc(var(--hdr-stack) + 12px);
 }
 
 .hero + .sheet {
   margin-top: -24px;
+}
+
+/* Menu opens below full fixed header (bar + announcement) */
+.header--ref .mobile-menu {
+  top: var(--hdr-stack);
 }
