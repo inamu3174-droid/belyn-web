@@ -196,6 +196,12 @@ export default function Header() {
         </div>
       )}
 
+      <div
+        className={`menu-scrim ${menu ? 'is-open' : ''}`}
+        onClick={() => setMenu(false)}
+        aria-hidden="true"
+      />
+
       <div id="mobile-menu" className={`mobile-menu menu-panels ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
         <div className="menu-panels__inner">
           {menuSections.map((section) => (
