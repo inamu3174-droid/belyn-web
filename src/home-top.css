@@ -1,4 +1,4 @@
-/* Header + announcement + welcome refinements (site-wide header, home welcome) */
+/* Header + announcement + welcome refinements */
 
 .header--ref {
   position: fixed;
@@ -50,7 +50,6 @@
   text-align: center;
 }
 
-/* Always show three-line menu icon (reference) */
 .header--ref .burger.burger--3 {
   display: block;
   width: 40px;
@@ -89,23 +88,30 @@
   transform: rotate(-45deg);
 }
 
-/* Announcement strip */
+/* Continuous announcement marquee */
 .announce {
   background: var(--deep-green);
   color: var(--warm-ivory);
-  text-align: center;
-  padding: 8px var(--pad);
+  overflow: hidden;
+  padding: 8px 0;
+  white-space: nowrap;
 }
 
-.announce p {
-  margin: 0;
+.announce__track {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  width: max-content;
+  animation: announce-marquee 28s linear infinite;
+}
+
+.announce__group {
+  display: flex;
   align-items: center;
-  gap: 6px 10px;
-  font-size: clamp(9px, 1.7vw, 11px);
-  font-weight: 700;
+  gap: 14px;
+  padding-right: 28px;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(10px, 1.7vw, 11px);
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   line-height: 1.4;
@@ -116,7 +122,15 @@
   font-weight: 500;
 }
 
-/* Offset page content for fixed header + announce (prevents jump/overlap) */
+@keyframes announce-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announce__track { animation: none; }
+}
+
 body {
   --hdr-stack: calc(var(--hdr) + 34px);
 }
@@ -139,7 +153,7 @@ body {
 .hero--ref .hero__sub {
   max-width: 36ch;
   color: var(--coffee-brown, #392C22);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* Welcome section */
@@ -166,7 +180,7 @@ body {
 .welcome__title {
   margin: 0;
   font-family: var(--serif);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(28px, 4vw, 42px);
   color: var(--deep-green);
   line-height: 1.15;
@@ -201,6 +215,7 @@ body {
   border: 1.5px solid var(--deep-green);
   background: transparent;
   color: var(--deep-green);
+  font-family: var(--sans);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
@@ -228,13 +243,6 @@ body {
 }
 
 @media (max-width: 640px) {
-  .announce p {
-    letter-spacing: 0.06em;
-    gap: 4px 6px;
-  }
-  .announce__sep {
-    display: none;
-  }
   .welcome__cat {
     flex: 1 1 calc(50% - 10px);
   }
@@ -244,7 +252,6 @@ body {
   }
 }
 
-/* Pages other than home still clear the fixed header stack */
 .page {
   padding-top: calc(var(--hdr-stack) + 12px);
 }
@@ -253,7 +260,81 @@ body {
   margin-top: -24px;
 }
 
-/* Menu opens below full fixed header (bar + announcement) */
-.header--ref .mobile-menu {
+/* Hamburger menu — four soft-green panels */
+.header--ref .mobile-menu.menu-panels {
   top: var(--hdr-stack);
+  background: var(--warm-ivory, #F8F6EF);
+  color: var(--deep-green);
+  padding: 20px var(--pad) 32px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.menu-panels__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.menu-panel {
+  background: #eef5e4;
+  border: 1px solid #d7e3c8;
+  border-radius: 4px;
+  padding: 18px 20px 16px;
+  text-align: left;
+}
+
+.menu-panel__title {
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--deep-green);
+}
+
+.menu-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.menu-panel__list a {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--coffee-brown, #392C22);
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.menu-panel__list a:hover {
+  color: var(--deep-green);
+}
+
+/* Typography system overrides */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+}
+
+h1, h2, h3, .h-section, .hero__title, .welcome__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+}
+
+.btn, .hero__cta, .welcome__cat, button.arrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+}
+
+.nav-link, .menu-panel__list a, .foot__nav a {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
 }

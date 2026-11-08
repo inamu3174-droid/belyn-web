@@ -16,6 +16,41 @@ const SearchIcon = () => (
   </svg>
 );
 
+const menuSections = [
+  {
+    title: 'EXPLORE',
+    links: [
+      { label: 'Home', to: '/' },
+      { label: 'Shop All Products', to: '/shop' },
+      { label: 'Best Sellers', to: '/#best-sellers' },
+      { label: 'Sample Kit', to: '/shop' },
+    ],
+  },
+  {
+    title: 'GIFTING',
+    links: [
+      { label: 'Festive Gifting', to: '/shop' },
+      { label: 'Corporate Gifting', to: '/shop' },
+      { label: 'Build Your Own Box', to: '/shop' },
+    ],
+  },
+  {
+    title: 'OUR BRAND',
+    links: [
+      { label: 'Our Story', to: '/story' },
+      { label: 'The BELYN Promise', to: '/story' },
+      { label: 'The People Behind BELYN', to: '/story' },
+    ],
+  },
+  {
+    title: 'BUSINESS & SUPPORT',
+    links: [
+      { label: 'Wholesale', to: '/contact' },
+      { label: 'Contact Us', to: '/contact' },
+    ],
+  },
+];
+
 export default function Header() {
   const { path, navigate } = useRouter();
   const { count, setOpen } = useCart();
@@ -94,15 +129,26 @@ export default function Header() {
       </div>
 
       <div className="announce" role="region" aria-label="Brand promise">
-        <p>
-          <span>100% PURE &amp; RAW</span>
-          <span className="announce__sep" aria-hidden="true">|</span>
-          <span>DIRECT FROM KASHMIR</span>
-          <span className="announce__sep" aria-hidden="true">|</span>
-          <span>LAB TESTED FOR PURITY</span>
-          <span className="announce__sep" aria-hidden="true">|</span>
-          <span>NATURE, LEFT UNALTERED</span>
-        </p>
+        <div className="announce__track">
+          <p className="announce__group">
+            <span>100% PURE &amp; RAW</span>
+            <span className="announce__sep" aria-hidden="true">|</span>
+            <span>DIRECT FROM KASHMIR</span>
+            <span className="announce__sep" aria-hidden="true">|</span>
+            <span>LAB TESTED FOR PURITY</span>
+            <span className="announce__sep" aria-hidden="true">|</span>
+            <span>NATURE, LEFT UNALTERED</span>
+          </p>
+          <p className="announce__group" aria-hidden="true">
+            <span>100% PURE &amp; RAW</span>
+            <span className="announce__sep">|</span>
+            <span>DIRECT FROM KASHMIR</span>
+            <span className="announce__sep">|</span>
+            <span>LAB TESTED FOR PURITY</span>
+            <span className="announce__sep">|</span>
+            <span>NATURE, LEFT UNALTERED</span>
+          </p>
+        </div>
       </div>
 
       {searchOpen && (
@@ -150,17 +196,23 @@ export default function Header() {
         </div>
       )}
 
-      <div id="mobile-menu" className={`mobile-menu ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
-        <Link to="/shop" tabIndex={menu ? 0 : -1}>
-          Shop
-        </Link>
-        <Link to="/story" tabIndex={menu ? 0 : -1}>
-          Our Story
-        </Link>
-        <Link to="/contact" tabIndex={menu ? 0 : -1}>
-          Contact
-        </Link>
-        <p>Born in Kashmir. Crafted with Purity.</p>
+      <div id="mobile-menu" className={`mobile-menu menu-panels ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
+        <div className="menu-panels__inner">
+          {menuSections.map((section) => (
+            <section key={section.title} className="menu-panel">
+              <h3 className="menu-panel__title">{section.title}</h3>
+              <ul className="menu-panel__list">
+                {section.links.map((link) => (
+                  <li key={link.label}>
+                    <Link to={link.to} tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </div>
     </header>
   );
