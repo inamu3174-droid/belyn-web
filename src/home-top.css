@@ -45,6 +45,45 @@
   text-align: center;
 }
 
+/* Always show three-line menu icon (reference) */
+.header--ref .burger.burger--3 {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  position: relative;
+  margin-left: -6px;
+  color: var(--deep-green);
+  cursor: pointer;
+}
+
+.header--ref .burger.burger--3 span {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 0.25s ease, top 0.25s ease, opacity 0.2s ease;
+}
+
+.header--ref .burger.burger--3 span:nth-child(1) { top: 13px; }
+.header--ref .burger.burger--3 span:nth-child(2) { top: 19px; }
+.header--ref .burger.burger--3 span:nth-child(3) { top: 25px; }
+
+.header--ref .burger.burger--3[aria-expanded='true'] span:nth-child(1) {
+  top: 19px;
+  transform: rotate(45deg);
+}
+.header--ref .burger.burger--3[aria-expanded='true'] span:nth-child(2) {
+  opacity: 0;
+}
+.header--ref .burger.burger--3[aria-expanded='true'] span:nth-child(3) {
+  top: 19px;
+  transform: rotate(-45deg);
+}
+
 /* Announcement strip */
 .announce {
   background: var(--deep-green);

@@ -62,12 +62,13 @@ export default function Header() {
       <div className="header__inner">
         <div className="header__left">
           <button
-            className="burger"
+            className="burger burger--3"
             aria-label={menu ? 'Close menu' : 'Open menu'}
             aria-expanded={menu}
             aria-controls="mobile-menu"
             onClick={() => setMenu((v) => !v)}
           >
+            <span />
             <span />
             <span />
           </button>
