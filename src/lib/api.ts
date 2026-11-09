@@ -43,8 +43,9 @@ export async function submitOrder(payload: any): Promise<{ ok: boolean; demo?: b
 }
 
 export async function createRazorpayOrder(
+  items: { slug: string; variantId: string; qty: number }[],
   subtotal: number,
-  receipt: string,
+  ref: string,
   pin: string,
   state: string,
 ): Promise<
@@ -55,7 +56,8 @@ export async function createRazorpayOrder(
     const r = await fetch('/api/razorpay-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subtotal, amount: subtotal, receipt, pin, state }),
+      // The server prices the cart itself; subtotal is only sent so it can detect stale prices.
+      body: JSON.stringify({ items, subtotal, ref, pin, state }),
     });
     const j = await r.json().catch(() => ({}));
     if (r.status === 501) return { ok: false, message: j.message || 'Razorpay is not configured yet.' };

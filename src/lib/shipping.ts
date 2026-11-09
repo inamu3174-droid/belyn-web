@@ -1,31 +1,17 @@
-/** Belyn shipping rules — keep in sync with api/_shipping.js */
+/**
+ * Storefront shipping display. The rules themselves live in shared/shipping.js
+ * (the single source used by the server too). This file only adds UI labels.
+ */
+import {
+  JK_FREE_THRESHOLD,
+  FLAT_SHIPPING,
+  isJammuKashmirState,
+  shippingCharge,
+  orderTotal,
+} from '../../shared/shipping.js';
 
-export const JK_FREE_THRESHOLD = 600;
-export const FLAT_SHIPPING = 100;
-
-/** Jammu & Kashmir PIN prefixes: 180–194 */
-export function isJammuKashmirPin(pin: string): boolean {
-  const p = String(pin || '').replace(/\D/g, '');
-  if (!/^\d{6}$/.test(p)) return false;
-  const prefix = parseInt(p.slice(0, 3), 10);
-  return prefix >= 180 && prefix <= 194;
-}
-
-export function isJammuKashmirState(state: string): boolean {
-  const s = String(state || '').trim().toLowerCase();
-  if (!s) return false;
-  if (s === 'jk' || s === 'j&k' || s === 'j and k') return true;
-  return /jammu|kashmir|ladakh/.test(s);
-}
-
-export function isJammuKashmir(pin: string, state?: string): boolean {
-  if (isJammuKashmirPin(pin)) return true;
-  // Only trust state when PIN is missing/invalid
-  if (!/^\d{6}$/.test(String(pin || '').replace(/\D/g, ''))) {
-    return isJammuKashmirState(state || '');
-  }
-  return false;
-}
+export { JK_FREE_THRESHOLD, FLAT_SHIPPING, orderTotal };
+export { isJammuKashmirPin, isJammuKashmirState, isJammuKashmir } from '../../shared/shipping.js';
 
 export type ShippingResult = {
   amount: number;
@@ -55,28 +41,7 @@ export function calculateShipping(subtotal: number, pin: string, state = ''): Sh
     };
   }
 
-  const jk = isJammuKashmir(digits, state);
-
-  if (jk) {
-    if (sub >= JK_FREE_THRESHOLD) {
-      return {
-        amount: 0,
-        free: true,
-        zone: 'jk',
-        label: 'FREE',
-        note: 'Free shipping within Jammu & Kashmir on orders of ₹600 or more.',
-      };
-    }
-    return {
-      amount: FLAT_SHIPPING,
-      free: false,
-      zone: 'jk',
-      label: `₹${FLAT_SHIPPING}`,
-      note: `Add ₹${JK_FREE_THRESHOLD - sub} more for free shipping in Jammu & Kashmir.`,
-    };
-  }
-
-  // No PIN yet — do not invent a charge in the cart; checkout will set it
+  // No PIN yet: do not invent a charge in the cart; checkout will set it
   if (digits.length === 0 && !isJammuKashmirState(state)) {
     return {
       amount: 0,
@@ -87,15 +52,32 @@ export function calculateShipping(subtotal: number, pin: string, state = ''): Sh
     };
   }
 
+  const c = shippingCharge(sub, digits, state);
+
+  if (c.zone === 'jk') {
+    if (c.free) {
+      return {
+        amount: 0,
+        free: true,
+        zone: 'jk',
+        label: 'FREE',
+        note: 'Free shipping within Jammu & Kashmir on orders of ₹600 or more.',
+      };
+    }
+    return {
+      amount: c.amount,
+      free: false,
+      zone: 'jk',
+      label: `₹${c.amount}`,
+      note: `Add ₹${JK_FREE_THRESHOLD - sub} more for free shipping in Jammu & Kashmir.`,
+    };
+  }
+
   return {
-    amount: FLAT_SHIPPING,
+    amount: c.amount,
     free: false,
     zone: 'pan',
-    label: `₹${FLAT_SHIPPING}`,
-    note: 'Flat ₹100 shipping across India outside Jammu & Kashmir.',
+    label: `₹${c.amount}`,
+    note: `Flat ₹${FLAT_SHIPPING} shipping across India outside Jammu & Kashmir.`,
   };
-}
-
-export function orderTotal(subtotal: number, shippingAmount: number): number {
-  return Math.max(0, Number(subtotal) || 0) + Math.max(0, Number(shippingAmount) || 0);
 }

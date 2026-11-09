@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useCart } from '../lib/cart';
 import { Link } from '../lib/router';
 import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct } from '../data/products';
@@ -88,6 +88,10 @@ export default function Checkout() {
   const [pay, setPay] = useState<'razorpay' | 'cod' | 'upi'>('razorpay');
   const [stateVal, setStateVal] = useState('');
   const [pinVal, setPinVal] = useState('');
+  // Synchronous double-submit guard (state updates are async, a fast double tap could slip through)
+  const submitting = useRef(false);
+  // One order reference per distinct cart+payment attempt, reused on retries (so a retry is the same order)
+  const attempt = useRef<{ key: string; ref: string } | null>(null);
 
   const ship = useMemo(() => calculateShipping(subtotal, pinVal, stateVal), [subtotal, pinVal, stateVal]);
   const total = orderTotal(subtotal, ship.zone === 'pending' ? 0 : ship.amount);
@@ -102,7 +106,7 @@ export default function Checkout() {
     link.id = id;
     link.rel = 'stylesheet';
     link.href =
-      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap';
+      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap';
     document.head.appendChild(link);
   }, []);
 
@@ -161,41 +165,49 @@ export default function Checkout() {
       return;
     }
 
+    if (submitting.current) return;
+    submitting.current = true;
+    const finish = () => {
+      submitting.current = false;
+      setBusy(false);
+    };
+
     const liveShip = calculateShipping(subtotal, pin, state);
     const liveTotal = orderTotal(subtotal, liveShip.amount);
 
     setBusy(true);
     setFail('');
-    const ref = 'BLY-' + Date.now().toString(36).toUpperCase();
     const paymentMethod = pay;
+    const key = JSON.stringify([lines, paymentMethod]);
+    if (!attempt.current || attempt.current.key !== key) {
+      attempt.current = {
+        key,
+        ref: ('BLY-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)).toUpperCase(),
+      };
+    }
+    const ref = attempt.current.ref;
     const payload = {
       ref,
       paymentMethod,
       customer: { name: v('name'), email: v('email'), phone: v('phone') },
       shipping: { address: v('address'), city: v('city'), state, pin },
       notes: v('notes'),
-      items: lines.map((l) => {
-        const p = getProduct(l.slug)!;
-        const variant = p.variants.find((x) => x.id === l.variantId)!;
-        return { slug: l.slug, name: p.name, variant: variant.label, qty: l.qty, unitPrice: variant.price };
-      }),
-      subtotal,
-      // Informational only — server recalculates shipping
-      shippingAmount: liveShip.amount,
-      total: liveTotal,
+      // Only what the server needs to price the cart itself. It ignores any price sent from here.
+      items: lines.map((l) => ({ slug: l.slug, variantId: l.variantId, qty: l.qty })),
+      subtotal, // lets the server detect stale prices
       website: v('website'),
     };
 
     if (paymentMethod === 'razorpay') {
       const loaded = await loadRazorpay();
       if (!loaded) {
-        setBusy(false);
+        finish();
         setFail('Could not load payment window. Please try again or choose Cash on Delivery.');
         return;
       }
-      const order = await createRazorpayOrder(subtotal, ref, pin, state);
+      const order = await createRazorpayOrder(payload.items, subtotal, ref, pin, state);
       if (!order.ok) {
-        setBusy(false);
+        finish();
         setFail(order.message);
         return;
       }
@@ -219,7 +231,7 @@ export default function Checkout() {
             razorpay_signature: response.razorpay_signature,
             order: payload,
           });
-          setBusy(false);
+          finish();
           if (verified.ok) {
             setDone({
               ref: verified.ref || ref,
@@ -229,6 +241,7 @@ export default function Checkout() {
               payment: 'Paid online (Razorpay)',
               shippingLabel: liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
             });
+            attempt.current = null;
             clear();
           } else {
             setFail(
@@ -239,13 +252,13 @@ export default function Checkout() {
         },
         modal: {
           ondismiss: () => {
-            setBusy(false);
+            finish();
             setFail('Payment cancelled. You can try again or choose Cash on Delivery.');
           },
         },
       });
       rzp.on('payment.failed', () => {
-        setBusy(false);
+        finish();
         setFail('Payment failed. Please try again or choose Cash on Delivery.');
       });
       rzp.open();
@@ -253,7 +266,7 @@ export default function Checkout() {
     }
 
     const r = await submitOrder(payload);
-    setBusy(false);
+    finish();
     if (r.ok) {
       setDone({
         ref: r.ref || ref,
@@ -263,6 +276,7 @@ export default function Checkout() {
         payment: paymentMethod === 'upi' ? 'UPI (manual confirmation)' : 'Cash on Delivery',
         shippingLabel: liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
       });
+      attempt.current = null;
       clear();
     } else setFail(r.message || 'Could not place your order.');
   }

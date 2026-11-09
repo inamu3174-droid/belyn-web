@@ -1,4 +1,19 @@
-export const PRICES_ARE_PLACEHOLDERS = true;
+import catalog from '../../shared/catalog.json';
+
+/**
+ * Variant ids, labels and prices live ONLY in shared/catalog.json so the storefront
+ * and the server (api/*) always agree. Edit prices there, then set
+ * "placeholderPrices": false.
+ */
+export const PRICES_ARE_PLACEHOLDERS: boolean = catalog._meta.placeholderPrices;
+
+type CatalogProducts = Record<string, { name: string; variants: Record<string, { label: string; price: number }> }>;
+
+function variant(slug: string, id: string): Variant {
+  const v = (catalog.products as CatalogProducts)[slug]?.variants[id];
+  if (!v) throw new Error(`catalog.json is missing ${slug}/${id}`);
+  return { id, label: v.label, price: v.price };
+}
 
 export interface Variant {
   id: string;
@@ -70,11 +85,11 @@ export const products: Product[] = [
     bg: '#f8f0d8',
     jar: { lid: '#c4a35a', body: '#f5e6b8', label: '#fff8e7', ink: '#5c3d1e', lines: ['WHITE', 'HONEY'] },
     variants: [
-      { id: '50g', label: '50 g', price: 299 },
-      { id: '100g', label: '100 g', price: 499 },
-      { id: '200g', label: '200 g', price: 899 },
-      { id: '325g', label: '325 g', price: 1299 },
-      { id: '500g', label: '500 g', price: 1899 },
+      variant('kashmiri-white-honey', '50g'),
+      variant('kashmiri-white-honey', '100g'),
+      variant('kashmiri-white-honey', '200g'),
+      variant('kashmiri-white-honey', '325g'),
+      variant('kashmiri-white-honey', '500g'),
     ],
   },
   {
@@ -102,11 +117,11 @@ export const products: Product[] = [
     bg: '#f4e8c8',
     jar: { lid: '#b8956a', body: '#f0dcb0', label: '#fff8e8', ink: '#5c3d1e', lines: ['BUTTER', 'HONEY'] },
     variants: [
-      { id: '50g', label: '50 g', price: 299 },
-      { id: '100g', label: '100 g', price: 499 },
-      { id: '200g', label: '200 g', price: 899 },
-      { id: '325g', label: '325 g', price: 1299 },
-      { id: '500g', label: '500 g', price: 1899 },
+      variant('kashmiri-butter-honey', '50g'),
+      variant('kashmiri-butter-honey', '100g'),
+      variant('kashmiri-butter-honey', '200g'),
+      variant('kashmiri-butter-honey', '325g'),
+      variant('kashmiri-butter-honey', '500g'),
     ],
   },
   {
@@ -135,11 +150,11 @@ export const products: Product[] = [
     bg: '#e8f0d0',
     jar: { lid: '#6b5a3a', body: '#d4c890', label: '#f5f0e0', ink: '#3a2e1a', lines: ['WILD', 'FOREST'] },
     variants: [
-      { id: '50g', label: '50 g', price: 349 },
-      { id: '100g', label: '100 g', price: 599 },
-      { id: '200g', label: '200 g', price: 999 },
-      { id: '325g', label: '325 g', price: 1499 },
-      { id: '500g', label: '500 g', price: 2199 },
+      variant('kashmiri-wild-forest-honey', '50g'),
+      variant('kashmiri-wild-forest-honey', '100g'),
+      variant('kashmiri-wild-forest-honey', '200g'),
+      variant('kashmiri-wild-forest-honey', '325g'),
+      variant('kashmiri-wild-forest-honey', '500g'),
     ],
   },
   {
@@ -158,9 +173,9 @@ export const products: Product[] = [
     bg: '#f4d4b8',
     jar: { lid: '#8b3a2a', body: '#e8a87c', label: '#fff0e0', ink: '#5c1e10', lines: ['MONGRA', 'SAFFRON'] },
     variants: [
-      { id: '1g', label: '1 g', price: 1499 },
-      { id: '2g', label: '2 g', price: 2799 },
-      { id: '5g', label: '5 g', price: 6499 },
+      variant('raw-mongra-saffron', '1g'),
+      variant('raw-mongra-saffron', '2g'),
+      variant('raw-mongra-saffron', '5g'),
     ],
   },
   {
@@ -179,9 +194,9 @@ export const products: Product[] = [
     bg: '#f0c8a0',
     jar: { lid: '#9a4030', body: '#e8b080', label: '#fff4e8', ink: '#5c1e10', lines: ['IRANI', 'SAFFRON'] },
     variants: [
-      { id: '1g', label: '1 g', price: 999 },
-      { id: '2g', label: '2 g', price: 1899 },
-      { id: '5g', label: '5 g', price: 4499 },
+      variant('irani-saffron', '1g'),
+      variant('irani-saffron', '2g'),
+      variant('irani-saffron', '5g'),
     ],
   },
   {
@@ -217,10 +232,10 @@ export const products: Product[] = [
     bg: '#e8f0c8',
     jar: { lid: '#6b5a3a', body: '#d4c4a0', label: '#f5f0e0', ink: '#3a2e1a', lines: ['MAMRA', 'ALMONDS'] },
     variants: [
-      { id: '50g', label: '50 g', price: 249 },
-      { id: '100g', label: '100 g', price: 449 },
-      { id: '250g', label: '250 g', price: 999 },
-      { id: '500g', label: '500 g', price: 1899 },
+      variant('kashmiri-mamra-almonds', '50g'),
+      variant('kashmiri-mamra-almonds', '100g'),
+      variant('kashmiri-mamra-almonds', '250g'),
+      variant('kashmiri-mamra-almonds', '500g'),
     ],
   },
   {
@@ -250,10 +265,10 @@ export const products: Product[] = [
     bg: '#d8e8f0',
     jar: { lid: '#5a4a3a', body: '#c4b090', label: '#f0e8d8', ink: '#3a2e1a', lines: ['WALNUT', 'KERNELS'] },
     variants: [
-      { id: '50g', label: '50 g', price: 199 },
-      { id: '100g', label: '100 g', price: 349 },
-      { id: '250g', label: '250 g', price: 799 },
-      { id: '500g', label: '500 g', price: 1499 },
+      variant('kashmiri-walnut-kernels', '50g'),
+      variant('kashmiri-walnut-kernels', '100g'),
+      variant('kashmiri-walnut-kernels', '250g'),
+      variant('kashmiri-walnut-kernels', '500g'),
     ],
   },
   {
@@ -281,8 +296,8 @@ export const products: Product[] = [
     bg: '#d0e8d8',
     jar: { lid: '#3a5a4a', body: '#a0c4b0', label: '#e8f5ee', ink: '#1a3a2a', lines: ['SAFFRON', 'KAHWA'] },
     variants: [
-      { id: '100g', label: '100 g', price: 449 },
-      { id: '200g', label: '200 g', price: 799 },
+      variant('kashmiri-saffron-kahwa', '100g'),
+      variant('kashmiri-saffron-kahwa', '200g'),
     ],
   },
 ];

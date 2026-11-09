@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "placeholderPrices": true,
+    "note": "PLACEHOLDER prices. Replace with real prices, then set placeholderPrices to false. This is the only place prices live."
+  },
+  "products": {
+    "kashmiri-white-honey": {
+      "name": "Kashmiri White Honey",
+      "variants": {
+        "50g": {
+          "label": "50 g",
+          "price": 299
+        },
+        "100g": {
+          "label": "100 g",
+          "price": 499
+        },
+        "200g": {
+          "label": "200 g",
+          "price": 899
+        },
+        "325g": {
+          "label": "325 g",
+          "price": 1299
+        },
+        "500g": {
+          "label": "500 g",
+          "price": 1899
+        }
+      }
+    },
+    "kashmiri-butter-honey": {
+      "name": "Kashmiri Butter Honey",
+      "variants": {
+        "50g": {
+          "label": "50 g",
+          "price": 299
+        },
+        "100g": {
+          "label": "100 g",
+          "price": 499
+        },
+        "200g": {
+          "label": "200 g",
+          "price": 899
+        },
+        "325g": {
+          "label": "325 g",
+          "price": 1299
+        },
+        "500g": {
+          "label": "500 g",
+          "price": 1899
+        }
+      }
+    },
+    "kashmiri-wild-forest-honey": {
+      "name": "Kashmiri Wild Forest Honey",
+      "variants": {
+        "50g": {
+          "label": "50 g",
+          "price": 349
+        },
+        "100g": {
+          "label": "100 g",
+          "price": 599
+        },
+        "200g": {
+          "label": "200 g",
+          "price": 999
+        },
+        "325g": {
+          "label": "325 g",
+          "price": 1499
+        },
+        "500g": {
+          "label": "500 g",
+          "price": 2199
+        }
+      }
+    },
+    "raw-mongra-saffron": {
+      "name": "Raw Mongra Saffron",
+      "variants": {
+        "1g": {
+          "label": "1 g",
+          "price": 1499
+        },
+        "2g": {
+          "label": "2 g",
+          "price": 2799
+        },
+        "5g": {
+          "label": "5 g",
+          "price": 6499
+        }
+      }
+    },
+    "irani-saffron": {
+      "name": "Irani Saffron",
+      "variants": {
+        "1g": {
+          "label": "1 g",
+          "price": 999
+        },
+        "2g": {
+          "label": "2 g",
+          "price": 1899
+        },
+        "5g": {
+          "label": "5 g",
+          "price": 4499
+        }
+      }
+    },
+    "kashmiri-mamra-almonds": {
+      "name": "Kashmiri Mamra Almonds",
+      "variants": {
+        "50g": {
+          "label": "50 g",
+          "price": 249
+        },
+        "100g": {
+          "label": "100 g",
+          "price": 449
+        },
+        "250g": {
+          "label": "250 g",
+          "price": 999
+        },
+        "500g": {
+          "label": "500 g",
+          "price": 1899
+        }
+      }
+    },
+    "kashmiri-walnut-kernels": {
+      "name": "Kashmiri Raw Walnut Kernels",
+      "variants": {
+        "50g": {
+          "label": "50 g",
+          "price": 199
+        },
+        "100g": {
+          "label": "100 g",
+          "price": 349
+        },
+        "250g": {
+          "label": "250 g",
+          "price": 799
+        },
+        "500g": {
+          "label": "500 g",
+          "price": 1499
+        }
+      }
+    },
+    "kashmiri-saffron-kahwa": {
+      "name": "Kashmiri Saffron Kahwa",
+      "variants": {
+        "100g": {
+          "label": "100 g",
+          "price": 449
+        },
+        "200g": {
+          "label": "200 g",
+          "price": 799
+        }
+      }
+    }
+  }
+}

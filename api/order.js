@@ -1,98 +1,69 @@
-// Receives an order request and emails it to Belyn.
+// Cash on Delivery / manual UPI orders. Online payments go through razorpay-order + razorpay-verify.
+// The server prices the cart itself from shared/catalog.json; client prices and totals are ignored.
 import send from './_send.js';
-import { calculateShipping, orderTotal } from './_shipping.js';
+import { priceOrder } from '../shared/pricing.js';
+import { validateCustomer, cleanRef, buildOrderText } from './_order.js';
 import { createDelhiveryShipment, delhiveryConfigured } from './_delhivery.js';
 
 export default async function order(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
   const b = req.body || {};
-  if (b.website) return res.status(200).json({ ok: true });
-  if (!b.customer || !b.shipping || !Array.isArray(b.items) || !b.items.length || b.items.length > 50) {
-    return res.status(400).json({ message: 'Invalid order.' });
+  if (b.website) return res.status(200).json({ ok: true }); // honeypot
+
+  const ref = cleanRef(b.ref);
+  if (!ref) return res.status(400).json({ message: 'Invalid order reference.' });
+
+  // Paid orders must go through Razorpay verification, never through this endpoint.
+  const method = String(b.paymentMethod || '').toLowerCase();
+  if (method !== 'cod' && method !== 'upi') {
+    return res.status(400).json({ message: 'Unsupported payment method for this endpoint.' });
   }
 
-  const pin = String(b.shipping.pin || '');
-  if (!/^\d{6}$/.test(pin)) {
-    return res.status(400).json({ message: 'A valid 6-digit PIN code is required for shipping.' });
+  const v = validateCustomer(b);
+  if (!v.ok) return res.status(400).json({ message: v.message });
+
+  const priced = priceOrder(b.items, v.shipping.pin, v.shipping.state);
+  if (!priced.ok) return res.status(400).json({ message: priced.message });
+
+  // The cart on screen was priced from an older catalog: ask the customer to refresh.
+  if (b.subtotal !== undefined && Number(b.subtotal) !== priced.subtotal) {
+    return res.status(409).json({ message: 'Prices have been updated. Please refresh the page and review your cart.' });
   }
-
-  const subtotal = Math.max(0, Number(b.subtotal) || 0);
-  const ship = calculateShipping(subtotal, pin, b.shipping.state);
-  const total = orderTotal(subtotal, ship.amount);
-
-  const method = ['cod', 'upi', 'razorpay'].includes(b.paymentMethod) ? b.paymentMethod.toUpperCase() : 'COD';
 
   let delhiveryLine = 'Delhivery: not configured';
   let waybill = '';
   let trackingUrl = '';
   if (delhiveryConfigured()) {
     const d = await createDelhiveryShipment({
-      ref: b.ref,
-      paymentMethod: b.paymentMethod,
-      customer: b.customer,
-      shipping: b.shipping,
-      items: b.items,
-      subtotal,
-      total,
+      ref,
+      paymentMethod: method,
+      customer: v.customer,
+      shipping: v.shipping,
+      items: priced.lines,
+      subtotal: priced.subtotal,
+      total: priced.total,
     });
     if (d.ok && d.waybill) {
       waybill = d.waybill;
       trackingUrl = d.trackingUrl || '';
       delhiveryLine = 'Delhivery AWB: ' + waybill + (trackingUrl ? '\nTrack: ' + trackingUrl : '');
     } else {
-      delhiveryLine = 'Delhivery: failed — ' + (d.error || 'unknown error');
+      delhiveryLine = 'Delhivery: failed - ' + (d.error || 'unknown error');
     }
   }
 
-  const lines = b.items
-    .map(
-      (i) =>
-        '- ' +
-        String(i.name).slice(0, 80) +
-        ' (' +
-        String(i.variant).slice(0, 20) +
-        ') x ' +
-        (Number(i.qty) | 0) +
-        ' @ INR ' +
-        (Number(i.unitPrice) | 0),
-    )
-    .join('\n');
+  const text = buildOrderText({
+    ref,
+    payment: method.toUpperCase() + (method === 'upi' ? ' (manual confirmation)' : ' (pay on delivery)'),
+    priced,
+    customer: v.customer,
+    shipping: v.shipping,
+    notes: v.notes,
+    delhiveryLine,
+  });
 
-  const text =
-    'Order ' +
-    String(b.ref).slice(0, 30) +
-    '\nPayment: ' +
-    method +
-    '\n\n' +
-    lines +
-    '\n\nSubtotal: INR ' +
-    subtotal +
-    '\nShipping: ' +
-    (ship.free ? 'FREE' : 'INR ' + ship.amount) +
-    ' (' +
-    (ship.zone === 'jk' ? 'Jammu & Kashmir' : 'Pan-India') +
-    ')\nTotal: INR ' +
-    total +
-    '\n\n' +
-    delhiveryLine +
-    '\n\nCustomer: ' +
-    b.customer.name +
-    ' | ' +
-    b.customer.email +
-    ' | ' +
-    b.customer.phone +
-    '\nShip to: ' +
-    b.shipping.address +
-    ', ' +
-    b.shipping.city +
-    ', ' +
-    b.shipping.state +
-    ' ' +
-    pin +
-    '\nNotes: ' +
-    String(b.notes || '').slice(0, 1000);
-
-  const r = await send('New Belyn order ' + b.ref + ' (' + method + ')', text, b.customer.email);
+  // Resend de-duplicates on this key, so a double submit does not email the same order twice.
+  const r = await send(`New Belyn order ${ref} (${method.toUpperCase()})`, text, v.customer.email, `order-${ref}`);
   if (!r.configured) {
     return res.status(501).json({ message: 'Orders are not configured. Set RESEND_API_KEY and MAIL_FROM in Vercel.' });
   }
@@ -103,9 +74,10 @@ export default async function order(req, res) {
   }
   return res.status(200).json({
     ok: true,
-    ref: b.ref,
-    shipping: ship.amount,
-    total,
+    ref,
+    subtotal: priced.subtotal,
+    shipping: priced.ship.amount,
+    total: priced.total,
     waybill: waybill || undefined,
     trackingUrl: trackingUrl || undefined,
   });
