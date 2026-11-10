@@ -9,9 +9,12 @@ import QuickView from './QuickView';
 import WishlistButton from './WishlistButton';
 
 /**
- * Product card.
- * - default: compact card used on the home page showcase (unchanged layout)
- * - detailed: collection/search/wishlist grids, with variants, rating, quick view
+ * One product card, two layouts:
+ *  - compact (default): image, ADD button on the image, name, rating, price. Used on the home page.
+ *  - detailed: adds size chips, Add to cart and Quick view. Used on collection, search and wishlist grids.
+ *
+ * On a compact card, ADD adds straight to the cart when the product has one size;
+ * with several sizes it opens quick view so the customer picks the size first.
  */
 export default function ProductCard({ product, detailed = false }: { product: Product; detailed?: boolean }) {
   const { add } = useCart();
@@ -23,23 +26,33 @@ export default function ProductCard({ product, detailed = false }: { product: Pr
 
   const v = (detailed && product.variants.find((x) => x.id === variantId)) || first;
   const vSold = !v.inStock;
+  const multi = product.variants.length > 1;
+
+  function flash() {
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1400);
+  }
 
   function onAdd(e?: React.MouseEvent) {
     e?.preventDefault();
     e?.stopPropagation();
     if (vSold) return;
+    if (!detailed && multi) {
+      setQuick(true);
+      return;
+    }
     add(product.slug, v.id, 1);
-    setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 1400);
+    flash();
   }
 
   const off = discountPercent(v);
+  const href = `/product/${product.slug}`;
 
   return (
-    <article className={`pcard${detailed ? ' pcard--detailed' : ''}`}>
+    <article className={`pcard ${detailed ? 'pcard--detailed' : 'pcard--compact'}`}>
       <div className="pcard__media" style={{ ['--card' as string]: product.bg }}>
         <Link
-          to={`/product/${product.slug}`}
+          to={href}
           className="pcard__link"
           aria-label={`${product.name}${soldOut ? ', sold out' : `, from ${formatPrice(first.price)}`}`}
         >
@@ -47,48 +60,47 @@ export default function ProductCard({ product, detailed = false }: { product: Pr
         </Link>
         {soldOut && <span className="pcard__badge pcard__badge--sold">Sold out</span>}
         {!soldOut && off > 0 && <span className="pcard__badge">{off}% off</span>}
-        {detailed && <WishlistButton slug={product.slug} name={product.name} className="pcard__wish" />}
-        <div className="pcard__hover">
-          <span className="pcard__tag">{product.short}</span>
-          <span className="pcard__hname">{product.name}</span>
-          <span className="pcard__price">
-            From {formatPrice(first.price)}
-            {PRICES_ARE_PLACEHOLDERS && <em> placeholder price</em>}
-          </span>
-          <button type="button" className="pcard__quick" onClick={onAdd} disabled={soldOut}>
-            {soldOut ? 'Sold out' : justAdded ? 'Added ✓' : 'Add to cart +'}
-          </button>
-        </div>
-      </div>
-
-      <div className="pcard__meta">
-        <div>
-          <h3 className="pcard__name">
-            <Link to={`/product/${product.slug}`} className="pcard__namelink">
-              {product.name}
-            </Link>
-          </h3>
-          {detailed && product.rating && <Rating value={product.rating.value} count={product.rating.count} />}
-          {detailed ? (
-            <PriceLine price={v.price} compareAt={v.compareAt} placeholder={PRICES_ARE_PLACEHOLDERS} />
-          ) : (
-            <p className="pcard__from">
-              {soldOut ? 'Sold out' : <>From {formatPrice(first.price)}</>}
-              {PRICES_ARE_PLACEHOLDERS && <em className="ph-tag">Placeholder price</em>}
-            </p>
-          )}
-        </div>
+        <WishlistButton slug={product.slug} name={product.name} className="pcard__wish" />
         {!detailed && (
           <button
             type="button"
-            className="pcard__add"
-            aria-label={soldOut ? `${product.name} is sold out` : `Add ${product.name} ${v.label} to cart`}
+            className="pcard__addpill"
             onClick={onAdd}
             disabled={soldOut}
+            aria-label={
+              soldOut
+                ? `${product.name} is sold out`
+                : multi
+                  ? `Choose a size for ${product.name}`
+                  : `Add ${product.name} to cart`
+            }
           >
-            {justAdded ? '✓' : '+'}
+            {soldOut ? 'Sold out' : justAdded ? 'Added ✓' : 'ADD +'}
           </button>
         )}
+      </div>
+
+      <div className="pcard__meta">
+        <div className="pcard__info">
+          <h3 className="pcard__name">
+            <Link to={href} className="pcard__namelink">
+              {product.name}
+            </Link>
+          </h3>
+          {product.rating && <Rating value={product.rating.value} count={product.rating.count} />}
+          {detailed ? (
+            <PriceLine price={v.price} compareAt={v.compareAt} placeholder={PRICES_ARE_PLACEHOLDERS} />
+          ) : soldOut ? (
+            <p className="pcard__from">Sold out</p>
+          ) : (
+            <PriceLine
+              price={first.price}
+              compareAt={first.compareAt}
+              placeholder={PRICES_ARE_PLACEHOLDERS}
+              from={multi}
+            />
+          )}
+        </div>
       </div>
 
       {detailed && (

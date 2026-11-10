@@ -7,6 +7,7 @@ import CartDrawer from './components/CartDrawer';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import Wishlist from './pages/Wishlist';
+import Account from './pages/Account';
 import Product from './pages/Product';
 import Story from './pages/Story';
 import Contact from './pages/Contact';
@@ -44,6 +45,7 @@ function Routes() {
   else if (clean === '/shop') page = <Collection slug="all" />;
   else if (clean.startsWith('/collections/')) page = <Collection slug={clean.split('/')[2]} />;
   else if (clean === '/wishlist') page = <Wishlist />;
+  else if (clean === '/account') page = <Account />;
   else if (clean.startsWith('/product/')) page = <Product slug={clean.split('/')[2]} />;
   else if (clean === '/story') page = <Story />;
   else if (clean === '/contact') page = <Contact />;

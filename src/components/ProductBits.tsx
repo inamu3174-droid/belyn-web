@@ -21,14 +21,18 @@ export function PriceLine({
   price,
   compareAt,
   placeholder,
+  from = false,
 }: {
   price: number;
   compareAt?: number;
   placeholder?: boolean;
+  /** show "From" before the price (cards that stand for several sizes) */
+  from?: boolean;
 }) {
   const off = discountPercent({ price, compareAt });
   return (
     <p className="priceline">
+      {from && <span className="priceline__from">From</span>}
       <span className="priceline__now">{formatPrice(price)}</span>
       {off > 0 && compareAt && (
         <>

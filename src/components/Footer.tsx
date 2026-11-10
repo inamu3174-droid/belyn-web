@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import Matter from 'matter-js';
 import { Link } from '../lib/router';
 import { site } from '../data/site';
+import { liveCollections } from '../data/home';
+import NewsletterForm from './NewsletterForm';
 
 const LETTERS = ['B', 'E', 'L', 'Y', 'N'];
 
@@ -150,16 +152,42 @@ export default function Footer() {
     <footer className="foot">
       <h2 className="sr-only">BELYN</h2>
       <Wordmark />
-      <nav className="foot__nav" aria-label="Footer">
-        <Link to="/shop">Shop</Link>
-        <Link to="/story">Our Story</Link>
-        <Link to="/contact">Contact</Link>
-        {site.instagram && (
-          <a href={site.instagram} target="_blank" rel="noopener noreferrer">
-            Instagram
-          </a>
-        )}
-      </nav>
+      <div className="foot__cols">
+        <div className="foot__col foot__col--wide">
+          <h3>BELYN</h3>
+          <p className="foot__about">Born in Kashmir. Crafted with Purity.</p>
+          <NewsletterForm id="nl-foot" />
+        </div>
+        <nav className="foot__col" aria-label="Shop">
+          <h3>Shop</h3>
+          <ul>
+            <li><Link to="/shop">Shop all</Link></li>
+            {liveCollections().map((c) => (
+              <li key={c.slug}><Link to={`/collections/${c.slug}`}>{c.title}</Link></li>
+            ))}
+            <li><Link to="/wishlist">Wishlist</Link></li>
+          </ul>
+        </nav>
+        <nav className="foot__col" aria-label="Company">
+          <h3>Company</h3>
+          <ul>
+            <li><Link to="/story">Our Story</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/account">Your account</Link></li>
+            {site.instagram && (
+              <li><a href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            )}
+          </ul>
+        </nav>
+        <nav className="foot__col" aria-label="Policies">
+          <h3>Policies</h3>
+          <ul>
+            <li><Link to="/policies/shipping">Shipping Policy</Link></li>
+            <li><Link to="/policies/privacy">Privacy Policy</Link></li>
+            <li><Link to="/policies/terms">Terms &amp; Conditions</Link></li>
+          </ul>
+        </nav>
+      </div>
       <div className="foot__legal">
         <p>
           &copy; {new Date().getFullYear()} BELYN. {site.short}

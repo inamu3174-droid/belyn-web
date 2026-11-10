@@ -1,10 +1,12 @@
-import Hero from '../components/Hero';
-import FeatureStrip from '../components/FeatureStrip';
-import ProductShowcase from '../components/ProductShowcase';
-import TextRows from '../components/TextRows';
-import SplitFeature from '../components/SplitFeature';
+import HeroSlider from '../components/home/HeroSlider';
+import Welcome from '../components/home/Welcome';
+import Pillars from '../components/home/Pillars';
+import Editorial from '../components/home/Editorial';
+import FocusSections from '../components/home/FocusSections';
+import Faq from '../components/home/Faq';
+import Reviews from '../components/home/Reviews';
+import Newsletter from '../components/home/Newsletter';
 import StorySection from '../components/StorySection';
-import Journal from '../components/Journal';
 import { useSeo } from '../lib/seo';
 
 export default function Home() {
@@ -14,21 +16,16 @@ export default function Home() {
     path: '/',
   });
   return (
-    <>
-      <Hero />
-      <div className="sheet">
-        <FeatureStrip />
-        <hr className="rule" />
-        <ProductShowcase />
-        <hr className="rule" />
-        <TextRows />
-        <SplitFeature />
-        <hr className="rule" />
-        <StorySection />
-        <hr className="rule" />
-        <Journal />
-        <hr className="rule rule--end" />
-      </div>
-    </>
+    <main className="home">
+      <HeroSlider />
+      <Welcome />
+      <Editorial />
+      <FocusSections />
+      <Pillars />
+      <StorySection />
+      <Faq />
+      <Reviews />
+      <Newsletter />
+    </main>
   );
 }

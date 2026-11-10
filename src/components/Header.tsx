@@ -6,6 +6,7 @@ import { collections } from '../data/collections';
 import { searchProducts, startingPrice } from '../lib/catalog';
 import { useWishlist } from '../lib/saved';
 import { ProductVisual } from './Art';
+import { announcements } from '../data/home';
 import '../shop.css';
 
 const Bag = () => (
@@ -39,6 +40,8 @@ const menuSections = [
     links: [
       { label: 'Contact Us', to: '/contact' },
       { label: 'Shipping Policy', to: '/policies/shipping' },
+      { label: 'Privacy Policy', to: '/policies/privacy' },
+      { label: 'Terms & Conditions', to: '/policies/terms' },
     ],
   },
 ];
@@ -159,8 +162,14 @@ export default function Header() {
         <DesktopNav />
 
         <div className="header__right">
-          <Link to="/wishlist" className="icon-btn hdr-icon" aria-label={`Wishlist, ${wishCount} saved`}>
+          <Link to="/wishlist" className="icon-btn hdr-icon hdr-wish" aria-label={`Wishlist, ${wishCount} saved`}>
             {heart}
+          </Link>
+          <Link to="/account" className="icon-btn hdr-icon" aria-label="Your account">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c1-4.2 4-6 8-6s7 1.8 8 6" />
+            </svg>
           </Link>
           <button className="icon-btn hdr-icon" aria-label="Search products" onClick={() => setSearchOpen(true)}>
             <SearchIcon />
@@ -178,24 +187,16 @@ export default function Header() {
 
       <div className="announce" role="region" aria-label="Brand promise">
         <div className="announce__track">
-          <p className="announce__group">
-            <span>100% PURE &amp; RAW</span>
-            <span className="announce__sep" aria-hidden="true">|</span>
-            <span>DIRECT FROM KASHMIR</span>
-            <span className="announce__sep" aria-hidden="true">|</span>
-            <span>LAB TESTED FOR PURITY</span>
-            <span className="announce__sep" aria-hidden="true">|</span>
-            <span>NATURE, LEFT UNALTERED</span>
-          </p>
-          <p className="announce__group" aria-hidden="true">
-            <span>100% PURE &amp; RAW</span>
-            <span className="announce__sep">|</span>
-            <span>DIRECT FROM KASHMIR</span>
-            <span className="announce__sep">|</span>
-            <span>LAB TESTED FOR PURITY</span>
-            <span className="announce__sep">|</span>
-            <span>NATURE, LEFT UNALTERED</span>
-          </p>
+          {[false, true].map((dup) => (
+            <p key={String(dup)} className="announce__group" aria-hidden={dup || undefined}>
+              {announcements.map((t, i) => (
+                <span key={t} className="announce__piece">
+                  {i > 0 && <span className="announce__sep" aria-hidden="true">|</span>}
+                  <span>{t}</span>
+                </span>
+              ))}
+            </p>
+          ))}
         </div>
       </div>
 
@@ -275,6 +276,12 @@ export default function Header() {
 
       <div id="mobile-menu" className={`mobile-menu menu-panels ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
         <div className="menu-panels__inner">
+          <div className="menu-greet">
+            <p>Hey there <span aria-hidden="true">👋</span></p>
+            <Link to="/account" className="shop-btn shop-btn--primary" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)}>
+              Profile
+            </Link>
+          </div>
           {menuSections.map((section) => (
             <section key={section.title} className="menu-panel">
               <h3 className="menu-panel__title">{section.title}</h3>

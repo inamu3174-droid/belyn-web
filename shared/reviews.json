@@ -1,0 +1,4 @@
+{
+  "_note": "Real customer reviews only. The home page review section stays hidden while this list is empty. Each entry: { \"name\": \"\", \"rating\": 5, \"text\": \"\", \"product\": \"Kashmiri White Honey\", \"photo\": \"/images/reviews/example.jpg (optional)\" }",
+  "reviews": []
+}
