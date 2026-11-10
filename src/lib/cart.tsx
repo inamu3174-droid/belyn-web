@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { getProduct } from '../data/products';
+import { SAMPLE_KIT_SLUG, getPurchasable } from '../data/products';
 
 export interface CartLine {
   slug: string;
@@ -13,6 +13,8 @@ interface CartCtx {
   lines: CartLine[];
   count: number;
   subtotal: number;
+  /** subtotal of items that pay shipping (everything except the Sample Kit, whose price includes it) */
+  shipBase: number;
   open: boolean;
   setOpen: (v: boolean) => void;
   add: (slug: string, variantId: string, qty?: number) => void;
@@ -27,7 +29,7 @@ const load = (): CartLine[] => {
     const raw = JSON.parse(localStorage.getItem(KEY) || '[]');
     if (!Array.isArray(raw)) return [];
     // drop anything that no longer exists in the catalog
-    return raw.filter((l: CartLine) => getProduct(l.slug)?.variants.some((v) => v.id === l.variantId) && l.qty > 0);
+    return raw.filter((l: CartLine) => getPurchasable(l.slug)?.variants.some((v) => v.id === l.variantId) && l.qty > 0);
   } catch {
     return [];
   }
@@ -67,13 +69,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartCtx>(() => {
     let subtotal = 0;
+    let shipBase = 0;
     let count = 0;
     for (const l of lines) {
-      const v = getProduct(l.slug)?.variants.find((x) => x.id === l.variantId);
-      if (v) subtotal += v.price * l.qty;
+      const v = getPurchasable(l.slug)?.variants.find((x) => x.id === l.variantId);
+      if (v) {
+        subtotal += v.price * l.qty;
+        if (l.slug !== SAMPLE_KIT_SLUG) shipBase += v.price * l.qty;
+      }
       count += l.qty;
     }
-    return { lines, count, subtotal, open, setOpen, add, setQty, remove, clear };
+    return { lines, count, subtotal, shipBase, open, setOpen, add, setQty, remove, clear };
   }, [lines, open, add, setQty, remove, clear]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

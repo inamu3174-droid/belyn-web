@@ -20,6 +20,8 @@ export type ShippingResult = {
   zone: 'jk' | 'pan' | 'pending';
   label: string;
   note: string;
+  /** true when shipping is already inside the price (Sample Kit only) */
+  included?: boolean;
 };
 
 /**
@@ -28,8 +30,12 @@ export type ShippingResult = {
  * - Across India: flat ₹150
  * - Incomplete PIN: pending (UI can show “enter PIN”)
  */
-export function calculateShipping(subtotal: number, pin: string, state = ''): ShippingResult {
-  const sub = Math.max(0, Number(subtotal) || 0);
+export function calculateShipping(subtotal: number, pin: string, state = '', shipBase = subtotal): ShippingResult {
+  // Sample Kit only: its price already includes shipping
+  if (subtotal > 0 && shipBase <= 0) {
+    return { amount: 0, free: true, zone: 'pan', label: 'Included', note: 'Shipping is included in the Sample Kit price.', included: true };
+  }
+  const sub = Math.max(0, Number(shipBase) || 0);
   const digits = String(pin || '').replace(/\D/g, '');
 
   if (digits.length > 0 && digits.length < 6) {

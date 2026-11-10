@@ -8,5 +8,6 @@ import './home-top.css';
 import './shop.css';
 import './home.css';
 import './home-rest.css';
+import './explore.css';
 
 createRoot(document.getElementById('root')!).render(<App />);

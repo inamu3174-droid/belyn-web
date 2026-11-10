@@ -8,6 +8,10 @@ import Home from './pages/Home';
 import Collection from './pages/Collection';
 import Wishlist from './pages/Wishlist';
 import Account from './pages/Account';
+import ShopAll from './pages/explore/ShopAll';
+import Featured from './pages/explore/Featured';
+import SampleKit from './pages/explore/SampleKit';
+import BuildBox from './pages/explore/BuildBox';
 import Product from './pages/Product';
 import Story from './pages/Story';
 import Contact from './pages/Contact';
@@ -42,7 +46,10 @@ function Routes() {
 
   let page;
   if (clean === '/') page = <Home />;
-  else if (clean === '/shop') page = <Collection slug="all" />;
+  else if (clean === '/shop') page = <ShopAll />;
+  else if (clean === '/featured') page = <Featured />;
+  else if (clean === '/sample-kit') page = <SampleKit />;
+  else if (clean === '/build-your-own-box') page = <BuildBox />;
   else if (clean.startsWith('/collections/')) page = <Collection slug={clean.split('/')[2]} />;
   else if (clean === '/wishlist') page = <Wishlist />;
   else if (clean === '/account') page = <Account />;

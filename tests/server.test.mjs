@@ -44,6 +44,20 @@ test('pricing: server uses catalog prices, ignores client prices', () => {
   assert.equal(p.total, unit * 2 + 150);
 });
 
+test('pricing: Sample Kit is Rs 999 with shipping included; other items still pay shipping', () => {
+  const kitOnly = priceOrder([{ slug: 'sample-kit', variantId: 'kit', qty: 2 }], '110001', 'Delhi');
+  assert.equal(kitOnly.ok, true);
+  assert.equal(kitOnly.subtotal, 1998);
+  assert.equal(kitOnly.ship.amount, 0);
+  assert.equal(kitOnly.total, 1998);
+  const unit = catalog.products['kashmiri-white-honey'].variants['50g'].price;
+  const mixed = priceOrder([{ slug: 'sample-kit', variantId: 'kit', qty: 1 }, { slug: 'kashmiri-white-honey', variantId: '50g', qty: 1 }], '110001', 'Delhi');
+  assert.equal(mixed.total, 999 + unit + 150);
+  // a kit must not push a small J&K honey order over the free-shipping line
+  const jk = priceOrder([{ slug: 'sample-kit', variantId: 'kit', qty: 1 }, { slug: 'kashmiri-white-honey', variantId: '50g', qty: 1 }], '190001', 'Jammu and Kashmir');
+  assert.equal(jk.ship.amount, unit >= 600 ? 0 : 100);
+});
+
 test('pricing: merges duplicate lines, accepts label fallback, rejects bad input', () => {
   const label = catalog.products[slug].variants[vid].label;
   const m = priceOrder([{ slug, variantId: vid, qty: 1 }, { slug, variant: label, qty: 2 }], '110001', '');

@@ -280,5 +280,18 @@
         }
       }
     }
+  },
+  "bundles": {
+    "sample-kit": {
+      "name": "BELYN Sample Kit",
+      "shippingIncluded": true,
+      "variants": {
+        "kit": {
+          "label": "Sample Kit",
+          "price": 999,
+          "inStock": true
+        }
+      }
+    }
   }
 }

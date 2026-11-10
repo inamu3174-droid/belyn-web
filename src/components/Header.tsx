@@ -43,9 +43,9 @@ const menuSections = [
     links: [
       { label: 'Home', to: '/' },
       { label: 'Shop All Products', to: '/shop' },
-      { label: 'Featured Products', to: '/#featured' },
-      { label: 'Sample Kit', to: '/contact?topic=sample' },
-      { label: 'Build Your Own Box', to: '/contact?topic=custom' },
+      { label: 'Featured Products', to: '/featured' },
+      { label: 'Sample Kit', to: '/sample-kit' },
+      { label: 'Build Your Own Box', to: '/build-your-own-box' },
     ],
   },
   {

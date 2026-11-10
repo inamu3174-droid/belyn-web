@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from '../lib/router';
 import { useCart } from '../lib/cart';
-import { formatPrice, getProduct } from '../data/products';
+import { formatPrice, getPurchasable, productHref } from '../data/products';
 import { JK_FREE_THRESHOLD, INDIA_SHIPPING } from '../lib/shipping';
 import { ProductVisual } from './Art';
 
@@ -45,7 +45,7 @@ export default function CartDrawer() {
           <>
             <div className="drawer__lines">
               {lines.map((l) => {
-                const p = getProduct(l.slug);
+                const p = getPurchasable(l.slug);
                 if (!p) return null;
                 const variant = p.variants.find((v) => v.id === l.variantId);
                 if (!variant) return null;
@@ -55,7 +55,7 @@ export default function CartDrawer() {
                       <ProductVisual product={p} />
                     </div>
                     <div>
-                      <Link to={`/product/${p.slug}`} className="cline__name" onClick={() => setOpen(false)}>
+                      <Link to={productHref(p.slug)} className="cline__name" onClick={() => setOpen(false)}>
                         {p.name}
                       </Link>
                       <p className="cline__var">{variant.label}</p>

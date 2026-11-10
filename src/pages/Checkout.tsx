@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useCart } from '../lib/cart';
 import { Link } from '../lib/router';
-import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct } from '../data/products';
+import { PRICES_ARE_PLACEHOLDERS, formatPrice, getPurchasable } from '../data/products';
 import { ProductVisual } from '../components/Art';
 import { submitOrder, createRazorpayOrder, verifyRazorpayPayment, loadRazorpay } from '../lib/api';
 import { calculateShipping, orderTotal } from '../lib/shipping';
@@ -80,7 +80,7 @@ function CheckoutField({
 
 export default function Checkout() {
   useSeo({ title: 'Checkout', description: 'Complete your Belyn order.', path: '/checkout', noindex: true });
-  const { lines, subtotal, clear } = useCart();
+  const { lines, subtotal, shipBase, clear } = useCart();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [fail, setFail] = useState('');
@@ -93,11 +93,11 @@ export default function Checkout() {
   // One order reference per distinct cart+payment attempt, reused on retries (so a retry is the same order)
   const attempt = useRef<{ key: string; ref: string } | null>(null);
 
-  const ship = useMemo(() => calculateShipping(subtotal, pinVal, stateVal), [subtotal, pinVal, stateVal]);
+  const ship = useMemo(() => calculateShipping(subtotal, pinVal, stateVal, shipBase), [subtotal, pinVal, stateVal, shipBase]);
   const total = orderTotal(subtotal, ship.zone === 'pending' ? 0 : ship.amount);
   const payable = ship.zone === 'pending' ? subtotal : total;
   const shippingDisplay =
-    ship.zone === 'pending' ? ship.label : ship.free ? 'FREE' : formatPrice(ship.amount);
+    ship.zone === 'pending' ? ship.label : ship.included ? 'Included' : ship.free ? 'FREE' : formatPrice(ship.amount);
 
   useEffect(() => {
     const id = 'belyn-checkout-fonts';
@@ -172,7 +172,7 @@ export default function Checkout() {
       setBusy(false);
     };
 
-    const liveShip = calculateShipping(subtotal, pin, state);
+    const liveShip = calculateShipping(subtotal, pin, state, shipBase);
     const liveTotal = orderTotal(subtotal, liveShip.amount);
 
     setBusy(true);
@@ -239,7 +239,7 @@ export default function Checkout() {
               total: verified.total ?? order.total,
               email: v('email'),
               payment: 'Paid online (Razorpay)',
-              shippingLabel: liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
+              shippingLabel: liveShip.included ? 'Included' : liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
             });
             attempt.current = null;
             clear();
@@ -274,7 +274,7 @@ export default function Checkout() {
         total: r.total ?? liveTotal,
         email: v('email'),
         payment: paymentMethod === 'upi' ? 'UPI (manual confirmation)' : 'Cash on Delivery',
-        shippingLabel: liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
+        shippingLabel: liveShip.included ? 'Included' : liveShip.free ? 'FREE' : formatPrice(liveShip.amount),
       });
       attempt.current = null;
       clear();
@@ -414,7 +414,7 @@ export default function Checkout() {
             <h2 className="co-summary-title">Order summary</h2>
             <ul className="co-lines">
               {lines.map((l) => {
-                const p = getProduct(l.slug)!;
+                const p = getPurchasable(l.slug)!;
                 const variant = p.variants.find((x) => x.id === l.variantId)!;
                 return (
                   <li key={l.slug + l.variantId} className="co-line">
@@ -441,12 +441,12 @@ export default function Checkout() {
                 <span>Shipping</span>
                 <span className={ship.free ? 'co-ship-free' : undefined}>{shippingDisplay}</span>
               </div>
-              {ship.free && (
+              {ship.free && !ship.included && (
                 <p className="co-ship-badge" role="status">
                   Free shipping · Jammu & Kashmir
                 </p>
               )}
-              {ship.zone !== 'pending' && !ship.free && (
+              {ship.zone !== 'pending' && (!ship.free || ship.included) && (
                 <p className="co-note">{ship.note}</p>
               )}
               {ship.zone === 'pending' && <p className="co-note">{ship.note}</p>}

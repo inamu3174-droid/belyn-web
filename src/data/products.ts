@@ -334,6 +334,30 @@ export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);
 }
 
+/** The Sample Kit is a priced bundle, not a catalogue product: it is not listed in the shop or search. */
+export const SAMPLE_KIT_SLUG = 'sample-kit';
+const kit = (catalog as unknown as { bundles: Record<string, { name: string; variants: Record<string, CatalogVariant> }> }).bundles[SAMPLE_KIT_SLUG];
+export const sampleKit: Product = {
+  slug: SAMPLE_KIT_SLUG,
+  category: 'gift-boxes',
+  keywords: [],
+  bestseller: false,
+  name: kit.name,
+  short: 'Sample Kit',
+  description: 'A little taste of Kashmir.',
+  bg: '#f2ecdc',
+  jar: { lid: '#0b5d49', body: '#f5e6b8', label: '#fff8e7', ink: '#0b5d49', lines: ['SAMPLE', 'KIT'] },
+  variants: [{ id: 'kit', label: kit.variants.kit.label, price: kit.variants.kit.price, inStock: kit.variants.kit.inStock !== false }],
+};
+
+/** Anything that can sit in the cart: a catalogue product or the Sample Kit. */
+export function getPurchasable(slug: string): Product | undefined {
+  return slug === SAMPLE_KIT_SLUG ? sampleKit : getProduct(slug);
+}
+
+/** Where a cart line links to. */
+export const productHref = (slug: string) => (slug === SAMPLE_KIT_SLUG ? '/sample-kit' : `/product/${slug}`);
+
 export function formatPrice(n: number): string {
   return '₹' + n.toLocaleString('en-IN');
 }

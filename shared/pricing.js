@@ -19,7 +19,9 @@ export function priceOrder(items, pin, state) {
   const merged = new Map();
   for (const raw of items) {
     const slug = String(raw?.slug || '');
-    const product = catalog.products[slug];
+    // a bundle (the Sample Kit) is priced like a product but its price already includes shipping
+    const bundle = catalog.bundles?.[slug];
+    const product = catalog.products[slug] || bundle;
     if (!product) return { ok: false, message: 'A product in your cart is no longer available.' };
 
     let variantId = String(raw?.variantId || '');
@@ -50,11 +52,15 @@ export function priceOrder(items, pin, state) {
       variant: variant.label,
       qty: nextQty,
       unitPrice: variant.price,
+      shippingIncluded: !!bundle?.shippingIncluded,
     });
   }
 
   const lines = [...merged.values()].map((l) => ({ ...l, lineTotal: l.unitPrice * l.qty }));
   const subtotal = lines.reduce((n, l) => n + l.lineTotal, 0);
-  const ship = shippingCharge(subtotal, pin, state);
+  // Shipping is worked out on everything except shipping-included bundles; a kit-only order ships free.
+  const shipBase = lines.filter((l) => !l.shippingIncluded).reduce((n, l) => n + l.lineTotal, 0);
+  const zoned = shippingCharge(shipBase, pin, state);
+  const ship = shipBase === 0 ? { amount: 0, free: true, zone: zoned.zone } : zoned;
   return { ok: true, lines, subtotal, ship, total: orderTotal(subtotal, ship.amount) };
 }
