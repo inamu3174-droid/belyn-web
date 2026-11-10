@@ -47,3 +47,4 @@
 .ctab__label { font-size: 13px; font-weight: 500; }
 .ctab.is-on .ctab__disc { border-color: var(--deep-green); transform: translateY(-2px); }
 .ctab.is-on .ctab__label { font-weight: 600; color: var(--deep-green); }
+.home { padding-top: var(--hdr-stack); }
