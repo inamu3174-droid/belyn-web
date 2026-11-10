@@ -1,1 +1,22 @@
-PLACEHOLDER_HOME_CSS
+/* Home page and shared storefront sections. Brand palette only (deep green / ivory / gold / brown). */
+.h-sec { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 3vw, 40px); line-height: 1.1; margin: 0; color: var(--deep-green); text-align: center; }
+.home > section:not(.hs) { padding: clamp(36px, 6vw, 72px) var(--pad); }
+.home { background: var(--warm-ivory); }
+
+/* Hero slider — full-bleed promo banners */
+.hs { position: relative; overflow: hidden; background: #0a1a12; }
+.hs__track { display: flex; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.hs__slide { flex: 0 0 100%; min-height: 0; padding: 0; }
+.hs__slide--banner { display: block; }
+.hs__banner-link { display: block; line-height: 0; }
+.hs__banner-img { width: 100%; height: auto; max-height: min(72vh, 640px); object-fit: cover; object-position: center; aspect-ratio: 16 / 9; }
+.hs__nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(248,246,239,.55); background: rgba(248,246,239,.92); color: var(--deep-green); font-size: 22px; line-height: 1; cursor: pointer; }
+.hs__nav--prev { left: 12px; } .hs__nav--next { right: 12px; }
+.hs__dots { position: absolute; bottom: 14px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px; z-index: 2; }
+.hs__dot { width: 28px; height: 28px; border: 0; background: none; cursor: pointer; position: relative; }
+.hs__dot::after { content: ''; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px; border-radius: 50%; background: rgba(248,246,239,.45); transition: width .25s, background .25s, margin .25s; }
+.hs__dot.is-on::after { width: 22px; margin-left: -11px; border-radius: 6px; background: var(--warm-ivory); }
+@media (max-width: 720px) {
+  .hs__banner-img { max-height: min(52vh, 420px); aspect-ratio: 4 / 3; }
+  .hs__nav { display: none; }
+}
