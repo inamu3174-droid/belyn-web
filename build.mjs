@@ -9,7 +9,6 @@ const dist = path.join(root, 'dist');
 const serve = process.argv.includes('--serve');
 const SITE_URL = (process.env.VITE_SITE_URL || 'https://www.belyn.in').replace(/\/$/, '');
 
-// Expose VITE_* variables to the client bundle (public values only, never secrets).
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => k.startsWith('VITE_')));
 env.VITE_SITE_URL = SITE_URL;
 
@@ -17,12 +16,28 @@ const copyDir = (from, to) => {
   if (!fs.existsSync(from)) return;
   fs.mkdirSync(to, { recursive: true });
   for (const f of fs.readdirSync(from, { withFileTypes: true })) {
-    const a = path.join(from, f.name), b = path.join(to, f.name);
+    const a = path.join(from, f.name),
+      b = path.join(to, f.name);
     f.isDirectory() ? copyDir(a, b) : fs.copyFileSync(a, b);
   }
 };
 
+/** Materialize hero WebP images from base64 text assets (avoids binary git tooling limits). */
+function materializeHeroImages() {
+  const srcDir = path.join(root, 'src/assets/hero');
+  const outDir = path.join(root, 'public/images/hero');
+  if (!fs.existsSync(srcDir)) return;
+  fs.mkdirSync(outDir, { recursive: true });
+  for (const f of fs.readdirSync(srcDir)) {
+    if (!f.endsWith('.b64')) continue;
+    const name = f.replace(/\.b64$/, '');
+    const b64 = fs.readFileSync(path.join(srcDir, f), 'utf8').replace(/\s+/g, '');
+    fs.writeFileSync(path.join(outDir, name), Buffer.from(b64, 'base64'));
+  }
+}
+
 async function writeStatic(meta) {
+  materializeHeroImages();
   copyDir(path.join(root, 'public'), dist);
   const outputs = Object.keys(meta.outputs);
   const js = outputs.find((o) => o.endsWith('.js'));
@@ -32,7 +47,6 @@ async function writeStatic(meta) {
   html = html.replaceAll('%SITE_URL%', SITE_URL).replace('%JS%', rel(js)).replace('%CSS%', rel(css));
   fs.writeFileSync(path.join(dist, 'index.html'), html);
 
-  // robots + sitemap (slugs read from the product data file)
   const src = fs.readFileSync(path.join(root, 'src/data/products.ts'), 'utf8');
   const slugs = [...src.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1]);
   const colSrc = fs.readFileSync(path.join(root, 'src/data/collections.ts'), 'utf8');
@@ -69,6 +83,7 @@ const opts = {
         b.onStart(() => {
           if (!serve) fs.rmSync(dist, { recursive: true, force: true });
           fs.mkdirSync(dist, { recursive: true });
+          materializeHeroImages();
         });
         b.onEnd(async (r) => {
           if (r.metafile) await writeStatic(r.metafile);
@@ -84,7 +99,19 @@ if (!serve) {
 } else {
   const ctx = await esbuild.context(opts);
   await ctx.watch();
-  const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.woff': 'font/woff', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.xml': 'text/xml', '.txt': 'text/plain', '.map': 'application/json' };
+  const mime = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.svg': 'image/svg+xml',
+    '.woff': 'font/woff',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.xml': 'text/xml',
+    '.txt': 'text/plain',
+    '.map': 'application/json',
+  };
   const port = Number(process.env.PORT) || 5173;
   http
     .createServer((req, res) => {
