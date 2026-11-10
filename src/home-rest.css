@@ -254,3 +254,12 @@
 .policy-block h2 { font: 600 28px var(--serif); margin: 0 0 8px; color: var(--deep-green); }
 .policy-block h3 { font: 600 13px var(--sans); letter-spacing: .12em; text-transform: uppercase; margin: 18px 0 6px; color: var(--muted-gold); }
 .policy-block p { margin: 0 0 8px; }
+
+/* ---- Desktop header: logo exactly centred, navigation on its own row beneath ---- */
+@media (min-width: 1100px) {
+  :root { --hdr: 108px; }
+  .header--ref .header__inner { grid-template-columns: 1fr auto 1fr; grid-template-rows: 64px 44px; column-gap: 24px; row-gap: 0; align-items: center; }
+  .header--ref .logo { grid-column: 2; grid-row: 1; justify-self: center; }
+  .header--ref .header__right { grid-column: 3; grid-row: 1; }
+  .header--ref .dnav { grid-column: 1 / -1; grid-row: 2; justify-content: center; gap: clamp(22px, 3vw, 44px); border-top: 1px solid var(--line); height: 100%; }
+}
