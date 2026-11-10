@@ -68,11 +68,7 @@
 .menu-scrim { z-index: 65; }
 .menu-panels__inner { max-width: none; margin: 0; gap: 0; padding: 0 0 28px; min-height: 100%; }
 .menu-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--line); }
-.menu-top__logo img { height: 28px; width: auto; }
 .menu-top__close { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: none; font-size: 24px; line-height: 1; color: var(--deep-green); cursor: pointer; }
-.menu-greet { padding: 20px 20px 18px; border-bottom: 1px solid var(--line); margin: 0; }
-.menu-greet p { font: 600 28px var(--serif); margin: 0 0 12px; color: var(--deep-green); }
-.menu-greet .shop-btn { width: 100%; }
 .menu-panels .menu-panel { background: none; border: 0; border-radius: 0; padding: 18px 20px 6px; }
 .menu-panels .menu-panel__title { color: var(--muted-gold); margin-bottom: 4px; }
 .menu-panels .menu-panel__list { list-style: none; margin: 0; padding: 0; }

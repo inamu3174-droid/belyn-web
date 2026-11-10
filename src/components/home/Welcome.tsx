@@ -63,7 +63,7 @@ export default function Welcome() {
   }
 
   return (
-    <section className="wel" aria-labelledby="welcome-title">
+    <section className="wel" id="featured" aria-labelledby="welcome-title">
       <header className="wel__head">
         <h2 id="welcome-title" className="wel__title">
           <span className="wel__rule" aria-hidden="true" />

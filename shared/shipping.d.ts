@@ -1,5 +1,6 @@
 export const JK_FREE_THRESHOLD: number;
-export const FLAT_SHIPPING: number;
+export const JK_SHIPPING: number;
+export const INDIA_SHIPPING: number;
 export function isJammuKashmirPin(pin: string): boolean;
 export function isJammuKashmirState(state: string): boolean;
 export function isJammuKashmir(pin: string, state?: string): boolean;

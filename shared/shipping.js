@@ -2,10 +2,11 @@
 // Used by the storefront (src/lib/shipping.ts) and the server (api/*).
 //
 //   Jammu & Kashmir : Rs 100 below Rs 600, FREE at Rs 600 or more
-//   Rest of India   : Rs 100 flat
+//   Rest of India   : Rs 150 flat
 
 export const JK_FREE_THRESHOLD = 600;
-export const FLAT_SHIPPING = 100;
+export const JK_SHIPPING = 100;
+export const INDIA_SHIPPING = 150;
 
 /** Jammu & Kashmir / Ladakh PIN prefixes: 180 to 194 */
 export function isJammuKashmirPin(pin) {
@@ -35,9 +36,9 @@ export function shippingCharge(subtotal, pin, state) {
   const sub = Math.max(0, Number(subtotal) || 0);
   if (isJammuKashmir(pin, state)) {
     if (sub >= JK_FREE_THRESHOLD) return { amount: 0, free: true, zone: 'jk' };
-    return { amount: FLAT_SHIPPING, free: false, zone: 'jk' };
+    return { amount: JK_SHIPPING, free: false, zone: 'jk' };
   }
-  return { amount: FLAT_SHIPPING, free: false, zone: 'pan' };
+  return { amount: INDIA_SHIPPING, free: false, zone: 'pan' };
 }
 
 /** Shipping is charged once, here: goods subtotal + shipping. */

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useRouter } from '../lib/router';
 import { useCart } from '../lib/cart';
 import { formatPrice } from '../data/products';
@@ -23,26 +23,54 @@ const SearchIcon = () => (
   </svg>
 );
 
+const I = (d: ReactNode) => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {d}
+  </svg>
+);
+const menuIcons = {
+  explore: I(<><rect x="4" y="4" width="6.5" height="6.5" rx="1.6" /><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6" /><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6" /><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6" /></>),
+  gifting: I(<><rect x="3.5" y="9" width="17" height="11" rx="1.5" /><path d="M3.5 13h17M12 9v11M12 9c-1.5-4.5-5.5-4-5.5-1.8C6.5 8.4 8 9 12 9Zm0 0c1.5-4.5 5.5-4 5.5-1.8C17.5 8.4 16 9 12 9Z" /></>),
+  brand: I(<><path d="M12 21V11" /><path d="M12 11c0-4 3-6 7-6 0 4-2 7-7 6Z" /><path d="M12 14c0-3-2-5-6-5 0 3 2 6 6 5Z" /></>),
+  support: I(<><path d="M4 13v-1a8 8 0 0 1 16 0v1" /><rect x="3" y="13" width="4" height="6" rx="1.5" /><rect x="17" y="13" width="4" height="6" rx="1.5" /><path d="M19 19c0 1.5-2 2-4 2" /></>),
+};
+
+/** Navigation drawer content. Every link goes to a working page, section or pre-filled enquiry. */
 const menuSections = [
   {
-    title: 'SHOP',
+    title: 'Explore',
+    icon: menuIcons.explore,
     links: [
-      { label: 'Shop All', to: '/shop' },
-      ...collections.map((c) => ({ label: c.title, to: `/collections/${c.slug}` })),
-      { label: 'Wishlist', to: '/wishlist' },
+      { label: 'Home', to: '/' },
+      { label: 'Shop All Products', to: '/shop' },
+      { label: 'Featured Products', to: '/#featured' },
+      { label: 'Sample Kit', to: '/contact?topic=sample' },
+      { label: 'Build Your Own Box', to: '/contact?topic=custom' },
     ],
   },
   {
-    title: 'OUR BRAND',
-    links: [{ label: 'Our Story', to: '/story' }],
+    title: 'Gifting',
+    icon: menuIcons.gifting,
+    links: [
+      { label: 'Festive Gifting', to: '/contact?topic=festive' },
+      { label: 'Corporate Gifting', to: '/contact?topic=corporate' },
+    ],
   },
   {
-    title: 'SUPPORT',
+    title: 'Our Brand',
+    icon: menuIcons.brand,
     links: [
+      { label: 'Our Story', to: '/story' },
+      { label: 'The BELYN Promise', to: '/#promise' },
+    ],
+  },
+  {
+    title: 'Business & Support',
+    icon: menuIcons.support,
+    links: [
+      { label: 'Wholesale', to: '/contact?topic=wholesale' },
       { label: 'Contact Us', to: '/contact' },
       { label: 'Shipping Policy', to: '/policies/shipping' },
-      { label: 'Privacy Policy', to: '/policies/privacy' },
-      { label: 'Terms & Conditions', to: '/policies/terms' },
     ],
   },
 ];
@@ -278,22 +306,26 @@ export default function Header() {
       <div id="mobile-menu" className={`mobile-menu menu-panels ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
         <div className="menu-panels__inner">
           <div className="menu-top">
-            <Link to="/" className="menu-top__logo" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} aria-label="Belyn home">
-              <img src="/images/logo.png" alt="Belyn" width="76" height="30" />
-            </Link>
             <button type="button" className="menu-top__close" tabIndex={menu ? 0 : -1} aria-label="Close menu" onClick={() => setMenu(false)}>
-              ×
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" /></svg>
             </button>
           </div>
-          <div className="menu-greet">
-            <p>Hey there <span aria-hidden="true">👋</span></p>
-            <Link to="/account" className="shop-btn shop-btn--primary" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)}>
-              Profile
+          <div className="menu-hello">
+            <div>
+              <p className="menu-hello__title">Hey there <span aria-hidden="true">👋</span></p>
+              <p className="menu-hello__sub">Discover a little Kashmir.</p>
+            </div>
+            <Link to="/account" className="menu-hello__btn" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)}>
+              My Account
             </Link>
           </div>
           {menuSections.map((section) => (
             <section key={section.title} className="menu-panel">
-              <h3 className="menu-panel__title">{section.title}</h3>
+              <h3 className="menu-panel__title">
+                <span className="menu-panel__icon">{section.icon}</span>
+                <span className="menu-panel__bar" aria-hidden="true" />
+                {section.title}
+              </h3>
               <ul className="menu-panel__list">
                 {section.links.map((link) => (
                   <li key={link.label}>

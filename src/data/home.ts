@@ -1,5 +1,5 @@
 import { collections, productsIn, type Collection } from './collections';
-import { JK_FREE_THRESHOLD, FLAT_SHIPPING } from '../lib/shipping';
+import { JK_FREE_THRESHOLD, JK_SHIPPING, INDIA_SHIPPING } from '../lib/shipping';
 
 /**
  * Homepage content, in one place. Edit copy here; nothing else on the home page hard-codes text.
@@ -9,9 +9,11 @@ import { JK_FREE_THRESHOLD, FLAT_SHIPPING } from '../lib/shipping';
 /** Messages in the slim bar above the header (shown in a loop). */
 export const announcements: string[] = [
   '100% PURE & RAW',
-  'DIRECT FROM KASHMIR',
+  'ROOTED IN KASHMIR',
+  'NO ADDED SUGAR',
   'LAB TESTED FOR PURITY',
-  'NATURE, LEFT UNALTERED',
+  'THOUGHTFULLY SELECTED',
+  'MADE WITH CARE',
 ];
 
 /** Collections that have at least one product (empty ones such as gift boxes are left out until stocked). */
@@ -71,7 +73,7 @@ export const pillars = [
   {
     id: 'delivery',
     title: 'Delivered With Care',
-    text: `Shipped across India. Free shipping in Jammu & Kashmir from ₹${JK_FREE_THRESHOLD}; ₹${FLAT_SHIPPING} flat elsewhere.`,
+    text: `Shipped across India. Free shipping in Jammu & Kashmir from ₹${JK_FREE_THRESHOLD}; ₹${INDIA_SHIPPING} flat elsewhere.`,
   },
 ] as const;
 
@@ -79,7 +81,7 @@ export const faqs = (contact: { email: string; phone: string }) => [
   { q: 'Where do BELYN products come from?', a: 'BELYN products come from Kashmir, India.' },
   {
     q: 'How much is shipping?',
-    a: `Orders within Jammu & Kashmir ship free from ₹${JK_FREE_THRESHOLD} and cost ₹${FLAT_SHIPPING} below that. Everywhere else in India is a flat ₹${FLAT_SHIPPING}. The charge is shown in your cart and at checkout before you pay.`,
+    a: `Orders within Jammu & Kashmir ship free from ₹${JK_FREE_THRESHOLD} and cost ₹${JK_SHIPPING} below that. Everywhere else in India is a flat ₹${INDIA_SHIPPING}. The charge is shown in your cart and at checkout before you pay.`,
   },
   {
     q: 'How can I pay?',
@@ -135,3 +137,9 @@ export const giftingTabs = [
 ] as const;
 
 export type GiftingId = (typeof giftingTabs)[number]['id'];
+
+/** /contact?topic=<id> pre-fills the message. Gifting topics plus wholesale. */
+export const enquiryMessages: Record<string, string> = {
+  ...Object.fromEntries(giftingTabs.map((g) => [g.id, g.message])),
+  wholesale: 'Hello BELYN, I would like to enquire about wholesale. Business name and quantity needed: ',
+};

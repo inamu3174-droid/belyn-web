@@ -31,7 +31,7 @@ const icons: Record<string, JSX.Element> = {
 
 export default function Pillars() {
   return (
-    <section className="pillars" aria-labelledby="why-title">
+    <section className="pillars" id="promise" aria-labelledby="why-title">
       <h2 id="why-title" className="h-sec">
         Why Choose BELYN?
       </h2>

@@ -27,10 +27,10 @@ const base = (over = {}) => ({
   ...over,
 });
 
-test('shipping: J&K free at 600, 100 below, pan-India flat 100', () => {
+test('shipping: J&K free at 600, 100 below, pan-India flat 150', () => {
   assert.deepEqual(shippingCharge(599, '190001', ''), { amount: 100, free: false, zone: 'jk' });
   assert.deepEqual(shippingCharge(600, '190001', ''), { amount: 0, free: true, zone: 'jk' });
-  assert.deepEqual(shippingCharge(5000, '110001', 'Delhi'), { amount: 100, free: false, zone: 'pan' });
+  assert.deepEqual(shippingCharge(5000, '110001', 'Delhi'), { amount: 150, free: false, zone: 'pan' });
   assert.equal(shippingCharge(5000, '110001', 'Kashmir').zone, 'pan', 'a full PIN outranks the state text');
   assert.equal(shippingCharge(100, '', 'Ladakh').zone, 'jk');
   assert.equal(orderTotal(500, 100), 600, 'shipping is added exactly once');
@@ -41,7 +41,7 @@ test('pricing: server uses catalog prices, ignores client prices', () => {
   assert.equal(p.ok, true);
   assert.equal(p.subtotal, unit * 2);
   assert.equal(p.lines[0].unitPrice, unit);
-  assert.equal(p.total, unit * 2 + 100);
+  assert.equal(p.total, unit * 2 + 150);
 });
 
 test('pricing: merges duplicate lines, accepts label fallback, rejects bad input', () => {

@@ -3,6 +3,7 @@ import Welcome from '../components/home/Welcome';
 import Pillars from '../components/home/Pillars';
 import Editorial from '../components/home/Editorial';
 import FocusSections from '../components/home/FocusSections';
+import ShippingInfo from '../components/home/ShippingInfo';
 import Faq from '../components/home/Faq';
 import Reviews from '../components/home/Reviews';
 import Newsletter from '../components/home/Newsletter';
@@ -23,6 +24,7 @@ export default function Home() {
       <FocusSections />
       <Pillars />
       <StorySection />
+      <ShippingInfo />
       <Faq />
       <Reviews />
       <Newsletter />

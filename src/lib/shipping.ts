@@ -4,13 +4,14 @@
  */
 import {
   JK_FREE_THRESHOLD,
-  FLAT_SHIPPING,
+  JK_SHIPPING,
+  INDIA_SHIPPING,
   isJammuKashmirState,
   shippingCharge,
   orderTotal,
 } from '../../shared/shipping.js';
 
-export { JK_FREE_THRESHOLD, FLAT_SHIPPING, orderTotal };
+export { JK_FREE_THRESHOLD, JK_SHIPPING, INDIA_SHIPPING, orderTotal };
 export { isJammuKashmirPin, isJammuKashmirState, isJammuKashmir } from '../../shared/shipping.js';
 
 export type ShippingResult = {
@@ -24,7 +25,7 @@ export type ShippingResult = {
 /**
  * Automatic shipping:
  * - J&K: free at ₹600+, else ₹100
- * - Pan-India: always ₹100
+ * - Across India: flat ₹150
  * - Incomplete PIN: pending (UI can show “enter PIN”)
  */
 export function calculateShipping(subtotal: number, pin: string, state = ''): ShippingResult {
@@ -48,7 +49,7 @@ export function calculateShipping(subtotal: number, pin: string, state = ''): Sh
       free: false,
       zone: 'pending',
       label: 'At checkout',
-      note: 'J&K: free above ₹600. Elsewhere: ₹100 flat.',
+      note: `J&K: free from ₹${JK_FREE_THRESHOLD}. Across India: flat ₹${INDIA_SHIPPING}.`,
     };
   }
 
@@ -78,6 +79,6 @@ export function calculateShipping(subtotal: number, pin: string, state = ''): Sh
     free: false,
     zone: 'pan',
     label: `₹${c.amount}`,
-    note: `Flat ₹${FLAT_SHIPPING} shipping across India outside Jammu & Kashmir.`,
+    note: `Flat ₹${INDIA_SHIPPING} shipping across India outside Jammu & Kashmir.`,
   };
 }

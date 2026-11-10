@@ -23,7 +23,11 @@ export function Router({ children }: { children: ReactNode }) {
     window.history.pushState({}, '', url.pathname + url.search + url.hash);
     setPath(url.pathname);
     if (url.hash) {
-      requestAnimationFrame(() => document.querySelector(url.hash)?.scrollIntoView());
+      const jump = () => document.querySelector(url.hash)?.scrollIntoView();
+      requestAnimationFrame(() => {
+        if (document.querySelector(url.hash)) jump();
+        else window.setTimeout(jump, 150); // page is still mounting
+      });
     } else {
       window.scrollTo({ top: 0 });
     }

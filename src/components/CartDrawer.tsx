@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link } from '../lib/router';
 import { useCart } from '../lib/cart';
 import { formatPrice, getProduct } from '../data/products';
-import { JK_FREE_THRESHOLD, FLAT_SHIPPING } from '../lib/shipping';
+import { JK_FREE_THRESHOLD, INDIA_SHIPPING } from '../lib/shipping';
 import { ProductVisual } from './Art';
 
 export default function CartDrawer() {
@@ -89,7 +89,7 @@ export default function CartDrawer() {
                 <span>At checkout</span>
               </div>
               <p className="note" style={{ margin: '0 0 8px' }}>
-                J&K: free on orders of {formatPrice(JK_FREE_THRESHOLD)}+. Elsewhere: flat {formatPrice(FLAT_SHIPPING)}.
+                J&K: free on orders of {formatPrice(JK_FREE_THRESHOLD)}+. Elsewhere: flat {formatPrice(INDIA_SHIPPING)}.
               </p>
               <Link to="/checkout" className="btn btn--dark btn--block" onClick={() => setOpen(false)}>
                 Checkout · {formatPrice(subtotal)}

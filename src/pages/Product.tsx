@@ -331,7 +331,7 @@ export default function Product({ slug }: { slug: string }) {
               <h3 className="pdpx-faq-title">How much is shipping?</h3>
               <p>
                 Orders within Jammu &amp; Kashmir ship free from ₹600 and cost ₹100 below that. Everywhere else in India
-                is a flat ₹100.
+                is a flat ₹150.
               </p>
               {product.care && (
                 <>
@@ -353,7 +353,7 @@ export default function Product({ slug }: { slug: string }) {
             <Accordion title="Shipping">
               <p>
                 Delivery details are on the <Link to="/policies/shipping">Shipping Policy</Link> page. J&K orders of
-                ₹600 or more ship free; other destinations have a flat ₹100 fee.
+                ₹600 or more ship free; other destinations have a flat ₹150 fee.
               </p>
             </Accordion>
           </div>
