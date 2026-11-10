@@ -29,25 +29,25 @@ export const heroSlides = (): HeroSlide[] => [
   {
     id: 'shop',
     title: 'Shop Now at Belyn.in — Born in Kashmir. Crafted with Purity.',
-    image: '/images/hero/hero-shop.webp',
+    image: '/images/shop.webp',
     primary: { label: 'Shop Now', to: '/shop' },
   },
   {
     id: 'saffron',
     title: 'Up to 40% off on Saffron',
-    image: '/images/hero/hero-saffron.webp',
+    image: '/images/saffron.webp',
     primary: { label: 'Shop Now', to: '/collections/saffron' },
   },
   {
     id: 'honey',
     title: 'Up to 40% off on all Honey',
-    image: '/images/hero/hero-honey.webp',
+    image: '/images/honey.webp',
     primary: { label: 'Shop Now', to: '/collections/honey' },
   },
   {
     id: 'dry-fruits',
     title: 'Up to 50% off on all Dry Fruits',
-    image: '/images/hero/hero-dryfruits.webp',
+    image: '/images/dryfruits.webp',
     primary: { label: 'Shop Now', to: '/collections/dry-fruits' },
   },
 ];
