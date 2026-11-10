@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '../../lib/router';
 import { heroSlides } from '../../data/home';
-import { Scene } from '../Art';
 
 const INTERVAL = 6500;
 
@@ -49,30 +48,24 @@ export default function HeroSlider() {
         {slides.map((s, n) => (
           <article
             key={s.id}
-            className="hs__slide"
+            className="hs__slide hs__slide--banner"
             role="group"
             aria-roledescription="slide"
-            aria-label={`${n + 1} of ${slides.length}`}
+            aria-label={`${n + 1} of ${slides.length}: ${s.title}`}
             aria-hidden={n !== i}
           >
-            <div className="hs__art">
-              <Scene kind={s.kind} />
-            </div>
-            <div className="hs__copy">
-              <p className="hs__eyebrow">{s.eyebrow}</p>
-              <h1 className="hs__title" {...(n === 0 ? {} : { role: 'heading', 'aria-level': 2 })}>
-                {s.title}
-              </h1>
-              <p className="hs__body">{s.body}</p>
-              <div className="hs__cta">
-                <Link to={s.primary.to} className="shop-btn shop-btn--primary" tabIndex={n === i ? 0 : -1}>
-                  {s.primary.label}
-                </Link>
-                <Link to={s.secondary.to} className="shop-btn shop-btn--ghost hs__ghost" tabIndex={n === i ? 0 : -1}>
-                  {s.secondary.label}
-                </Link>
-              </div>
-            </div>
+            <Link to={s.primary.to} className="hs__banner-link" tabIndex={n === i ? 0 : -1}>
+              <img
+                className="hs__banner-img"
+                src={s.image}
+                alt={s.title}
+                width={1200}
+                height={675}
+                loading={n === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+              <span className="sr-only">{s.primary.label}</span>
+            </Link>
           </article>
         ))}
       </div>

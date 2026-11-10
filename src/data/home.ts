@@ -19,34 +19,37 @@ export const liveCollections = (): Collection[] => collections.filter((c) => pro
 
 export interface HeroSlide {
   id: string;
-  eyebrow: string;
   title: string;
-  body: string;
-  kind: 'honey' | 'saffron' | 'walnut' | 'almond' | 'kahwa';
+  image: string;
   primary: { label: string; to: string };
-  secondary: { label: string; to: string };
 }
 
-/** Brand slide first, then one slide per live collection (copy comes from the collection itself). */
+/** Four promotional banner images for the hero carousel. */
 export const heroSlides = (): HeroSlide[] => [
   {
-    id: 'brand',
-    eyebrow: 'BELYN',
-    title: 'Purely from Kashmir.',
-    body: 'Honey, saffron, dry fruits and kahwa from the valley, delivered across India.',
-    kind: 'honey',
+    id: 'shop',
+    title: 'Shop Now at Belyn.in — Born in Kashmir. Crafted with Purity.',
+    image: '/images/hero/hero-shop.webp',
     primary: { label: 'Shop Now', to: '/shop' },
-    secondary: { label: 'Our Story', to: '/story' },
   },
-  ...liveCollections().map<HeroSlide>((c) => ({
-    id: c.slug,
-    eyebrow: 'Collection',
-    title: c.title,
-    body: c.intro,
-    kind: c.kind,
-    primary: { label: 'Shop Now', to: `/collections/${c.slug}` },
-    secondary: { label: 'Explore Collection', to: `/collections/${c.slug}` },
-  })),
+  {
+    id: 'saffron',
+    title: 'Up to 40% off on Saffron',
+    image: '/images/hero/hero-saffron.webp',
+    primary: { label: 'Shop Now', to: '/collections/saffron' },
+  },
+  {
+    id: 'honey',
+    title: 'Up to 40% off on all Honey',
+    image: '/images/hero/hero-honey.webp',
+    primary: { label: 'Shop Now', to: '/collections/honey' },
+  },
+  {
+    id: 'dry-fruits',
+    title: 'Up to 50% off on all Dry Fruits',
+    image: '/images/hero/hero-dryfruits.webp',
+    primary: { label: 'Shop Now', to: '/collections/dry-fruits' },
+  },
 ];
 
 export const pillars = [
