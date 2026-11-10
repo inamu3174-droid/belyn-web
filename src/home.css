@@ -20,3 +20,16 @@
   .hs__banner-img { max-height: min(52vh, 420px); aspect-ratio: 4 / 3; }
   .hs__nav { display: none; }
 }
+
+/* Welcome: category tabs + grid */
+.wel__head { text-align: center; margin-bottom: 22px; }
+.wel__sub { margin: 8px 0 0; color: var(--gray); letter-spacing: .08em; font-size: 13px; text-transform: uppercase; }
+.ctabs { display: flex; gap: clamp(14px, 3vw, 34px); justify-content: safe center; overflow-x: auto; padding: 4px 2px 14px; scrollbar-width: none; }
+.ctabs::-webkit-scrollbar { display: none; }
+.ctab { background: none; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 0 0 auto; font-family: var(--sans); color: var(--coffee-brown); }
+.ctab__disc { width: clamp(64px, 14vw, 92px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--soft-cream); display: grid; place-items: center; border: 2px solid transparent; transition: border-color .2s, transform .2s; }
+.ctab__disc svg { width: 78%; height: auto; }
+.ctab__all { font-family: var(--serif); font-weight: 600; font-size: 34px; color: var(--deep-green); }
+.ctab__label { font-size: 13px; font-weight: 500; }
+.ctab.is-on .ctab__disc { border-color: var(--deep-green); transform: translateY(-2px); }
+.ctab.is-on .ctab__label { font-weight: 600; color: var(--deep-green); }
