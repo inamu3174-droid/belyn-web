@@ -7,6 +7,7 @@ import { searchProducts, startingPrice } from '../lib/catalog';
 import { useWishlist } from '../lib/saved';
 import { ProductVisual } from './Art';
 import { announcements } from '../data/home';
+import { site } from '../data/site';
 import '../shop.css';
 
 const Bag = () => (
@@ -276,6 +277,14 @@ export default function Header() {
 
       <div id="mobile-menu" className={`mobile-menu menu-panels ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
         <div className="menu-panels__inner">
+          <div className="menu-top">
+            <Link to="/" className="menu-top__logo" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} aria-label="Belyn home">
+              <img src="/images/logo.svg" alt="Belyn" width="96" height="30" />
+            </Link>
+            <button type="button" className="menu-top__close" tabIndex={menu ? 0 : -1} aria-label="Close menu" onClick={() => setMenu(false)}>
+              ×
+            </button>
+          </div>
           <div className="menu-greet">
             <p>Hey there <span aria-hidden="true">👋</span></p>
             <Link to="/account" className="shop-btn shop-btn--primary" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)}>
@@ -296,6 +305,10 @@ export default function Header() {
               </ul>
             </section>
           ))}
+          <div className="menu-foot">
+            {site.email && <a href={`mailto:${site.email}`} tabIndex={menu ? 0 : -1}>{site.email}</a>}
+            {site.phone && <a href={`tel:${site.phone.replace(/\s/g, '')}`} tabIndex={menu ? 0 : -1}>{site.phone}</a>}
+          </div>
         </div>
       </div>
     </header>

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { site } from '../data/site';
 import { submitContact } from '../lib/api';
 import { useSeo } from '../lib/seo';
+import { giftingTabs } from '../data/home';
 
 type Status = 'idle' | 'sending' | 'sent' | 'demo' | 'error';
 const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -11,6 +12,9 @@ export default function Contact() {
   const [status, setStatus] = useState<Status>('idle');
   const [err, setErr] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // /contact?topic=festive pre-fills the message (only known topics are used)
+  const topic = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('topic') : null;
+  const prefill = giftingTabs.find((g) => g.id === topic)?.message;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -197,6 +201,7 @@ export default function Contact() {
             label="Message"
             name="message"
             textarea
+            defaultValue={prefill}
             placeholder="How can we help?"
             error={errors.message}
           />

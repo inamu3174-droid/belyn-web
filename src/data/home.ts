@@ -94,3 +94,44 @@ export const faqs = (contact: { email: string; phone: string }) => [
     a: `Email ${contact.email}${contact.phone ? ` or call ${contact.phone}` : ''}, or use the contact page.`,
   },
 ];
+
+/**
+ * Gifting tabs under "Welcome to BELYN". There are no gift-box products yet, so each opens an enquiry
+ * (the contact form, pre-filled) instead of a product grid. Replace with real collections once stocked.
+ */
+export const giftingTabs = [
+  {
+    id: 'festive',
+    label: 'Festive Gifting',
+    icon: 'gift',
+    title: 'Festive Gifting',
+    text: 'Planning gifts for a festival or celebration? Tell us what you have in mind and we will put together a selection from BELYN products.',
+    message: 'Hello BELYN, I would like to enquire about festive gifting. ',
+  },
+  {
+    id: 'corporate',
+    label: 'Corporate Gifting',
+    icon: 'office',
+    title: 'Corporate Gifting',
+    text: 'Gifts for clients, teams or events. Share the quantity and timeline and we will get back to you directly.',
+    message: 'Hello BELYN, I would like to enquire about corporate gifting. Quantity needed: ',
+  },
+  {
+    id: 'custom',
+    label: 'Build Your Own Box',
+    icon: 'box',
+    title: 'Build Your Own Box',
+    text: 'Choose the BELYN products you want in one box. Tell us your picks and we will confirm availability and the total.',
+    message: 'Hello BELYN, I would like to build my own box with these products: ',
+  },
+  {
+    id: 'sample',
+    label: 'Sample Kit',
+    icon: 'bag',
+    title: 'Sample Kit',
+    text: 'Want to try BELYN before a bigger order? Ask us about sample options and we will tell you what is available.',
+    message: 'Hello BELYN, I would like to know about sample kit options. ',
+  },
+] as const;
+
+export type GiftingId = (typeof giftingTabs)[number]['id'];

@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: clamp(12px, 2vw, 22px);
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   align-items: start;
 }
@@ -167,9 +167,11 @@
 @media (max-width: 760px) { .foot__cols { grid-template-columns: 1fr 1fr; } .foot__col--wide { grid-column: 1 / -1; } }
 
 /* Nav drawer greeting */
-.menu-greet { padding: 4px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
-.menu-greet p { font: 600 22px var(--serif); margin: 0 0 10px; color: var(--deep-green); }
 @media (max-width: 520px) { .hdr-wish { display: none; } }
 
 /* Account */
 .acct { max-width: 860px; margin: 0 auto; }
+
+@media (min-width: 1024px) {
+  .pgrid { grid-template-columns: repeat(4, 1fr); }
+}
