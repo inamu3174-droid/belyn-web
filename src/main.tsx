@@ -7,5 +7,6 @@ import './checkout-shipping.css';
 import './home-top.css';
 import './shop.css';
 import './home.css';
+import './home-rest.css';
 
 createRoot(document.getElementById('root')!).render(<App />);

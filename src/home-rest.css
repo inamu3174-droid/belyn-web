@@ -1,0 +1,88 @@
+/* Compact product card */
+.pcard--compact .pcard__media { aspect-ratio: 4 / 5; }
+.pcard--compact .pcard__link { display: grid; place-items: center; width: 100%; height: 100%; }
+.pcard--compact .pcard__img { width: 62%; transition: transform .35s; }
+.pcard--compact:hover .pcard__img { transform: scale(1.04); }
+.pcard__addpill { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 3; min-height: 36px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--deep-green); background: var(--warm-ivory); color: var(--deep-green); font: 600 12px var(--sans); letter-spacing: .06em; cursor: pointer; white-space: nowrap; transition: background .2s, color .2s; }
+.pcard__addpill:hover:not(:disabled) { background: var(--deep-green); color: var(--warm-ivory); }
+.pcard__addpill:disabled { opacity: .6; cursor: not-allowed; }
+.pcard--compact .pcard__meta { padding: 10px 2px 0; }
+.pcard--compact .pcard__name { font: 600 14px/1.3 var(--sans); margin: 0 0 4px; }
+.pcard--compact .pcard__namelink { color: var(--deep-green); text-decoration: none; }
+.pcard__from { margin: 0; font-size: 13px; color: var(--gray); }
+.priceline__from { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--gray); margin-right: 6px; }
+
+/* Pillars */
+.pillars { background: var(--soft-cream); }
+.pillars__grid { list-style: none; margin: 28px auto 0; padding: 0; max-width: 1100px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.pillar { text-align: center; color: var(--deep-green); }
+.pillar__icon { margin: 0 auto 12px; }
+.pillar__title { font: 600 20px var(--serif); margin: 0 0 6px; }
+.pillar__text { margin: 0; font-size: 14px; color: var(--coffee-brown); }
+@media (max-width: 820px) { .pillars__grid { grid-template-columns: repeat(2, 1fr); gap: 22px 14px; } }
+
+/* Editorial */
+.edit__title { font: 600 clamp(30px, 4.4vw, 56px)/1.05 var(--serif); text-align: center; margin: 0; color: var(--deep-green); }
+.edit__sub { text-align: center; margin: 8px 0 26px; color: var(--gray); }
+.edit__rail { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; max-width: 1200px; margin: 0 auto; }
+.ecard { display: flex; flex-direction: column; text-decoration: none; color: var(--deep-green); border-radius: var(--r); overflow: hidden; background: var(--soft-cream); transition: transform .25s; }
+.ecard:hover { transform: translateY(-3px); }
+.ecard__img { aspect-ratio: 4 / 3; display: grid; place-items: center; background: var(--warm-ivory); }
+.ecard__img svg { width: 55%; height: auto; }
+.ecard__body { padding: 16px 18px 20px; }
+.ecard__title { font: 600 20px var(--serif); margin: 0 0 6px; }
+.ecard__text { margin: 0; font-size: 14px; color: var(--coffee-brown); }
+
+/* Focus / story blocks */
+.focus { display: grid; gap: 40px; }
+.focus__row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; max-width: 1100px; margin: 0 auto; }
+.focus__row--flip { direction: rtl; }
+.focus__row--flip > * { direction: ltr; }
+.focus__copy h2 { font: 600 clamp(24px, 3vw, 36px)/1.1 var(--serif); margin: 0 0 10px; color: var(--deep-green); }
+.focus__copy p { margin: 0 0 16px; color: var(--coffee-brown); }
+@media (max-width: 760px) { .focus__row, .focus__row--flip { grid-template-columns: 1fr; direction: ltr; } }
+
+/* FAQ */
+.faq__list { max-width: 720px; margin: 24px auto 0; }
+.faq__item { border-bottom: 1px solid var(--line); }
+.faq__item summary { list-style: none; cursor: pointer; padding: 14px 28px 14px 0; font: 600 16px var(--sans); color: var(--deep-green); position: relative; }
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary::after { content: '+'; position: absolute; right: 4px; top: 12px; font-size: 22px; }
+.faq__item[open] summary::after { content: '−'; }
+.faq__item p { margin: 0 0 16px; color: var(--coffee-brown); font-size: 15px; }
+
+/* Reviews */
+.rev { margin: 0; padding: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--warm-ivory); }
+.rev blockquote { margin: 8px 0; font-size: 15px; }
+.rev figcaption { font-size: 13px; color: var(--gray); }
+.rev__photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+
+/* Newsletter */
+.newsl { text-align: center; background: var(--deep-green); color: var(--warm-ivory); }
+.newsl .h-sec { color: var(--warm-ivory); }
+.newsl > p { margin: 8px 0 18px; opacity: .9; }
+.nl { max-width: 460px; margin: 0 auto; }
+.nl__row { display: flex; gap: 8px; }
+.nl__row input[type='email'] { flex: 1; min-width: 0; min-height: 46px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--warm-ivory); background: var(--warm-ivory); color: var(--ink); font: 400 14px var(--sans); }
+.nl__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.newsl .shop-btn--primary { background: var(--muted-gold); border-color: var(--muted-gold); color: var(--ink); }
+.nl__msg { min-height: 20px; margin: 8px 0 0; font-size: 13px; }
+.nl__msg.is-err { color: #ffd9c9; }
+@media (max-width: 480px) { .nl__row { flex-direction: column; } }
+
+/* Footer columns */
+.foot__cols { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 28px; padding: 36px var(--pad); border-top: 1px solid var(--line); }
+.foot__col h3 { font: 600 13px var(--sans); letter-spacing: .12em; text-transform: uppercase; margin: 0 0 12px; color: var(--muted-gold); }
+.foot__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.foot__col a { text-decoration: none; font-size: 14px; }
+.foot__col a:hover { text-decoration: underline; }
+.foot__about { margin: 0 0 12px; font-size: 14px; max-width: 34ch; }
+@media (max-width: 760px) { .foot__cols { grid-template-columns: 1fr 1fr; } .foot__col--wide { grid-column: 1 / -1; } }
+
+/* Nav drawer greeting */
+.menu-greet { padding: 4px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.menu-greet p { font: 600 22px var(--serif); margin: 0 0 10px; color: var(--deep-green); }
+@media (max-width: 520px) { .hdr-wish { display: none; } }
+
+/* Account */
+.acct { max-width: 860px; margin: 0 auto; }
