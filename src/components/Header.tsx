@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useRouter } from '../lib/router';
 import { useCart } from '../lib/cart';
-import { products } from '../data/products';
+import { formatPrice } from '../data/products';
+import { collections } from '../data/collections';
+import { searchProducts, startingPrice } from '../lib/catalog';
+import { useWishlist } from '../lib/saved';
+import { ProductVisual } from './Art';
+import '../shop.css';
 
 const Bag = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
@@ -18,38 +23,84 @@ const SearchIcon = () => (
 
 const menuSections = [
   {
-    title: 'EXPLORE',
+    title: 'SHOP',
     links: [
-      { label: 'Home', to: '/' },
-      { label: 'Shop All Products', to: '/shop' },
-      { label: 'Best Sellers', to: '/#best-sellers' },
-      { label: 'Sample Kit', to: '/shop' },
-    ],
-  },
-  {
-    title: 'GIFTING',
-    links: [
-      { label: 'Festive Gifting', to: '/shop' },
-      { label: 'Corporate Gifting', to: '/shop' },
-      { label: 'Build Your Own Box', to: '/shop' },
+      { label: 'Shop All', to: '/shop' },
+      ...collections.map((c) => ({ label: c.title, to: `/collections/${c.slug}` })),
+      { label: 'Wishlist', to: '/wishlist' },
     ],
   },
   {
     title: 'OUR BRAND',
-    links: [
-      { label: 'Our Story', to: '/story' },
-      { label: 'The BELYN Promise', to: '/story' },
-      { label: 'The People Behind BELYN', to: '/story' },
-    ],
+    links: [{ label: 'Our Story', to: '/story' }],
   },
   {
-    title: 'BUSINESS & SUPPORT',
+    title: 'SUPPORT',
     links: [
-      { label: 'Wholesale', to: '/contact' },
       { label: 'Contact Us', to: '/contact' },
+      { label: 'Shipping Policy', to: '/policies/shipping' },
     ],
   },
 ];
+
+const heart = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+    <path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9Z" />
+  </svg>
+);
+
+function DesktopNav() {
+  const dropdown = (title: string, to: string, items: { label: string; to: string; blurb?: string }[]) => (
+    <div className="dnav__item" key={title}>
+      <Link to={to} className="dnav__link" aria-haspopup="true">
+        {title}
+      </Link>
+      <div className="dnav__panel">
+        {items.map((i) => (
+          <Link key={i.label} to={i.to}>
+            {i.label}
+            {i.blurb && <small>{i.blurb}</small>}
+          </Link>
+        ))}
+        <Link to={to} className="dnav__all">
+          View all {title.toLowerCase()}
+        </Link>
+      </div>
+    </div>
+  );
+  const dry = collections.find((c) => c.slug === 'dry-fruits')!;
+  return (
+    <nav className="dnav" aria-label="Primary">
+      <div className="dnav__item">
+        <Link to="/shop" className="dnav__link">
+          Shop All
+        </Link>
+      </div>
+      {dropdown('Honey', '/collections/honey', searchProducts('honey', 6).map((p) => ({ label: p.name, to: `/product/${p.slug}` })))}
+      {dropdown('Dry Fruits', `/collections/${dry.slug}`, searchProducts('dry fruit', 6).map((p) => ({ label: p.name, to: `/product/${p.slug}` })))}
+      <div className="dnav__item">
+        <Link to="/collections/saffron" className="dnav__link">
+          Saffron
+        </Link>
+      </div>
+      <div className="dnav__item">
+        <Link to="/collections/kahwa" className="dnav__link">
+          Kahwa
+        </Link>
+      </div>
+      <div className="dnav__item">
+        <Link to="/collections/gift-boxes" className="dnav__link">
+          Gift Boxes
+        </Link>
+      </div>
+      <div className="dnav__item">
+        <Link to="/story" className="dnav__link">
+          Our Story
+        </Link>
+      </div>
+    </nav>
+  );
+}
 
 export default function Header() {
   const { path, navigate } = useRouter();
@@ -59,16 +110,8 @@ export default function Header() {
   const [query, setQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length < 1) return [];
-    return products
-      .filter((p) => {
-        const hay = [p.name, p.subtitle, p.short, p.description, p.slug].filter(Boolean).join(' ').toLowerCase();
-        return hay.includes(q);
-      })
-      .slice(0, 8);
-  }, [query]);
+  const results = useMemo(() => searchProducts(query, 8), [query]);
+  const wishCount = useWishlist().length;
 
   useEffect(() => {
     setMenu(false);
@@ -113,7 +156,12 @@ export default function Header() {
           <img src="/images/logo.svg" alt="Belyn" width="120" height="38" />
         </Link>
 
+        <DesktopNav />
+
         <div className="header__right">
+          <Link to="/wishlist" className="icon-btn hdr-icon" aria-label={`Wishlist, ${wishCount} saved`}>
+            {heart}
+          </Link>
           <button className="icon-btn hdr-icon" aria-label="Search products" onClick={() => setSearchOpen(true)}>
             <SearchIcon />
           </button>
@@ -163,6 +211,11 @@ export default function Header() {
               placeholder="Search honey, saffron, almonds…"
               aria-label="Search products"
             />
+            {query && (
+              <button type="button" className="search-overlay__clear" aria-label="Clear search" onClick={() => { setQuery(''); searchInputRef.current?.focus(); }}>
+                ×
+              </button>
+            )}
             <button
               type="button"
               className="link-btn"
@@ -174,8 +227,20 @@ export default function Header() {
               Close
             </button>
           </div>
-          <div className="search-overlay__results">
-            {query.trim() && results.length === 0 && <p className="note">No products match “{query.trim()}”.</p>}
+          <div className="search-overlay__results" role="status" aria-live="polite">
+            {query.trim() && results.length === 0 && (
+              <div className="search-empty">
+                <p className="note">No products match &ldquo;{query.trim()}&rdquo;.</p>
+                <div className="search-empty__links">
+                  {collections.map((c) => (
+                    <Link key={c.slug} to={`/collections/${c.slug}`} className="coll__tab">
+                      {c.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            {results.length > 0 && <p className="search-overlay__label">{results.length} result{results.length === 1 ? '' : 's'}</p>}
             {results.map((p) => (
               <button
                 key={p.slug}
@@ -187,11 +252,17 @@ export default function Header() {
                   navigate(`/product/${p.slug}`);
                 }}
               >
-                <span className="search-result__name">{p.name}</span>
-                {p.subtitle && <span className="search-result__sub">{p.subtitle}</span>}
+                <span className="search-result__thumb" style={{ background: p.bg }}>
+                  <ProductVisual product={p} />
+                </span>
+                <span>
+                  <span className="search-result__name">{p.name}</span>
+                  {p.subtitle && <span className="search-result__sub">{p.subtitle}</span>}
+                </span>
+                <span className="search-result__price">From {formatPrice(startingPrice(p))}</span>
               </button>
             ))}
-            {!query.trim() && <p className="note">Try “honey”, “saffron”, “almonds” or “kahwa”.</p>}
+            {!query.trim() && <p className="note">Try &ldquo;honey&rdquo;, &ldquo;saffron&rdquo;, &ldquo;almonds&rdquo; or &ldquo;kahwa&rdquo;.</p>}
           </div>
         </div>
       )}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from '../lib/router';
 import { useCart } from '../lib/cart';
 import { formatPrice, getProduct } from '../data/products';
@@ -6,6 +7,16 @@ import { ProductVisual } from './Art';
 
 export default function CartDrawer() {
   const { lines, count, subtotal, open, setOpen, setQty, remove } = useCart();
+
+  // Escape closes the drawer; page scroll is locked while it is open
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, setOpen]);
 
   return (
     <>

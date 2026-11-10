@@ -2,10 +2,11 @@ import { Link } from '../lib/router';
 
 const categories = [
   { label: 'All Products', to: '/shop', icon: 'grid', primary: true },
-  { label: 'Festive Gifting', to: '/shop', icon: 'gift' },
-  { label: 'Corporate Gifting', to: '/shop', icon: 'building' },
-  { label: 'Build Your Own Box', to: '/shop', icon: 'box' },
-  { label: 'Sample Kit', to: '/shop', icon: 'jar', wide: true },
+  { label: 'Honey', to: '/collections/honey', icon: 'jar' },
+  { label: 'Saffron', to: '/collections/saffron', icon: 'box' },
+  { label: 'Dry Fruits', to: '/collections/dry-fruits', icon: 'grid' },
+  { label: 'Kahwa', to: '/collections/kahwa', icon: 'jar' },
+  { label: 'Gift Boxes', to: '/collections/gift-boxes', icon: 'gift', wide: true },
 ];
 
 function Icon({ name }: { name: string }) {

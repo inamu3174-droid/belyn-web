@@ -7,18 +7,31 @@ import catalog from '../../shared/catalog.json';
  */
 export const PRICES_ARE_PLACEHOLDERS: boolean = catalog._meta.placeholderPrices;
 
-type CatalogProducts = Record<string, { name: string; variants: Record<string, { label: string; price: number }> }>;
+type CatalogVariant = { label: string; price: number; inStock?: boolean; compareAt?: number };
+type CatalogProduct = {
+  name: string;
+  category: string;
+  keywords: string[];
+  bestseller?: boolean;
+  rating?: { value: number; count: number };
+  variants: Record<string, CatalogVariant>;
+};
+const catalogProducts = catalog.products as unknown as Record<string, CatalogProduct>;
 
 function variant(slug: string, id: string): Variant {
-  const v = (catalog.products as CatalogProducts)[slug]?.variants[id];
+  const v = catalogProducts[slug]?.variants[id];
   if (!v) throw new Error(`catalog.json is missing ${slug}/${id}`);
-  return { id, label: v.label, price: v.price };
+  return { id, label: v.label, price: v.price, inStock: v.inStock !== false, compareAt: v.compareAt };
 }
 
 export interface Variant {
   id: string;
   label: string;
   price: number;
+  /** false = sold out (set in shared/catalog.json) */
+  inStock: boolean;
+  /** original price, only when a real discount applies (shared/catalog.json) */
+  compareAt?: number;
 }
 
 export interface NutritionRow {
@@ -28,6 +41,13 @@ export interface NutritionRow {
 
 export interface Product {
   slug: string;
+  /** collection id: honey | saffron | dry-fruits | kahwa | gift-boxes */
+  category: string;
+  /** extra search terms (synonyms, Hindi names) */
+  keywords: string[];
+  bestseller: boolean;
+  /** only present when real reviews exist */
+  rating?: { value: number; count: number };
   name: string;
   subtitle?: string;
   short: string;
@@ -58,7 +78,9 @@ export interface Product {
   variants: Variant[];
 }
 
-export const products: Product[] = [
+type BaseProduct = Omit<Product, 'category' | 'keywords' | 'bestseller' | 'rating'>;
+
+const baseProducts: BaseProduct[] = [
   {
     slug: 'kashmiri-white-honey',
     name: 'Kashmiri White Honey',
@@ -301,6 +323,12 @@ export const products: Product[] = [
     ],
   },
 ];
+
+export const products: Product[] = baseProducts.map((p) => {
+  const c = catalogProducts[p.slug];
+  if (!c) throw new Error(`catalog.json is missing product ${p.slug}`);
+  return { ...p, category: c.category, keywords: c.keywords, bestseller: !!c.bestseller, rating: c.rating };
+});
 
 export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);

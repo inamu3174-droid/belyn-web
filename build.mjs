@@ -35,7 +35,9 @@ async function writeStatic(meta) {
   // robots + sitemap (slugs read from the product data file)
   const src = fs.readFileSync(path.join(root, 'src/data/products.ts'), 'utf8');
   const slugs = [...src.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1]);
-  const pages = ['', '/shop', '/story', '/contact', ...slugs.map((s) => '/product/' + s)];
+  const colSrc = fs.readFileSync(path.join(root, 'src/data/collections.ts'), 'utf8');
+  const colSlugs = [...colSrc.matchAll(/^\s{4}slug: '([^']+)'/gm)].map((m) => m[1]);
+  const pages = ['', '/shop', '/story', '/contact', ...colSlugs.map((s) => '/collections/' + s), ...slugs.map((s) => '/product/' + s)];
   const sm = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages
     .map((p) => `  <url><loc>${SITE_URL}${p}</loc></url>`)
     .join('\n')}\n</urlset>\n`;

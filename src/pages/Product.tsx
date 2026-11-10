@@ -1,5 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct, products } from '../data/products';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { PRICES_ARE_PLACEHOLDERS, formatPrice, getProduct, products, type Product as ProductT } from '../data/products';
+import { getCollection } from '../data/collections';
+import { discountPercent } from '../lib/catalog';
+import { recordViewed, useRecentlyViewed } from '../lib/saved';
+import { PriceLine, Rating } from '../components/ProductBits';
+import WishlistButton from '../components/WishlistButton';
 import { ProductVisual } from '../components/Art';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../lib/cart';
@@ -7,6 +12,7 @@ import { Link, useRouter } from '../lib/router';
 import { useSeo } from '../lib/seo';
 import NotFound from './NotFound';
 import '../product-page.css';
+import '../shop.css';
 
 function Accordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -32,6 +38,8 @@ export default function Product({ slug }: { slug: string }) {
   const [added, setAdded] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const touchX = useRef<number | null>(null);
+  const recent = useRecentlyViewed();
 
   const gallery = useMemo(() => {
     if (!product) return [] as string[];
@@ -51,6 +59,10 @@ export default function Product({ slug }: { slug: string }) {
     setImgIndex(0);
     setZoom(false);
   }, [slug, product]);
+
+  useEffect(() => {
+    if (product) recordViewed(product.slug);
+  }, [product]);
 
   const variant = product?.variants.find((v) => v.id === variantId);
 
@@ -85,12 +97,14 @@ export default function Product({ slug }: { slug: string }) {
   if (!product || !variant) return <NotFound />;
 
   function addToCart() {
+    if (!variant!.inStock) return;
     add(product!.slug, variant!.id, qty);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
   }
 
   function buyNow() {
+    if (!variant!.inStock) return;
     add(product!.slug, variant!.id, qty);
     navigate('/checkout');
   }
@@ -98,6 +112,28 @@ export default function Product({ slug }: { slug: string }) {
   const hasGallery = gallery.length > 0;
   const mainSrc = hasGallery ? gallery[Math.min(imgIndex, gallery.length - 1)] : null;
   const lineTotal = variant.price * qty;
+  const soldOut = !variant.inStock;
+  const collection = getCollection(product.category);
+  const related = [
+    ...products.filter((p) => p.slug !== product.slug && p.category === product.category),
+    ...products.filter((p) => p.slug !== product.slug && p.category !== product.category),
+  ].slice(0, 4);
+  const recentItems = recent
+    .filter((sl) => sl !== product.slug)
+    .map((sl) => getProduct(sl))
+    .filter((p): p is ProductT => !!p)
+    .slice(0, 4);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null || gallery.length < 2) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    touchX.current = null;
+    if (Math.abs(dx) < 40) return;
+    setImgIndex((i) => (dx < 0 ? (i + 1) % gallery.length : (i - 1 + gallery.length) % gallery.length));
+  };
 
   return (
     <main className="page pdpx">
@@ -105,7 +141,7 @@ export default function Product({ slug }: { slug: string }) {
         <div className="pdpx-gallery" style={{ background: product.bg }}>
           {mainSrc ? (
             <>
-              <div className="pdpx-gallery__stage">
+              <div className="pdpx-gallery__stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
                 <button type="button" className="pdpx-gallery__zoom" aria-label="Zoom image" onClick={() => setZoom(true)}>
                   <img src={mainSrc} alt={product.name} />
                 </button>
@@ -159,6 +195,12 @@ export default function Product({ slug }: { slug: string }) {
           <nav className="pdpx-crumbs" aria-label="Breadcrumb">
             <Link to="/shop">Shop</Link>
             <span aria-hidden="true">/</span>
+            {collection && (
+              <>
+                <Link to={`/collections/${collection.slug}`}>{collection.title}</Link>
+                <span aria-hidden="true">/</span>
+              </>
+            )}
             <span>{product.name}</span>
           </nav>
 
@@ -167,9 +209,10 @@ export default function Product({ slug }: { slug: string }) {
           {product.subtitle && <p className="pdpx-subtitle">{product.subtitle}</p>}
           {product.badge && <p className="pdpx-badge">{product.badge}</p>}
 
-          <p className="pdpx-price">
-            <span>{formatPrice(variant.price)}</span>
-            {PRICES_ARE_PLACEHOLDERS && <em className="ph-tag">Placeholder price</em>}
+          {product.rating && <Rating value={product.rating.value} count={product.rating.count} />}
+          <PriceLine price={variant.price} compareAt={variant.compareAt} placeholder={PRICES_ARE_PLACEHOLDERS} />
+          <p className={`pdpx-stock${soldOut ? ' is-out' : ''}`} role="status">
+            {soldOut ? 'Sold out' : 'In stock'}
           </p>
 
           <p className="pdpx-desc">{product.description}</p>
@@ -187,7 +230,7 @@ export default function Product({ slug }: { slug: string }) {
                   onClick={() => setVariantId(v.id)}
                 >
                   <span className="pdpx-size__label">{v.label}</span>
-                  <span className="pdpx-size__price">{formatPrice(v.price)}</span>
+                  <span className="pdpx-size__price">{v.inStock ? formatPrice(v.price) : 'Sold out'}</span>
                 </button>
               ))}
             </div>
@@ -203,14 +246,17 @@ export default function Product({ slug }: { slug: string }) {
                 +
               </button>
             </div>
-            <button type="button" className="pdpx-btn pdpx-btn--primary" onClick={addToCart}>
-              {added ? 'Added to cart' : `Add to cart · ${formatPrice(lineTotal)}`}
+            <button type="button" className="pdpx-btn pdpx-btn--primary" onClick={addToCart} disabled={soldOut}>
+              {soldOut ? 'Sold out' : added ? 'Added to cart' : `Add to cart · ${formatPrice(lineTotal)}`}
             </button>
           </div>
 
-          <button type="button" className="pdpx-btn pdpx-btn--gold" onClick={buyNow}>
-            Buy now · {formatPrice(lineTotal)}
+          <button type="button" className="pdpx-btn pdpx-btn--gold" onClick={buyNow} disabled={soldOut}>
+            {soldOut ? 'Currently unavailable' : `Buy now · ${formatPrice(lineTotal)}`}
           </button>
+          <div className="pdpx-wish">
+            <WishlistButton slug={product.slug} name={product.name} withLabel />
+          </div>
 
           <p className="pdpx-ship-note">Shipping calculated at checkout · Free in J&K on orders of ₹600+</p>
 
@@ -279,6 +325,31 @@ export default function Product({ slug }: { slug: string }) {
                 )}
               </Accordion>
             )}
+            <Accordion title="Frequently asked questions">
+              <h3 className="pdpx-faq-title">Where is this from?</h3>
+              <p>BELYN products come from Kashmir, India.</p>
+              <h3 className="pdpx-faq-title">How much is shipping?</h3>
+              <p>
+                Orders within Jammu &amp; Kashmir ship free from ₹600 and cost ₹100 below that. Everywhere else in India
+                is a flat ₹100.
+              </p>
+              {product.care && (
+                <>
+                  <h3 className="pdpx-faq-title">How should I store it?</h3>
+                  <p>{product.care}</p>
+                </>
+              )}
+              {product.shelfLife && (
+                <>
+                  <h3 className="pdpx-faq-title">What is the shelf life?</h3>
+                  <p>{product.shelfLife}</p>
+                </>
+              )}
+              <h3 className="pdpx-faq-title">Still have a question?</h3>
+              <p>
+                <Link to="/contact">Contact us</Link> and we will help.
+              </p>
+            </Accordion>
             <Accordion title="Shipping">
               <p>
                 Delivery details are on the <Link to="/policies/shipping">Shipping Policy</Link> page. J&K orders of
@@ -300,20 +371,30 @@ export default function Product({ slug }: { slug: string }) {
 
       <section className="pdpx-related" aria-labelledby="pdpx-rel">
         <div className="pdpx-related__head">
-          <h2 id="pdpx-rel">More from Kashmir</h2>
-          <Link to="/shop" className="pdpx-related__all">
+          <h2 id="pdpx-rel">You may also like</h2>
+          <Link to={collection ? `/collections/${collection.slug}` : '/shop'} className="pdpx-related__all">
             View all
           </Link>
         </div>
         <div className="pdpx-related__grid">
-          {products
-            .filter((p) => p.slug !== product.slug)
-            .slice(0, 3)
-            .map((p) => (
-              <ProductCard key={p.slug} product={p} />
-            ))}
+          {related.map((p) => (
+            <ProductCard key={p.slug} product={p} detailed />
+          ))}
         </div>
       </section>
+
+      {recentItems.length > 0 && (
+        <section className="pdpx-related pdpx-recent" aria-labelledby="pdpx-recent">
+          <div className="pdpx-related__head">
+            <h2 id="pdpx-recent">Recently viewed</h2>
+          </div>
+          <div className="pdpx-related__grid">
+            {recentItems.map((p) => (
+              <ProductCard key={p.slug} product={p} detailed />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

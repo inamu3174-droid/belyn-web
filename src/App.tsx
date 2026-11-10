@@ -5,7 +5,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import Home from './pages/Home';
-import Shop from './pages/Shop';
+import Collection from './pages/Collection';
+import Wishlist from './pages/Wishlist';
 import Product from './pages/Product';
 import Story from './pages/Story';
 import Contact from './pages/Contact';
@@ -40,7 +41,9 @@ function Routes() {
 
   let page;
   if (clean === '/') page = <Home />;
-  else if (clean === '/shop') page = <Shop />;
+  else if (clean === '/shop') page = <Collection slug="all" />;
+  else if (clean.startsWith('/collections/')) page = <Collection slug={clean.split('/')[2]} />;
+  else if (clean === '/wishlist') page = <Wishlist />;
   else if (clean.startsWith('/product/')) page = <Product slug={clean.split('/')[2]} />;
   else if (clean === '/story') page = <Story />;
   else if (clean === '/contact') page = <Contact />;

@@ -5,5 +5,6 @@ import './styles-more.css';
 import './ecommerce-extras.css';
 import './checkout-shipping.css';
 import './home-top.css';
+import './shop.css';
 
 createRoot(document.getElementById('root')!).render(<App />);

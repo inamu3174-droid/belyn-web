@@ -30,6 +30,10 @@ export function priceOrder(items, pin, state) {
     const variant = product.variants[variantId];
     if (!variant) return { ok: false, message: `A size for ${product.name} is no longer available.` };
 
+    if (variant.inStock === false) {
+      return { ok: false, message: `${product.name} (${variant.label}) is sold out.` };
+    }
+
     const qty = Number(raw?.qty);
     if (!Number.isInteger(qty) || qty < 1 || qty > MAX_QTY) {
       return { ok: false, message: `Invalid quantity for ${product.name}.` };

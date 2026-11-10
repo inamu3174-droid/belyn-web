@@ -56,6 +56,18 @@ test('pricing: merges duplicate lines, accepts label fallback, rejects bad input
   assert.equal(priceOrder([], '110001', '').ok, false);
 });
 
+test('pricing: sold-out variants are rejected server-side', () => {
+  const copy = structuredClone(catalog.products[slug].variants[vid]);
+  catalog.products[slug].variants[vid].inStock = false;
+  try {
+    const r = priceOrder([{ slug, variantId: vid, qty: 1 }], '110001', '');
+    assert.equal(r.ok, false);
+    assert.match(r.message, /sold out/i);
+  } finally {
+    catalog.products[slug].variants[vid] = copy;
+  }
+});
+
 test('order endpoint: validation, razorpay bypass blocked, stale price detected', async () => {
   const { default: order } = await import('../api/order.js');
 
