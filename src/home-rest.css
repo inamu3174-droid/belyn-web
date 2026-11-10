@@ -175,3 +175,47 @@
 @media (min-width: 1024px) {
   .pgrid { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ---- Editorial cards: one clean card (image fills the top, copy below) ---- */
+.home .edit__sub { margin-bottom: clamp(22px, 4vw, 36px); }
+.home .edit__rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 2vw, 24px); max-width: 1200px; margin: 0 auto; }
+.home .ecard { display: flex; flex-direction: column; background: var(--warm-ivory); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; text-decoration: none; color: var(--deep-green); box-shadow: 0 1px 0 rgba(57,44,34,.04); transition: transform .25s, box-shadow .25s, border-color .25s; }
+.home .ecard:hover { transform: translateY(-4px); border-color: var(--deep-green); box-shadow: 0 14px 30px rgba(57,44,34,.12); }
+.home .ecard__img { aspect-ratio: 1 / 1; width: 100%; padding: 0; display: block; background: var(--soft-cream); overflow: hidden; }
+.home .ecard__img svg, .home .ecard__img img { display: block; width: 100%; height: 100%; max-height: none; object-fit: cover; transition: transform .5s; }
+.home .ecard:hover .ecard__img svg { transform: scale(1.05); }
+.home .ecard__body { display: flex; flex-direction: column; gap: 6px; flex: 1; padding: 18px 18px 18px; background: none; border: 0; border-radius: 0; }
+.home .ecard__title { font: 600 26px/1.1 var(--serif); margin: 0; }
+.home .ecard__text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--coffee-brown); }
+.home .ecard__meta { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid var(--line); font-size: 12px; color: var(--gray); }
+.home .ecard__cta { font-size: 13px; font-weight: 600; color: var(--deep-green); }
+@media (max-width: 1023px) { .home .edit__rail { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) {
+  .home .edit__rail { display: flex; scroll-padding-inline: var(--pad); overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(var(--pad) * -1); padding: 2px var(--pad) 8px; scrollbar-width: none; }
+  .home .edit__rail::-webkit-scrollbar { display: none; }
+  .home .ecard { flex: 0 0 72vw; scroll-snap-align: start; }
+}
+
+/* ---- "Product in focus" rows: aligned header, then a rail ---- */
+.home .focus { display: block; }
+.home .focus__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; max-width: 1200px; margin: 0 auto 22px; text-align: left; }
+.home .focus__head .eyebrow { margin: 0 0 8px; color: var(--muted-gold); text-transform: uppercase; }
+.home .focus__head .h-sec { text-align: left; font-size: clamp(26px, 3.2vw, 40px); }
+.home .focus__blurb { margin: 8px 0 0; max-width: 56ch; font-size: 15px; color: var(--coffee-brown); }
+.home .focus__tools { flex: 0 0 auto; display: flex; align-items: center; gap: 14px; }
+.home .focus__all { display: inline-flex; align-items: center; min-height: 40px; padding: 0 18px; border: 1.5px solid var(--deep-green); border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--deep-green); text-decoration: none; transition: background .2s, color .2s; }
+.home .focus__all:hover { background: var(--deep-green); color: var(--warm-ivory); }
+.home .focus + .focus { padding-top: 0; }
+@media (max-width: 640px) {
+  .home .focus__head { align-items: flex-start; flex-direction: column; gap: 12px; }
+}
+
+/* ---- Scrolling product rails (focus rows, reviews) ---- */
+.home .rail { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; max-width: 1200px; margin: 0 auto; padding-bottom: 6px; }
+.home .rail::-webkit-scrollbar { display: none; }
+.home .rail__item { flex: 0 0 calc((100% - 3 * 16px) / 4); min-width: 0; scroll-snap-align: start; }
+.home .focus__arrows { display: flex; gap: 8px; }
+.home .focus__arrows button { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--deep-green); background: none; color: var(--deep-green); font-size: 20px; line-height: 1; cursor: pointer; }
+.home .focus__arrows button:hover { background: var(--deep-green); color: var(--warm-ivory); }
+@media (max-width: 1023px) { .home .rail__item { flex-basis: calc((100% - 2 * 16px) / 3); } }
+@media (max-width: 640px) { .home .rail { gap: 12px; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); scroll-padding-inline: var(--pad); } .home .rail__item { flex-basis: 46vw; } .home .focus__arrows { display: none; } }

@@ -21,8 +21,13 @@ export default function Editorial() {
             <div className="ecard__body">
               <h3 className="ecard__title">{c.title}</h3>
               <p className="ecard__text">{c.blurb}</p>
-              <span className="ecard__cta">
-                {productsIn(c).length} {productsIn(c).length === 1 ? 'product' : 'products'} <span aria-hidden="true">→</span>
+              <span className="ecard__meta">
+                <span>
+                  {productsIn(c).length} {productsIn(c).length === 1 ? 'product' : 'products'}
+                </span>
+                <span className="ecard__cta">
+                  Shop {c.title} <span aria-hidden="true">→</span>
+                </span>
               </span>
             </div>
           </Link>
