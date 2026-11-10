@@ -157,7 +157,7 @@ export default function Header() {
         </div>
 
         <Link to="/" className="logo" aria-label="Belyn home">
-          <img src="/images/logo.svg" alt="Belyn" width="120" height="38" />
+          <img src="/images/logo.png" alt="Belyn" width="95" height="38" />
         </Link>
 
         <DesktopNav />
@@ -279,7 +279,7 @@ export default function Header() {
         <div className="menu-panels__inner">
           <div className="menu-top">
             <Link to="/" className="menu-top__logo" tabIndex={menu ? 0 : -1} onClick={() => setMenu(false)} aria-label="Belyn home">
-              <img src="/images/logo.svg" alt="Belyn" width="96" height="30" />
+              <img src="/images/logo.png" alt="Belyn" width="76" height="30" />
             </Link>
             <button type="button" className="menu-top__close" tabIndex={menu ? 0 : -1} aria-label="Close menu" onClick={() => setMenu(false)}>
               ×
