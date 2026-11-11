@@ -123,16 +123,20 @@ export const giftingTabs = [
     label: 'Build Your Own Box',
     icon: 'box',
     title: 'Build Your Own Box',
-    text: 'Choose the BELYN products you want in one box. Tell us your picks and we will confirm availability and the total.',
+    text: 'Choose the BELYN products and sizes you want in one box and add it to your bag.',
     message: 'Hello BELYN, I would like to build my own box with these products: ',
+    href: '/build-your-own-box',
+    cta: 'Build your box',
   },
   {
     id: 'sample',
     label: 'Sample Kit',
     icon: 'bag',
     title: 'Sample Kit',
-    text: 'Want to try BELYN before a bigger order? Ask us about sample options and we will tell you what is available.',
+    text: 'Want to try BELYN before a bigger order? The Sample Kit brings seven of our products together at ₹999, shipping included.',
     message: 'Hello BELYN, I would like to know about sample kit options. ',
+    href: '/sample-kit',
+    cta: 'View Sample Kit',
   },
 ] as const;
 

@@ -51,7 +51,7 @@ export default function Welcome() {
   const [tab, setTab] = useState('all');
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
   const list = useMemo(() => products.slice(0, MAX), []);
-  const gift = giftingTabs.find((g) => g.id === tab);
+  const gift = giftingTabs.find((g) => g.id === tab) as ((typeof giftingTabs)[number] & { href?: string; cta?: string }) | undefined;
 
   function onKey(e: React.KeyboardEvent, idx: number) {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
@@ -103,8 +103,8 @@ export default function Welcome() {
           <div className="wel__gift">
             <h3>{gift.title}</h3>
             <p>{gift.text}</p>
-            <Link to={`/contact?topic=${gift.id}`} className="shop-btn shop-btn--primary">
-              Enquire now
+            <Link to={gift.href ?? `/contact?topic=${gift.id}`} className="shop-btn shop-btn--primary">
+              {gift.cta ?? 'Enquire now'}
             </Link>
           </div>
         ) : (
