@@ -130,3 +130,7 @@
 @media (max-width: 639px) { .cgift-img { aspect-ratio: 4 / 3; } }
 .occ__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .occ__card::after { background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.08) 60%); }
+
+/* Home: Why Choose BELYN? */
+.why { max-width: 760px; margin: clamp(28px, 5vw, 64px) auto; padding-inline: clamp(16px, 4vw, 24px); }
+.why__img { display: block; width: 100%; height: auto; border-radius: 22px; border: 1px solid var(--line); }
