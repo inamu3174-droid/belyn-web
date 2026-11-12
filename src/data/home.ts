@@ -109,6 +109,8 @@ export const giftingTabs = [
     title: 'Festive Gifting',
     text: 'Planning gifts for a festival or celebration? Tell us what you have in mind and we will put together a selection from BELYN products.',
     message: 'Hello BELYN, I would like to enquire about festive gifting. ',
+    href: '/festive-gifting',
+    cta: 'Explore festive gifting',
   },
   {
     id: 'corporate',
@@ -117,6 +119,8 @@ export const giftingTabs = [
     title: 'Corporate Gifting',
     text: 'Gifts for clients, teams or events. Share the quantity and timeline and we will get back to you directly.',
     message: 'Hello BELYN, I would like to enquire about corporate gifting. Quantity needed: ',
+    href: '/corporate-gifting',
+    cta: 'Explore corporate gifting',
   },
   {
     id: 'custom',

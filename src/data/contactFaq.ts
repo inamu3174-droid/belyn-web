@@ -21,14 +21,14 @@ export const contactFaqs: ContactFaq[] = [
   {
     q: 'Do you offer gifting options?',
     a: 'Yes. BELYN offers festive gift hampers and selected gifting options designed for special occasions and thoughtful celebrations.',
-    links: [{ label: 'Explore Festive Gifting', to: '/contact?topic=festive' }],
+    links: [{ label: 'Explore Festive Gifting', to: '/festive-gifting' }],
   },
   {
     q: 'How can I place a wholesale or corporate gifting enquiry?',
     a: 'For wholesale enquiries, visit our Wholesale page. For corporate gifting, visit our Corporate Gifting page to discuss your requirements with BELYN.',
     links: [
       { label: 'Wholesale', to: '/wholesale' },
-      { label: 'Corporate Gifting', to: '/contact?topic=corporate' },
+      { label: 'Corporate Gifting', to: '/corporate-gifting' },
     ],
   },
   { q: 'Where can I find product ingredients and nutrition information?', a: 'Product ingredients, nutritional information and relevant product details are provided on the individual product pages and packaging.' },

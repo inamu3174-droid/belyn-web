@@ -51,7 +51,7 @@ async function writeStatic(meta) {
   const slugs = [...src.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1]);
   const colSrc = fs.readFileSync(path.join(root, 'src/data/collections.ts'), 'utf8');
   const colSlugs = [...colSrc.matchAll(/^\s{4}slug: '([^']+)'/gm)].map((m) => m[1]);
-  const pages = ['', '/shop', '/featured', '/sample-kit', '/build-your-own-box', '/story', '/wholesale', '/contact', ...colSlugs.map((s) => '/collections/' + s), ...slugs.map((s) => '/product/' + s)];
+  const pages = ['', '/shop', '/featured', '/sample-kit', '/build-your-own-box', '/story', '/wholesale', '/festive-gifting', '/corporate-gifting', '/contact', ...colSlugs.map((s) => '/collections/' + s), ...slugs.map((s) => '/product/' + s)];
   const sm = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages
     .map((p) => `  <url><loc>${SITE_URL}${p}</loc></url>`)
     .join('\n')}\n</urlset>\n`;

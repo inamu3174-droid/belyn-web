@@ -275,7 +275,7 @@ export default function Contact() {
         </div>
         <div className="wbtns wbtns--c">
           <Link to="/policies/shipping" className="shop-btn shop-btn--ghost">View Shipping &amp; Returns Policy</Link>
-          <Link to="/contact?topic=festive" className="shop-btn shop-btn--ghost">Explore Festive Gifting</Link>
+          <Link to="/festive-gifting" className="shop-btn shop-btn--ghost">Explore Festive Gifting</Link>
           <Link to="/shop" className="shop-btn shop-btn--primary">Shop All Products</Link>
         </div>
       </section>

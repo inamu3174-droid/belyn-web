@@ -53,8 +53,8 @@ const menuSections = [
     title: 'Gifting',
     icon: menuIcons.gifting,
     links: [
-      { label: 'Festive Gifting', to: '/contact?topic=festive' },
-      { label: 'Corporate Gifting', to: '/contact?topic=corporate' },
+      { label: 'Festive Gifting', to: '/festive-gifting' },
+      { label: 'Corporate Gifting', to: '/corporate-gifting' },
     ],
   },
   {
