@@ -3,6 +3,9 @@ import { site } from '../data/site';
 import { submitContact } from '../lib/api';
 import { useSeo } from '../lib/seo';
 import { enquiryMessages } from '../data/home';
+import { contactFaqs } from '../data/contactFaq';
+import { Link } from '../lib/router';
+import SocialIcons from '../components/SocialIcons';
 
 type Status = 'idle' | 'sending' | 'sent' | 'demo' | 'error';
 const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -23,6 +26,8 @@ export default function Contact() {
       name: String(f.get('name') || '').trim(),
       email: String(f.get('email') || '').trim(),
       message: String(f.get('message') || '').trim(),
+      phone: String(f.get('phone') || '').trim(),
+      subject: String(f.get('subject') || '').trim(),
       website: String(f.get('website') || ''),
     };
     const next: Record<string, string> = {};
@@ -44,7 +49,7 @@ export default function Contact() {
   }
 
   return (
-    <main className="page page--narrow contact-page">
+    <main className="page contact-page xpage">
       <style>{`
         .contact-page .contact-head { margin-bottom: 2rem; }
         .contact-page .contact-head .lede { margin-top: 0.75rem; }
@@ -154,26 +159,54 @@ export default function Contact() {
         }
       `}</style>
 
-      <header className="page__head contact-head" data-reveal>
-        <p className="eyebrow">CONTACT</p>
-        <h1 className="h-page">SAY HELLO</h1>
-        <p className="lede">
-          For orders, product questions, or anything else — send a note and we will get back to you.
-        </p>
-        {(site.email || site.phone) && (
-          <div className="contact-direct">
-            {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
-            {site.phone && (
-              <a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a>
-            )}
-          </div>
-        )}
+      <header className="xbanner" data-reveal>
+        <div className="xbanner__card">
+          <h1>Contact us</h1>
+          <p className="xbanner__tag">We&rsquo;d love to hear from you.</p>
+        </div>
       </header>
 
+      <section className="csec">
+        <h2 className="wsec__h">We&rsquo;d love to hear from you</h2>
+        <p>Questions, feedback, or simply want to say hello? We&rsquo;re here to help.</p>
+      </section>
+
+      <section className="csec" aria-labelledby="touch-title">
+        <h2 id="touch-title" className="wsec__h">Get in touch</h2>
+        <div className="ctiles">
+          {site.email && (
+            <a className="ctile" href={`mailto:${site.email}`}>
+              <span className="ctile__k">Email</span>
+              <span className="ctile__v">{site.email}</span>
+            </a>
+          )}
+          {site.whatsapp && (
+            <a className="ctile" href={`https://wa.me/${site.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+              <span className="ctile__k">WhatsApp / Phone</span>
+              <span className="ctile__v">{site.phone}</span>
+            </a>
+          )}
+          {site.instagram && (
+            <a className="ctile" href={site.instagram} target="_blank" rel="noopener noreferrer">
+              <span className="ctile__k">Instagram</span>
+              <span className="ctile__v">@belyn.in</span>
+            </a>
+          )}
+          {site.facebook && (
+            <a className="ctile" href={site.facebook} target="_blank" rel="noopener noreferrer">
+              <span className="ctile__k">Facebook</span>
+              <span className="ctile__v">BELYN on Facebook</span>
+            </a>
+          )}
+        </div>
+        <SocialIcons />
+      </section>
+
+      <h2 className="wsec__h csec">Send us a message</h2>
       {status === 'sent' || status === 'demo' ? (
         <div className="contact-success" role="status">
-          <h2>Thank you</h2>
-          <p>We have your message and will reply as soon as we can.</p>
+          <h2>Thank you for reaching out.</h2>
+          <p>We&rsquo;ve received your message and will get back to you soon.</p>
           {status === 'demo' && (
             <p className="contact-hint" style={{ marginTop: '0.75rem' }}>
               Demo mode: email is not connected yet, so this note was not delivered.
@@ -183,22 +216,24 @@ export default function Contact() {
       ) : (
         <form className="contact-form" onSubmit={onSubmit} noValidate data-reveal>
           <Field
-            label="Name"
+            label="Full name"
             name="name"
             autoComplete="name"
             placeholder="Your name"
             error={errors.name}
           />
           <Field
-            label="Email"
+            label="Email address"
             name="email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
             error={errors.email}
           />
+          <Field label="Phone number (optional)" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+91" />
+          <Field label="Subject" name="subject" placeholder="What is this about?" />
           <Field
-            label="Message"
+            label="Your message"
             name="message"
             textarea
             defaultValue={prefill}
@@ -221,6 +256,35 @@ export default function Contact() {
           </div>
         </form>
       )}
+      <section className="csec cfaq" aria-labelledby="cfaq-title">
+        <h2 id="cfaq-title" className="wsec__h">FAQ</h2>
+        <div className="faq__list cfaq__list">
+          {contactFaqs.map((f) => (
+            <details key={f.q} className="faq__item">
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+              {f.links && (
+                <p className="cfaq__links">
+                  {f.links.map((l) => (
+                    <Link key={l.to} to={l.to} className="shop-btn shop-btn--ghost">{l.label}</Link>
+                  ))}
+                </p>
+              )}
+            </details>
+          ))}
+        </div>
+        <div className="wbtns wbtns--c">
+          <Link to="/policies/shipping" className="shop-btn shop-btn--ghost">View Shipping &amp; Returns Policy</Link>
+          <Link to="/contact?topic=festive" className="shop-btn shop-btn--ghost">Explore Festive Gifting</Link>
+          <Link to="/shop" className="shop-btn shop-btn--primary">Shop All Products</Link>
+        </div>
+      </section>
+
+      <section className="csec csec--close">
+        <h2 className="wsec__h">Here when you need us</h2>
+        <p>Whether you have a question, feedback or simply want to connect, we&rsquo;re always happy to hear from you.</p>
+        <p className="wnote">BELYN &mdash; A shared dream, made to be shared with the world.</p>
+      </section>
     </main>
   );
 }

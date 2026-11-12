@@ -174,8 +174,12 @@ export default function Footer() {
             <li><Link to="/story">Our Story</Link></li>
             <li><Link to="/contact">Contact</Link></li>
             <li><Link to="/account">Your account</Link></li>
+            <li><Link to="/wholesale">Wholesale</Link></li>
             {site.instagram && (
               <li><a href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            )}
+            {site.facebook && (
+              <li><a href={site.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
             )}
           </ul>
         </nav>

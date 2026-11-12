@@ -7,6 +7,7 @@ import { searchProducts, startingPrice } from '../lib/catalog';
 import { useWishlist } from '../lib/saved';
 import { ProductVisual } from './Art';
 import { announcements } from '../data/home';
+import SocialIcons from './SocialIcons';
 import { site } from '../data/site';
 import '../shop.css';
 
@@ -68,7 +69,7 @@ const menuSections = [
     title: 'Business & Support',
     icon: menuIcons.support,
     links: [
-      { label: 'Wholesale', to: '/contact?topic=wholesale' },
+      { label: 'Wholesale', to: '/wholesale' },
       { label: 'Contact Us', to: '/contact' },
     ],
   },
@@ -339,6 +340,10 @@ export default function Header() {
           <div className="menu-foot">
             {site.email && <a href={`mailto:${site.email}`} tabIndex={menu ? 0 : -1}>{site.email}</a>}
             {site.phone && <a href={`tel:${site.phone.replace(/\s/g, '')}`} tabIndex={menu ? 0 : -1}>{site.phone}</a>}
+          </div>
+          <div className="menu-social">
+            <SocialIcons tabIndex={menu ? 0 : -1} />
+            <p className="menu-social__note">ENJOY YOUR JOURNEY</p>
           </div>
         </div>
       </div>

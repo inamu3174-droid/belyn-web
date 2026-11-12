@@ -14,6 +14,7 @@ import SampleKit from './pages/explore/SampleKit';
 import BuildBox from './pages/explore/BuildBox';
 import Product from './pages/Product';
 import Story from './pages/Story';
+import Wholesale from './pages/Wholesale';
 import Contact from './pages/Contact';
 import Checkout from './pages/Checkout';
 import Policy from './pages/Policy';
@@ -55,6 +56,7 @@ function Routes() {
   else if (clean === '/account') page = <Account />;
   else if (clean.startsWith('/product/')) page = <Product slug={clean.split('/')[2]} />;
   else if (clean === '/story') page = <Story />;
+  else if (clean === '/wholesale') page = <Wholesale />;
   else if (clean === '/contact') page = <Contact />;
   else if (clean === '/checkout') page = <Checkout />;
   else if (clean.startsWith('/policies/')) page = <Policy slug={clean.split('/')[2]} />;

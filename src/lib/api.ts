@@ -4,6 +4,8 @@ export async function submitContact(data: {
   name: string;
   email: string;
   message: string;
+  phone?: string;
+  subject?: string;
   website?: string;
 }): Promise<{ ok: boolean; demo?: boolean; message?: string }> {
   try {
