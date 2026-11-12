@@ -67,7 +67,10 @@ export default function FestiveGifting() {
         <h2 className="wsec__h wsec__h--c">Made for moments that matter</h2>
         <div className="occ">
           {occasions.map((o, i) => (
-            <div key={o} className={`occ__card occ__card--${i}`}><span>{o}</span></div>
+            <div key={o.title} className={`occ__card occ__card--${i}`}>
+              <img src={o.img} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={(e) => (e.currentTarget.style.display = 'none')} />
+              <span>{o.title}</span>
+            </div>
           ))}
         </div>
       </section>

@@ -128,3 +128,5 @@
 .occ__card--3 { background: linear-gradient(135deg, #3f5a3a, #8aa56a); }
 .cgift-img { margin: clamp(26px, 4vw, 44px) 0; aspect-ratio: 16 / 7; border-radius: 22px; background: linear-gradient(135deg, var(--deep-green), #0f6e57); }
 @media (max-width: 639px) { .cgift-img { aspect-ratio: 4 / 3; } }
+.occ__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.occ__card::after { background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.08) 60%); }

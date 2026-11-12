@@ -40,7 +40,18 @@ export const hampers = [
   },
 ] as const;
 
-export const occasions = ['Festive Celebrations', 'Birthdays & Special Occasions', 'Family & Friends', 'Thank You Gifts'] as const;
+/**
+ * Photos are hot-linked from Unsplash (free under the Unsplash License, no attribution required).
+ * Credits: Suchandra Roy Chowdhury (festive lights), Aneta Pawlik (birthday cake), Tobias Tullius (friends),
+ * JESHOOTS.COM (gift box). Replace with BELYN's own photography when supplied; the card gradient shows if an image fails.
+ */
+const u = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=720&q=75`;
+export const occasions = [
+  { title: 'Festive Celebrations', img: u('photo-1635192592106-77a5aacbe1a3') },
+  { title: 'Birthdays & Special Occasions', img: u('photo-1545696563-af8f6ec2295a') },
+  { title: 'Family & Friends', img: u('photo-1686574086026-9f02b82f4765') },
+  { title: 'Thank You Gifts', img: u('photo-1513980297158-ac7902b06406') },
+] as const;
 
 /** Order of the eight products on the Corporate Gifting page. */
 export const corporateSlugs = [
