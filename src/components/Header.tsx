@@ -60,7 +60,7 @@ const menuSections = [
     title: 'Our Brand',
     icon: menuIcons.brand,
     links: [
-      { label: 'Our Story', to: '/story' },
+      { label: 'The People Behind BELYN', to: '/story' },
       { label: 'The BELYN Promise', to: '/#promise' },
     ],
   },
@@ -70,7 +70,6 @@ const menuSections = [
     links: [
       { label: 'Wholesale', to: '/contact?topic=wholesale' },
       { label: 'Contact Us', to: '/contact' },
-      { label: 'Shipping Policy', to: '/policies/shipping' },
     ],
   },
 ];
