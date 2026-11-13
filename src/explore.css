@@ -159,3 +159,16 @@
 .origin__cta { margin-top: 6px; font: 600 13px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: #fff; display: inline-flex; gap: 8px; width: fit-content; padding-bottom: 3px; border-bottom: 1px solid rgba(255, 255, 255, .55); transition: border-color .2s, gap .2s; }
 @media (hover: hover) { .origin__tile:hover img { transform: scale(1.04); } .origin__tile:hover .origin__cta { gap: 12px; border-color: #fff; } }
 .origin__tile:focus-visible { outline: 2px solid var(--deep-green); outline-offset: 3px; }
+
+/* Home: Only the best makes it to BELYN */
+.qual { max-width: 1120px; margin: clamp(36px, 6vw, 84px) auto; padding-inline: clamp(16px, 4vw, 32px); }
+.qual__head { text-align: center; margin-bottom: clamp(18px, 3vw, 32px); }
+.qual__title { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 28px); margin: 0; font: 600 clamp(26px, 4.6vw, 44px)/1.12 var(--serif); color: var(--deep-green); text-align: center; }
+.qual__track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2vw, 22px); }
+.qual__item { margin: 0; border-radius: 20px; overflow: hidden; background: #fcf3e8; border: 1px solid var(--line); aspect-ratio: 3 / 4; }
+.qual__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 719px) {
+  .qual__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding-inline: clamp(16px, 4vw, 32px); scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .qual__track::-webkit-scrollbar { display: none; }
+  .qual__item { flex: 0 0 84%; scroll-snap-align: start; }
+}
