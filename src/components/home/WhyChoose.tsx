@@ -10,14 +10,7 @@ export default function WhyChoose() {
   return (
     <section className="why" aria-labelledby="why-title">
       <header className="why__head">
-        <h2 id="why-title" className="why__title">
-          <span className="why__rule" aria-hidden="true" />
-          Why Choose BELYN?
-          <span className="why__rule" aria-hidden="true" />
-        </h2>
-        <svg className="why__leaf" width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M15 22V12M15 12C15 6 11 3 3 3c0 7 4 9 12 9zM15 12c0-6 4-9 12-9 0 7-4 9-12 9z" />
-        </svg>
+        <h2 id="why-title" className="why__title">Why Choose BELYN?</h2>
       </header>
       <div className="why__grid">
         {items.map((i) => (

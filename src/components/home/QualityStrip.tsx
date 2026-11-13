@@ -14,11 +14,6 @@ export default function QualityStrip() {
         <h2 id="qual-title" className="qual__title">
           Only the best makes it to <em>BELYN</em>
         </h2>
-        <div className="qual__orn" aria-hidden="true">
-          <span />
-          <svg width="26" height="20" viewBox="0 0 30 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22V12M15 12C15 6 11 3 3 3c0 7 4 9 12 9zM15 12c0-6 4-9 12-9 0 7-4 9-12 9z" /></svg>
-          <span />
-        </div>
         <p className="qual__sub">Careful selection, careful checks and careful packing, from sourcing to your doorstep.</p>
       </header>
       <ul className="qual__track">
