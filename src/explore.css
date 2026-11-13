@@ -162,10 +162,16 @@
 
 /* Home: Only the best makes it to BELYN */
 .qual { max-width: 1120px; margin: clamp(36px, 6vw, 84px) auto; padding-inline: clamp(16px, 4vw, 32px); }
-.qual__head { text-align: center; margin-bottom: clamp(18px, 3vw, 32px); }
-.qual__title { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 28px); margin: 0; font: 600 clamp(26px, 4.6vw, 44px)/1.12 var(--serif); color: var(--deep-green); text-align: center; }
+.qual__head { text-align: center; margin-bottom: clamp(22px, 3.6vw, 40px); display: grid; justify-items: center; gap: 12px; }
+.qual__eyebrow { margin: 0; font: 600 12px var(--sans); letter-spacing: .26em; text-transform: uppercase; color: #a77b2c; }
+.qual__title { margin: 0; max-width: 18ch; font: 600 clamp(34px, 6vw, 58px)/1.04 var(--serif); letter-spacing: -.005em; color: var(--deep-green); text-wrap: balance; }
+.qual__title em { font-style: italic; font-weight: 600; color: #a77b2c; }
+.qual__orn { display: flex; align-items: center; gap: 14px; color: var(--deep-green); }
+.qual__orn span { width: clamp(40px, 9vw, 84px); height: 1px; background: #b8893a; }
+.qual__sub { margin: 0; max-width: 46ch; font-size: clamp(14.5px, 1.6vw, 16.5px); line-height: 1.6; color: var(--coffee-brown); }
 .qual__track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2vw, 22px); }
-.qual__item { margin: 0; border-radius: 20px; overflow: hidden; background: #fcf3e8; border: 1px solid var(--line); aspect-ratio: 3 / 4; }
+.qual__item { margin: 0; border-radius: 22px; overflow: hidden; background: #fcf3e8; border: 1px solid var(--line); aspect-ratio: 3 / 4; box-shadow: 0 1px 2px rgba(57,44,34,.05), 0 12px 28px -18px rgba(57,44,34,.25); transition: transform .3s ease, box-shadow .3s ease; }
+@media (hover: hover) { .qual__item:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(57,44,34,.06), 0 18px 36px -18px rgba(57,44,34,.32); } }
 .qual__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 719px) {
   .qual__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding-inline: clamp(16px, 4vw, 32px); scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
