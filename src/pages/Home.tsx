@@ -2,6 +2,7 @@ import HeroSlider from '../components/home/HeroSlider';
 import Welcome from '../components/home/Welcome';
 import Pillars from '../components/home/Pillars';
 import WhyChoose from '../components/home/WhyChoose';
+import OriginStories from '../components/home/OriginStories';
 import FocusSections from '../components/home/FocusSections';
 import ShippingInfo from '../components/home/ShippingInfo';
 import Faq from '../components/home/Faq';
@@ -21,6 +22,7 @@ export default function Home() {
       <HeroSlider />
       <Welcome />
       <WhyChoose />
+      <OriginStories />
       <FocusSections />
       <Pillars />
       <StorySection />
