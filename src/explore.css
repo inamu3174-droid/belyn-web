@@ -148,9 +148,14 @@
 
 /* Home: origin photographs */
 .origin { max-width: 1120px; margin: clamp(28px, 5vw, 64px) auto; padding-inline: clamp(16px, 4vw, 32px); }
-.origin__grid { display: grid; gap: clamp(12px, 2vw, 22px); grid-template-columns: 1fr; }
-@media (min-width: 640px) { .origin__grid { grid-template-columns: 1fr 1fr; } }
-.origin__tile { display: block; position: relative; overflow: hidden; border-radius: 20px; aspect-ratio: 1 / 1; background: #e9e4d6; }
-.origin__tile img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
-@media (hover: hover) { .origin__tile:hover img { transform: scale(1.03); } }
+.origin__grid { display: grid; gap: clamp(14px, 2vw, 22px); grid-template-columns: 1fr; }
+@media (min-width: 720px) { .origin__grid { grid-template-columns: 1fr 1fr; } }
+.origin__tile { display: block; position: relative; overflow: hidden; border-radius: 20px; aspect-ratio: 3 / 2; background: #e9e4d6; color: #fff; text-decoration: none; isolation: isolate; }
+.origin__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.origin__shade { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(10, 32, 26, .82) 0%, rgba(10, 32, 26, .45) 38%, rgba(10, 32, 26, 0) 68%); }
+.origin__copy { position: absolute; z-index: 2; inset: auto 0 0 0; display: grid; gap: 6px; padding: clamp(18px, 2.6vw, 28px); }
+.origin__title { font: 600 clamp(26px, 3vw, 34px)/1.08 var(--serif); }
+.origin__line { font-size: 14.5px; line-height: 1.45; color: rgba(255, 255, 255, .88); max-width: 38ch; }
+.origin__cta { margin-top: 6px; font: 600 13px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: #fff; display: inline-flex; gap: 8px; width: fit-content; padding-bottom: 3px; border-bottom: 1px solid rgba(255, 255, 255, .55); transition: border-color .2s, gap .2s; }
+@media (hover: hover) { .origin__tile:hover img { transform: scale(1.04); } .origin__tile:hover .origin__cta { gap: 12px; border-color: #fff; } }
 .origin__tile:focus-visible { outline: 2px solid var(--deep-green); outline-offset: 3px; }
