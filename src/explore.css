@@ -132,5 +132,16 @@
 .occ__card::after { background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.08) 60%); }
 
 /* Home: Why Choose BELYN? */
-.why { max-width: 760px; margin: clamp(28px, 5vw, 64px) auto; padding-inline: clamp(16px, 4vw, 24px); }
-.why__img { display: block; width: 100%; height: auto; border-radius: 22px; border: 1px solid var(--line); }
+.why { max-width: 1040px; margin: clamp(36px, 6vw, 84px) auto; padding-inline: clamp(16px, 4vw, 32px); }
+.why__head { text-align: center; margin-bottom: clamp(20px, 3.5vw, 36px); }
+.why__title { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 28px); margin: 0; font: 600 clamp(30px, 5.2vw, 48px)/1.1 var(--serif); color: var(--deep-green); }
+.why__rule { flex: 1 1 0; max-width: 120px; height: 1px; background: #b8893a; }
+.why__leaf { display: block; margin: 12px auto 0; color: var(--deep-green); }
+.why__grid { display: grid; gap: clamp(12px, 2vw, 22px); grid-template-columns: 1fr; }
+@media (min-width: 560px) { .why__grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .why__grid { grid-template-columns: repeat(4, 1fr); } }
+.why__card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: clamp(20px, 2.6vw, 30px) clamp(16px, 2vw, 24px); border: 1px solid var(--line); border-radius: 20px; background: rgb(254, 245, 236); box-shadow: 0 1px 2px rgba(57, 44, 34, .04); transition: box-shadow .2s ease, transform .2s ease; }
+.why__card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(57, 44, 34, .08); }
+.why__icon { width: auto; height: clamp(110px, 12vw, 130px); max-width: 100%; object-fit: contain; }
+.why__name { margin: 16px 0 8px; font: 600 clamp(22px, 2.2vw, 25px)/1.15 var(--serif); color: var(--deep-green); }
+.why__text { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--coffee-brown); max-width: 30ch; }

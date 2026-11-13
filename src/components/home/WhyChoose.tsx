@@ -1,16 +1,33 @@
-/** "Why Choose BELYN?" infographic (supplied artwork). Replaces the "Native to Kashmir" collection band. */
+/** "Why Choose BELYN?": real text and cards; the four illustrations are cropped from the supplied artwork. */
+const items = [
+  { img: 'tree', title: 'Thoughtfully Selected', text: 'Carefully chosen products, selected for their natural character, quality and origin.', w: 325, h: 237 },
+  { img: 'mortar', title: 'Natural, Honest Products', text: 'Products thoughtfully presented with clear information and nothing unnecessary added.', w: 305, h: 220 },
+  { img: 'check', title: 'Quality & Purity', text: 'We focus on quality at every step, with appropriate testing and careful attention to product purity.', w: 255, h: 235 },
+  { img: 'saffron', title: 'Rooted in Kashmir', text: 'Inspired by the natural richness of Kashmir and thoughtfully shared from our home with the world.', w: 375, h: 205 },
+] as const;
+
 export default function WhyChoose() {
   return (
-    <section className="why" aria-label="Why choose BELYN">
-      <img
-        className="why__img"
-        src="/images/why-choose-belyn.jpg"
-        width={1206}
-        height={1305}
-        loading="lazy"
-        decoding="async"
-        alt="Why choose BELYN? Thoughtfully Selected: carefully chosen products, selected for their natural character, quality and origin. Natural, Honest Products: products thoughtfully presented with clear information and nothing unnecessary added. Quality and Purity: we focus on quality at every step, with appropriate testing and careful attention to product purity. Rooted in Kashmir: inspired by the natural richness of Kashmir and thoughtfully shared from our home with the world."
-      />
+    <section className="why" aria-labelledby="why-title">
+      <header className="why__head">
+        <h2 id="why-title" className="why__title">
+          <span className="why__rule" aria-hidden="true" />
+          Why Choose BELYN?
+          <span className="why__rule" aria-hidden="true" />
+        </h2>
+        <svg className="why__leaf" width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M15 22V12M15 12C15 6 11 3 3 3c0 7 4 9 12 9zM15 12c0-6 4-9 12-9 0 7-4 9-12 9z" />
+        </svg>
+      </header>
+      <div className="why__grid">
+        {items.map((i) => (
+          <article key={i.title} className="why__card">
+            <img className="why__icon" src={`/images/why-${i.img}.png`} width={i.w} height={i.h} alt="" loading="lazy" decoding="async" />
+            <h3 className="why__name">{i.title}</h3>
+            <p className="why__text">{i.text}</p>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
