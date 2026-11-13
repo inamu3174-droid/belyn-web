@@ -1,9 +1,9 @@
 /** "Why Choose BELYN?": real text and cards; the four illustrations are cropped from the supplied artwork. */
 const items = [
-  { img: 'tree', title: 'Thoughtfully Selected', text: 'Carefully chosen products, selected for their natural character, quality and origin.', w: 325, h: 237 },
-  { img: 'mortar', title: 'Natural, Honest Products', text: 'Products thoughtfully presented with clear information and nothing unnecessary added.', w: 305, h: 220 },
-  { img: 'check', title: 'Quality & Purity', text: 'We focus on quality at every step, with appropriate testing and careful attention to product purity.', w: 255, h: 235 },
-  { img: 'saffron', title: 'Rooted in Kashmir', text: 'Inspired by the natural richness of Kashmir and thoughtfully shared from our home with the world.', w: 375, h: 205 },
+  { img: 'leaf', title: 'Thoughtfully Selected', text: 'Carefully chosen products selected for their natural character, quality and origin.', w: 173, h: 172 },
+  { img: 'mortar', title: 'Honest & Natural', text: 'Naturally presented products with clear information and nothing unnecessary added.', w: 170, h: 174 },
+  { img: 'check', title: 'Quality & Purity', text: 'Focused on quality, appropriate testing and careful attention to purity.', w: 146, h: 179 },
+  { img: 'saffron', title: 'Rooted in Kashmir', text: 'Inspired by the natural richness of Kashmir and thoughtfully shared with the world.', w: 214, h: 171 },
 ] as const;
 
 export default function WhyChoose() {
