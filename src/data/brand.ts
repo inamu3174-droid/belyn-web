@@ -65,3 +65,32 @@ export const people = {
   },
   closing: 'BELYN — A shared dream, made to be shared with the world.',
 };
+
+/** Festive and Corporate Gifting pages. Set `banner` to the designer's image path when supplied. */
+export const gifting = {
+  festive: {
+    path: '/festive-gifting',
+    seo: 'Thoughtfully curated gifts from Kashmir, beautifully arranged and ready to be shared.',
+    banner: '' as string,
+    hero: { title: 'Wrap & Wonder', tag: 'Thoughtful Gifts. Beautiful Moments.', sub: 'Thoughtfully curated gifts from Kashmir, beautifully arranged and ready to be shared.' },
+    eyebrow: 'Festive Gifting',
+    lead: 'Make every celebration a little more thoughtful with beautifully curated BELYN gifts, inspired by the natural flavours of Kashmir.',
+    ask: { title: 'Looking for the right gift?', text: 'Tell us what you have in mind and our team will help you choose the right BELYN gift for your occasion.' },
+    note: 'Gift options and pricing will be shared based on your requirements.',
+    subject: 'Festive gifting enquiry',
+    message: 'Hello BELYN, I would like to enquire about festive gifting. ',
+  },
+  corporate: {
+    path: '/corporate-gifting',
+    seo: 'Thoughtfully selected gifts for teams, clients, business partners and professional occasions.',
+    banner: '' as string,
+    hero: { title: 'Thoughtful Gifting. Meaningful Connections.', tag: 'Thoughtful Gifts for Every Professional Occasion.', sub: '' },
+    eyebrow: 'Corporate Gifting',
+    lead: 'Thoughtfully selected gifts for teams, clients, business partners and professional occasions.',
+    ask: { title: 'Let’s create something thoughtful', text: 'Tell us about your gifting requirements and connect with BELYN to discuss product selection, bulk orders and pricing.' },
+    note: 'Corporate gifting options and pricing will be shared based on your requirements.',
+    subject: 'Corporate gifting enquiry',
+    message: 'Hello BELYN, I would like to enquire about corporate gifting. Quantity needed: ',
+  },
+  closing: 'BELYN — A shared dream, made to be shared with the world.',
+};

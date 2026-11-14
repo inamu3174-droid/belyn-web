@@ -23,8 +23,8 @@ export default function Banner({ image, label, children }: { image?: string; lab
             </linearGradient>
           </defs>
           <rect width="1200" height="420" fill="url(#bnr-sky)" />
-          <circle cx="840" cy="150" r="190" fill="url(#bnr-sun)" />
-          <circle cx="840" cy="150" r="34" fill="#FFF9E6" />
+          <circle cx="1000" cy="150" r="190" fill="url(#bnr-sun)" />
+          <circle cx="1000" cy="150" r="34" fill="#FFF9E6" />
           <path d="M0 250 L90 205 L180 238 L300 150 L400 215 L470 185 L580 250 L690 175 L790 232 L900 160 L1010 228 L1110 190 L1200 235 V420 H0Z" fill="#D9CFB2" opacity=".55" />
           <path d="M0 290 L110 232 L210 272 L330 190 L430 262 L540 205 L660 282 L780 212 L890 270 L1010 205 L1110 255 L1200 232 V420 H0Z" fill="#9DB3A5" opacity=".8" />
           <rect y="250" width="1200" height="90" fill="url(#bnr-mist)" />
