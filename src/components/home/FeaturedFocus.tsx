@@ -6,6 +6,7 @@ import { isSoldOut, startingVariant } from '../../lib/catalog';
 import { ProductVisual } from '../Art';
 import { PriceLine } from '../ProductBits';
 import QuickView from '../QuickView';
+import AddButton from '../AddButton';
 
 /** Category shortcuts + featured product cards. The five shortcuts map one-to-one to the five cards. */
 const picks: { slug: string; label: string; icon: ReactNode }[] = [
@@ -104,20 +105,12 @@ function Card({ product }: { product: Product }) {
           <div className="ff-card__price">
             {sold ? <span>Sold out</span> : <PriceLine price={first.price} compareAt={first.compareAt} placeholder={PRICES_ARE_PLACEHOLDERS} from={multi} />}
           </div>
-          <button
-            type="button"
-            className="ff-card__add"
+          <AddButton
             onClick={onAdd}
             disabled={sold}
-            aria-label={sold ? `${product.name} is sold out` : multi ? `Choose a size for ${product.name}` : `Add ${product.name} to cart`}
-          >
-            <span>{sold ? 'Sold out' : added ? 'Added' : 'ADD'}</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M3 4h2.5l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h8a1.5 1.5 0 0 0 1.5-1.1L20 8H6.2" />
-              <circle cx="9.5" cy="19.5" r="1.3" />
-              <circle cx="17" cy="19.5" r="1.3" />
-            </svg>
-          </button>
+            state={sold ? 'sold' : added ? 'added' : 'idle'}
+            label={sold ? `${product.name} is sold out` : multi ? `Choose a size for ${product.name}` : `Add ${product.name} to cart`}
+          />
         </div>
       </div>
       {quick && <QuickView product={product} initialVariantId={first.id} onClose={() => setQuick(false)} />}

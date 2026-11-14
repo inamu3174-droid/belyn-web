@@ -6,6 +6,7 @@ import { discountPercent, isSoldOut, startingVariant } from '../lib/catalog';
 import { ProductVisual } from './Art';
 import { Rating, PriceLine, VariantChips } from './ProductBits';
 import QuickView from './QuickView';
+import AddButton from './AddButton';
 import WishlistButton from './WishlistButton';
 
 /**
@@ -61,23 +62,6 @@ export default function ProductCard({ product, detailed = false }: { product: Pr
         {soldOut && <span className="pcard__badge pcard__badge--sold">Sold out</span>}
         {!soldOut && off > 0 && <span className="pcard__badge">{off}% off</span>}
         <WishlistButton slug={product.slug} name={product.name} className="pcard__wish" />
-        {!detailed && (
-          <button
-            type="button"
-            className="pcard__addpill"
-            onClick={onAdd}
-            disabled={soldOut}
-            aria-label={
-              soldOut
-                ? `${product.name} is sold out`
-                : multi
-                  ? `Choose a size for ${product.name}`
-                  : `Add ${product.name} to cart`
-            }
-          >
-            {soldOut ? 'Sold out' : justAdded ? 'Added ✓' : 'ADD +'}
-          </button>
-        )}
       </div>
 
       <div className="pcard__meta">
@@ -103,13 +87,22 @@ export default function ProductCard({ product, detailed = false }: { product: Pr
         </div>
       </div>
 
+      {!detailed && (
+        <div className="pcard__buy">
+          <AddButton
+            onClick={onAdd}
+            disabled={soldOut}
+            state={soldOut ? 'sold' : justAdded ? 'added' : 'idle'}
+            label={soldOut ? `${product.name} is sold out` : multi ? `Choose a size for ${product.name}` : `Add ${product.name} to cart`}
+          />
+        </div>
+      )}
+
       {detailed && (
         <div className="pcard__extra">
           <VariantChips variants={product.variants} value={variantId} onChange={setVariantId} label={product.name} />
           <div className="pcard__actions">
-            <button type="button" className="shop-btn shop-btn--primary" onClick={onAdd} disabled={vSold}>
-              {vSold ? 'Sold out' : justAdded ? 'Added ✓' : 'Add to cart'}
-            </button>
+            <AddButton onClick={onAdd} disabled={vSold} state={vSold ? 'sold' : justAdded ? 'added' : 'idle'} label={vSold ? `${product.name} is sold out` : `Add ${product.name} to cart`} />
             <button type="button" className="shop-btn shop-btn--ghost" onClick={() => setQuick(true)}>
               Quick view
             </button>
