@@ -10,7 +10,9 @@ interface Review {
 
 function Stars({ value }: { value: number }) {
   const full = Math.max(0, Math.min(5, Math.round(value)));
-  return "★".repeat(full)}
+  return (
+    <span className="reviews__stars" aria-label={`${full} out of 5 stars`}>
+      <span aria-hidden="true">{"★".repeat(full)}</span>
       <span className="reviews__star-off" aria-hidden="true">
         {"★".repeat(5 - full)}
       </span>
