@@ -131,20 +131,30 @@
 .occ__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .occ__card::after { background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.08) 60%); }
 
-/* Home: Why Choose BELYN? */
-.why { max-width: 1040px; margin: clamp(36px, 6vw, 84px) auto; padding-inline: clamp(16px, 4vw, 32px); }
-.why__head { text-align: center; margin-bottom: clamp(20px, 3.5vw, 36px); }
-.why__title { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 28px); margin: 0; font: 600 clamp(30px, 5.2vw, 48px)/1.1 var(--serif); color: var(--deep-green); }
-.why__rule { flex: 1 1 0; max-width: 120px; height: 1px; background: #b8893a; }
-.why__leaf { display: block; margin: 12px auto 0; color: var(--deep-green); }
-.why__grid { display: grid; gap: clamp(12px, 2vw, 22px); grid-template-columns: 1fr; }
-@media (min-width: 560px) { .why__grid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1000px) { .why__grid { grid-template-columns: repeat(4, 1fr); } }
-.why__card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: clamp(20px, 2.6vw, 30px) clamp(16px, 2vw, 24px); border: 1px solid var(--line); border-radius: 20px; background: #fff; box-shadow: 0 1px 2px rgba(57, 44, 34, .04); transition: box-shadow .2s ease, transform .2s ease; }
-.why__card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(57, 44, 34, .08); }
-.why__icon { width: auto; height: clamp(76px, 8vw, 92px); max-width: 100%; object-fit: contain; }
-.why__name { margin: 16px 0 8px; font: 600 clamp(22px, 2.2vw, 25px)/1.15 var(--serif); color: var(--deep-green); }
-.why__text { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--coffee-brown); max-width: 30ch; }
+/* Home: Why Choose BELYN?  (brand tokens: green #0B5F4E, text #4A3F35, page #F8F6EF, card #fff) */
+.why { --w-green: #0B5F4E; --w-text: #4A3F35; max-width: 1120px; margin: 0 auto; padding: 52px 16px; }
+.why__title { margin: 0 0 28px; text-align: center; font: 700 30px/1.15 var(--serif); color: var(--w-green); }
+.why__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; row-gap: 18px; }
+.why__card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 22px 14px 24px; background: #fff; border-radius: 18px; box-shadow: 0 2px 8px rgba(74, 63, 53, .06); }
+.why__icon { width: 52px; height: 52px; flex: none; color: var(--w-green); }
+.why__name { margin: 16px 0 8px; font: 600 21px/1.18 var(--serif); color: var(--w-green); text-wrap: balance; }
+.why__text { margin: 0; font: 400 14.5px/1.55 var(--sans); color: var(--w-text); }
+@media (min-width: 720px) {
+  .why { padding: 72px 32px; }
+  .why__title { margin-bottom: 36px; font-size: 36px; }
+  .why__grid { column-gap: 20px; row-gap: 20px; }
+  .why__card { padding: 28px 22px 30px; border-radius: 20px; }
+  .why__name { font-size: 24px; }
+  .why__text { font-size: 16px; }
+}
+@media (min-width: 1024px) {
+  .why { padding: 88px 32px; }
+  .why__title { margin-bottom: 44px; font-size: 40px; }
+  .why__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
+  .why__card { padding: 34px 24px 36px; }
+  .why__name { font-size: 26px; }
+  .why__text { font-size: 17px; }
+}
 
 /* Home: origin photographs */
 .origin { max-width: 1120px; margin: clamp(28px, 5vw, 64px) auto; padding-inline: clamp(16px, 4vw, 32px); }
