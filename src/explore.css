@@ -180,23 +180,22 @@
 @media (hover: hover) { .origin__tile:hover img { transform: scale(1.04); } .origin__tile:hover .origin__cta { gap: 12px; border-color: #fff; } }
 .origin__tile:focus-visible { outline: 2px solid var(--deep-green); outline-offset: 3px; }
 
-/* Home: Only the best makes it to BELYN */
-.qual { max-width: 1120px; margin: clamp(36px, 6vw, 84px) auto; padding-inline: clamp(16px, 4vw, 32px); }
-.qual__head { text-align: center; margin-bottom: clamp(22px, 3.6vw, 40px); display: grid; justify-items: center; gap: 12px; }
-.qual__eyebrow { margin: 0; font: 600 12px var(--sans); letter-spacing: .26em; text-transform: uppercase; color: #a77b2c; }
-.qual__title { margin: 0; max-width: 18ch; font: 600 clamp(34px, 6vw, 58px)/1.04 var(--serif); letter-spacing: -.005em; color: var(--deep-green); text-wrap: balance; }
-.qual__title em { font-style: italic; font-weight: 600; color: #a77b2c; }
-.qual__orn { display: flex; align-items: center; gap: 14px; color: var(--deep-green); }
-.qual__orn span { width: clamp(40px, 9vw, 84px); height: 1px; background: #b8893a; }
-.qual__sub { margin: 0; max-width: 46ch; font-size: clamp(14.5px, 1.6vw, 16.5px); line-height: 1.6; color: var(--coffee-brown); }
-.qual__track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2vw, 22px); }
-.qual__item { margin: 0; border-radius: 22px; overflow: hidden; background: #fcf3e8; border: 1px solid var(--line); aspect-ratio: 3 / 4; box-shadow: 0 1px 2px rgba(57,44,34,.05), 0 12px 28px -18px rgba(57,44,34,.25); transition: transform .3s ease, box-shadow .3s ease; }
-@media (hover: hover) { .qual__item:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(57,44,34,.06), 0 18px 36px -18px rgba(57,44,34,.32); } }
+/* Home: QUALITY, CHECKED WITH CARE  (deep forest green #0B5D46, cream card #FAF6ED, section #FFFEF9) */
+.qual { background: #FFFEF9; max-width: none; margin: 0; padding: 38px clamp(16px, 4vw, 32px) 40px; }
+.qual__title { margin: 0 auto 24px; max-width: 1120px; text-align: center; font: 600 27px/1.18 var(--serif); letter-spacing: 0; text-transform: uppercase; color: #0B5D46; text-wrap: balance; }
+.qual__track { list-style: none; margin: 0 auto; padding: 0; max-width: 1120px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.qual__item { margin: 0; border-radius: 18px; overflow: hidden; background: #FAF6ED; border: 0; aspect-ratio: 3 / 4; box-shadow: 0 2px 10px rgba(74, 63, 53, .08); }
 .qual__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.qual__dots { display: none; justify-content: center; gap: 10px; margin-top: 20px; }
+.qual__dots button { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 50%; background: #c9c4b6; cursor: pointer; transition: background .2s, transform .2s; position: relative; }
+.qual__dots button::after { content: ''; position: absolute; inset: -9px; }
+.qual__dots button.is-on { background: #0B5D46; transform: scale(1.15); }
+@media (min-width: 720px) { .qual { padding-block: 52px; } .qual__title { font-size: 34px; margin-bottom: 32px; } }
 @media (max-width: 1023px) {
-  .qual__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding-inline: clamp(16px, 4vw, 32px); scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .qual__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding-inline: clamp(16px, 4vw, 32px); margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); max-width: none; scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; padding-block: 4px 12px; }
   .qual__track::-webkit-scrollbar { display: none; }
   .qual__item { flex: 0 0 84%; scroll-snap-align: start; }
+  .qual__dots { display: flex; }
 }
 @media (min-width: 560px) and (max-width: 1023px) { .qual__item { flex-basis: 46%; } }
 
