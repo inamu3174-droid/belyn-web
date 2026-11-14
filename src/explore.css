@@ -185,3 +185,19 @@
   .qual__item { flex: 0 0 84%; scroll-snap-align: start; }
 }
 @media (min-width: 560px) and (max-width: 1023px) { .qual__item { flex-basis: 46%; } }
+
+/* Welcome to BELYN: quiet, text-and-icon category row (no boxes, borders or rules) */
+.wel__head { margin-bottom: clamp(18px, 3vw, 28px); }
+.wel__title { display: block; margin: 0; font: 600 clamp(28px, 3vw, 30px)/1.15 var(--serif); letter-spacing: .005em; color: var(--deep-green); }
+.wel__tag { max-width: none; margin: 8px 0 0; font: 500 clamp(20px, 2.1vw, 22px)/1.3 var(--serif); font-style: normal; color: #2b2f2d; }
+.wtabs { gap: clamp(22px, 5vw, 56px); padding: 6px clamp(16px, 4vw, 24px) 10px; margin-inline: calc(-1 * clamp(0px, 0vw, 0px)); scroll-snap-type: x proximity; }
+.wtab { position: relative; min-width: 0; min-height: 96px; justify-content: flex-start; padding: 4px 2px 12px; gap: 10px; border: 0; border-radius: 0; background: transparent; color: #2b2f2d; font: 500 15px/1.25 var(--serif); scroll-snap-align: center; transition: color .2s ease; }
+.wtab span { max-width: 11ch; }
+.wtab__icon { display: block; opacity: .92; }
+.wtab:hover { background: transparent; color: var(--deep-green); }
+.wtab::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: var(--deep-green); transform: scaleX(0); transform-origin: center; transition: transform .25s ease; }
+.wtab.is-on { background: transparent; color: var(--deep-green); font-weight: 700; }
+.wtab.is-on::after { transform: scaleX(1); }
+.wtab:focus-visible { outline: 2px solid var(--deep-green); outline-offset: 4px; border-radius: 6px; }
+.wel__gift { border: 0; background: transparent; padding: 8px 16px; }
+@media (max-width: 640px) { .wtab { min-width: 0; min-height: 92px; padding: 4px 2px 12px; font-size: 14px; } .wtabs { justify-content: flex-start; gap: 26px; } }

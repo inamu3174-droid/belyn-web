@@ -33,15 +33,20 @@ const icons: Record<string, JSX.Element> = {
       <path d="M4 7.5 12 12l8-4.5M12 12v9" />
     </>
   ),
-  bag: (
+  jar: (
     <>
-      <path d="M5.5 8h13l-1 12h-11l-1-12Z" />
-      <path d="M9 8V7a3 3 0 0 1 6 0v1" />
+      <rect x="5" y="3.5" width="14" height="4" rx="1.4" />
+      <path d="M6 7.5v10.8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7.5" />
     </>
   ),
 };
 
-const tabs = [{ id: 'all', label: 'All Products', icon: 'all' }, ...giftingTabs.map((g) => ({ id: g.id, label: g.label, icon: g.icon }))];
+const order = ['festive', 'custom', 'corporate', 'sample'];
+const iconFor = (id: string, icon: string) => (id === 'sample' ? 'jar' : icon);
+const tabs = [
+  { id: 'all', label: 'All Products', icon: 'all' },
+  ...order.map((id) => giftingTabs.find((g) => g.id === id)).filter((g): g is (typeof giftingTabs)[number] => !!g).map((g) => ({ id: g.id, label: g.label, icon: iconFor(g.id, g.icon) })),
+];
 
 /**
  * "Welcome to BELYN": heading, tagline and five tabs. "All Products" shows the product grid;
@@ -65,12 +70,8 @@ export default function Welcome() {
   return (
     <section className="wel" id="featured" aria-labelledby="welcome-title">
       <header className="wel__head">
-        <h2 id="welcome-title" className="wel__title">
-          <span className="wel__rule" aria-hidden="true" />
-          Welcome to BELYN
-          <span className="wel__rule" aria-hidden="true" />
-        </h2>
-        <p className="wel__tag">From our home to yours, bringing you nature just as it should be.</p>
+        <h2 id="welcome-title" className="wel__title">Welcome to BELYN!</h2>
+        <p className="wel__tag">You&rsquo;re One Step Closer to Purity</p>
       </header>
 
       <div className="wtabs" role="tablist" aria-label="Browse BELYN">
@@ -90,7 +91,7 @@ export default function Welcome() {
             onClick={() => setTab(t.id)}
             onKeyDown={(e) => onKey(e, idx)}
           >
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg className="wtab__icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               {icons[t.icon]}
             </svg>
             <span>{t.label}</span>
