@@ -1,0 +1,146 @@
+/* Customer Reviews — editorial layout (scoped; does not affect other sections) */
+
+.reviews {
+  background: var(--warm-ivory, #F8F6EF);
+  padding: clamp(40px, 6vw, 80px) var(--pad);
+  color: #2f2f2f;
+}
+
+.reviews__inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.reviews__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.15;
+  color: #2f2f2f;
+  text-align: center;
+}
+
+.reviews__list {
+  display: grid;
+  gap: clamp(40px, 5vw, 56px);
+  margin-top: clamp(32px, 4vw, 40px);
+}
+
+.reviews__item {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.reviews__quote {
+  margin: 0;
+  position: relative;
+  padding: 0 0.15em;
+}
+
+.reviews__mark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(36px, 5vw, 52px);
+  line-height: 1;
+  color: #2f2f2f;
+  opacity: 0.9;
+}
+
+.reviews__mark--open {
+  display: block;
+  margin-bottom: 0.1em;
+}
+
+.reviews__mark--close {
+  display: block;
+  margin-top: 0.05em;
+}
+
+.reviews__text {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: clamp(16px, 1.6vw, 20px);
+  line-height: 1.7;
+  color: #2f2f2f;
+  max-width: 36em;
+  margin-inline: auto;
+}
+
+.reviews__person {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: clamp(24px, 3vw, 32px);
+  text-align: left;
+}
+
+.reviews__avatar {
+  width: clamp(48px, 8vw, 64px);
+  height: clamp(48px, 8vw, 64px);
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+  border: 0;
+}
+
+.reviews__avatar--initials {
+  display: grid;
+  place-items: center;
+  background: var(--soft-cream, #E9E5D8);
+  color: var(--deep-green, #075B4D);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.reviews__meta {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.reviews__name {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.2;
+  color: #2f2f2f;
+}
+
+.reviews__stars {
+  display: inline-flex;
+  gap: 2px;
+  color: #ffb800;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.reviews__star-off {
+  color: #d9d3c4;
+}
+
+.reviews__product {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray, #6B5E52);
+}
+
+@media (max-width: 720px) {
+  .reviews {
+    padding: clamp(40px, 8vw, 56px) var(--pad);
+  }
+  .reviews__person {
+    gap: 12px;
+  }
+}
