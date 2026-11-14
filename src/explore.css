@@ -157,8 +157,12 @@
 }
 
 /* Home: origin photographs */
-.origin { max-width: 1120px; margin: clamp(28px, 5vw, 64px) auto; padding-inline: clamp(16px, 4vw, 32px); }
-.origin__grid { display: grid; gap: clamp(14px, 2vw, 22px); grid-template-columns: 1fr; }
+.origin { max-width: 1120px; margin: 0 auto; padding: 48px clamp(16px, 4vw, 32px); }
+.origin__head { text-align: center; margin-bottom: 28px; }
+.origin__h { margin: 0; font: 700 clamp(28px, 4vw, 40px)/1.12 var(--serif); letter-spacing: .01em; color: #075C50; }
+.origin__sub { margin: 12px auto 0; max-width: 34ch; font: 400 clamp(16px, 1.8vw, 21px)/1.5 var(--sans); color: #4A3F35; text-wrap: balance; }
+@media (min-width: 1024px) { .origin { padding-block: 72px; } .origin__head { margin-bottom: 40px; } }
+.origin__grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
 @media (min-width: 1024px) { .origin__grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 1023px) {
   .origin__grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding-inline: clamp(16px, 4vw, 32px); scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
@@ -166,7 +170,7 @@
   .origin__tile { flex: 0 0 84%; scroll-snap-align: start; }
 }
 @media (min-width: 560px) and (max-width: 1023px) { .origin__tile { flex-basis: 46%; } }
-.origin__tile { display: block; position: relative; overflow: hidden; border-radius: 20px; aspect-ratio: 3 / 2; background: #e9e4d6; color: #fff; text-decoration: none; isolation: isolate; }
+.origin__tile { display: block; position: relative; overflow: hidden; border-radius: 18px; aspect-ratio: 3 / 2; background: #e9e4d6; color: #fff; text-decoration: none; isolation: isolate; }
 .origin__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
 .origin__shade { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(10, 32, 26, .82) 0%, rgba(10, 32, 26, .45) 38%, rgba(10, 32, 26, 0) 68%); }
 .origin__copy { position: absolute; z-index: 2; inset: auto 0 0 0; display: grid; gap: 6px; padding: clamp(18px, 2.6vw, 28px); }
