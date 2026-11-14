@@ -14,6 +14,8 @@ import SampleKit from './pages/explore/SampleKit';
 import BuildBox from './pages/explore/BuildBox';
 import Product from './pages/Product';
 import Story from './pages/Story';
+import PromisePage from './pages/Promise';
+import People from './pages/People';
 import Wholesale from './pages/Wholesale';
 import FestiveGifting from './pages/FestiveGifting';
 import CorporateGifting from './pages/CorporateGifting';
@@ -58,6 +60,8 @@ function Routes() {
   else if (clean === '/account') page = <Account />;
   else if (clean.startsWith('/product/')) page = <Product slug={clean.split('/')[2]} />;
   else if (clean === '/story') page = <Story />;
+  else if (clean === '/promise') page = <PromisePage />;
+  else if (clean === '/story/people') page = <People />;
   else if (clean === '/festive-gifting') page = <FestiveGifting />;
   else if (clean === '/corporate-gifting') page = <CorporateGifting />;
   else if (clean === '/wholesale') page = <Wholesale />;

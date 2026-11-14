@@ -62,8 +62,8 @@ const menuSections = [
     icon: menuIcons.brand,
     links: [
       { label: 'Our Story', to: '/story' },
-      { label: 'The People Behind BELYN', to: '/story#people' },
-      { label: 'The BELYN Promise', to: '/#promise' },
+      { label: 'The People Behind BELYN', to: '/story/people' },
+      { label: 'The BELYN Promise', to: '/promise' },
     ],
   },
   {
