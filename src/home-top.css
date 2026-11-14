@@ -133,7 +133,7 @@
 }
 
 body {
-  --hdr-stack: calc(var(--hdr) + 34px);
+  --hdr-stack: calc(var(--hdr) + 31px); /* fallback; Header.tsx sets the exact measured height */
 }
 
 .hero--ref {

@@ -168,6 +168,21 @@ export default function Header() {
     if (searchOpen) requestAnimationFrame(() => searchInputRef.current?.focus());
   }, [searchOpen]);
 
+  // Keep the content offset equal to the real header + announcement height (no gap below the green bar).
+  useEffect(() => {
+    const el = document.querySelector<HTMLElement>('.header--ref');
+    if (!el) return;
+    const sync = () => document.body.style.setProperty('--hdr-stack', `${el.getBoundingClientRect().height}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    window.addEventListener('resize', sync);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', sync);
+    };
+  }, []);
+
   return (
     <header className="header header--ref">
       <div className="header__inner">
