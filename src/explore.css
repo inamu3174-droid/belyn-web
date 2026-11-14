@@ -196,7 +196,7 @@
 .wtab__icon { display: block; opacity: .92; }
 .wtab:hover { background: transparent; color: var(--deep-green); }
 .wtab::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: var(--deep-green); transform: scaleX(0); transform-origin: center; transition: transform .25s ease; }
-.wtab.is-on { background: transparent; color: var(--deep-green); font-weight: 700; }
+.wtab.is-on { background: transparent; color: var(--deep-green); font-weight: 600; }
 .wtab.is-on::after { transform: scaleX(1); }
 .wtab:focus-visible { outline: 2px solid var(--deep-green); outline-offset: 4px; border-radius: 6px; }
 .wel__gift { border: 0; background: transparent; padding: 8px 16px; }
