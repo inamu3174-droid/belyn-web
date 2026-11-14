@@ -13,6 +13,7 @@ export default function Story() {
           <p className="brand__eyebrow">Our Story</p>
           <h1 className="brand__title">{story.lead}</h1>
           <p className="brand__intro">{story.intro}</p>
+          <span className="orn" aria-hidden="true" />
         </header>
         <div className="chap">
           {story.chapters.map((c, i) => (

@@ -11,6 +11,7 @@ export default function People() {
         <header className="brand__head">
           <p className="brand__eyebrow">BELYN</p>
           <h1 className="brand__title">{people.title}</h1>
+          <span className="orn" aria-hidden="true" />
         </header>
         {people.video && (
           <div className="vid">

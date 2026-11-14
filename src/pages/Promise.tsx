@@ -23,6 +23,7 @@ export default function PromisePage() {
       <article className="brand__wrap">
         <header className="brand__head">
           <p className="brand__intro brand__intro--solo">{promise.intro}</p>
+          <span className="orn" aria-hidden="true" />
         </header>
         <div className="prom">
           {promise.items.map((it) => (
