@@ -4,7 +4,7 @@ import Pillars from '../components/home/Pillars';
 import WhyChoose from '../components/home/WhyChoose';
 import OriginStories from '../components/home/OriginStories';
 import QualityStrip from '../components/home/QualityStrip';
-import FocusSections from '../components/home/FocusSections';
+import FeaturedFocus from '../components/home/FeaturedFocus';
 import ShippingInfo from '../components/home/ShippingInfo';
 import Faq from '../components/home/Faq';
 import Reviews from '../components/home/Reviews';
@@ -25,7 +25,7 @@ export default function Home() {
       <WhyChoose />
       <OriginStories />
       <QualityStrip />
-      <FocusSections />
+      <FeaturedFocus />
       <Pillars />
       <StorySection />
       <ShippingInfo />

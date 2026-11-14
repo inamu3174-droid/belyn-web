@@ -214,3 +214,49 @@
 .wtab:focus-visible { outline: 2px solid var(--deep-green); outline-offset: 4px; border-radius: 6px; }
 .wel__gift { border: 0; background: transparent; padding: 8px 16px; }
 @media (max-width: 640px) { .wtab { min-width: 0; min-height: 92px; padding: 4px 2px 12px; font-size: 14px; } .wtabs { justify-content: flex-start; gap: 26px; } }
+
+/* Home: Products in Focus (forest green #0B5D46, charcoal #2F2F2F, card cream #EFF9F2 per spec sheet) */
+.ff { max-width: 1120px; margin: 0 auto; padding: 44px 16px 52px; color: #2F2F2F; }
+.ff__title { margin: 0 0 26px; text-align: center; font: 600 28px/1.2 var(--serif); color: #0B5D46; }
+.ff__title span { display: block; }
+.ff__tabs { display: flex; gap: 22px; overflow-x: auto; scrollbar-width: none; padding: 4px 4px 0; margin-bottom: 22px; scroll-snap-type: x proximity; justify-content: safe center; }
+.ff__tabs::-webkit-scrollbar { display: none; }
+.ff__tab { position: relative; flex: 0 0 auto; width: 92px; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 4px 0 14px; border: 0; background: none; cursor: pointer; color: #2F2F2F; font: 600 13px/1.25 var(--sans); text-align: center; scroll-snap-align: center; }
+.ff__tab svg { color: #2F2F2F; }
+.ff__tab::after { content: ''; position: absolute; left: 6px; right: 6px; bottom: 0; height: 3px; border-radius: 3px; background: #0B5D46; transform: scaleX(0); transition: transform .25s ease; }
+.ff__tab.is-on { color: #0B5D46; }
+.ff__tab.is-on svg { color: #0B5D46; }
+.ff__tab.is-on::after { transform: scaleX(1); }
+.ff__tab:focus-visible { outline: 2px solid #0B5D46; outline-offset: 3px; border-radius: 6px; }
+.ff__track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; padding: 4px 2px 14px; outline: none; }
+.ff__track::-webkit-scrollbar { display: none; }
+.ff__slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
+.ff-card { display: flex; flex-direction: column; height: 100%; background: #EFF9F2; border: 0; border-radius: 18px; padding: 20px; }
+.ff-card__media { display: grid; place-items: center; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden; background: var(--card, #f4efe2); }
+.ff-card__media > * { width: 100%; height: 100%; object-fit: contain; }
+.ff-card__body { padding: 18px 2px 2px; display: flex; flex-direction: column; flex: 1; }
+.ff-card__name { margin: 0; font: 600 20px/1.2 var(--serif); }
+.ff-card__name a { color: #2F2F2F; text-decoration: none; }
+.ff-card__detail { margin: 6px 0 0; font: 400 14px/1.45 var(--sans); color: #6B7280; }
+.ff-card__buy { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 18px; }
+.ff-card__price, .ff-card__price p { margin: 0; font: 600 18px/1.2 var(--sans); color: #2F2F2F; }
+.ff-card__price .ph-tag { display: block; margin-top: 2px; font: 400 11px var(--sans); font-style: normal; color: #6B7280; }
+.ff-card__add { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 0; border-radius: 26px; background: #2F2F2F; color: #fff; font: 600 14px/1 var(--sans); letter-spacing: .04em; cursor: pointer; transition: background .2s ease, transform .15s ease; flex: none; }
+.ff-card__add:hover { background: #000; }
+.ff-card__add:active { transform: translateY(1px); }
+.ff-card__add:disabled { background: #8a8f8c; cursor: not-allowed; }
+.ff-card__add:focus-visible { outline: 2px solid #0B5D46; outline-offset: 3px; }
+@media (min-width: 720px) {
+  .ff { padding: 64px 32px 72px; }
+  .ff__title { margin-bottom: 34px; font-size: 36px; }
+  .ff__tabs { gap: 34px; margin-bottom: 30px; }
+  .ff__tab { width: 120px; font-size: 15px; }
+  .ff__track { gap: 24px; }
+  .ff__slide { flex-basis: calc((100% - 24px) / 2); }
+  .ff-card { padding: 24px; border-radius: 20px; }
+  .ff-card__name { font-size: 24px; }
+  .ff-card__detail { font-size: 16px; }
+  .ff-card__price, .ff-card__price p { font-size: 22px; }
+  .ff-card__add { padding: 12px 20px; font-size: 15px; }
+}
+@media (min-width: 1024px) { .ff__title { font-size: 42px; } .ff-card__name { font-size: 26px; } }
